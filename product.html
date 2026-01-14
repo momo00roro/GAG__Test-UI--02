@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteFlow - Product</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Performance Optimization */
+        .will-change-transform {
+            will-change: transform;
+        }
+
+        /* Smooth Hover Transitions */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out;
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .hero-bg {
+            background-image: url('assets/product_hero_bg.png');
+            /* Will be generated */
+            background-size: cover;
+            background-position: center;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Custom Utilities */
+        .text-gradient {
+            background: linear-gradient(to right, #3B82F6, #A855F7, #F472B6);
+            -webkit-background-clip: text;
+            background-clip: text;
+            /* Standard property */
+            -webkit-text-fill-color: transparent;
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#050505',
+                        primary: '#A855F7',
+                        secondary: '#3B82F6',
+                        accent: '#F472B6',
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-dark text-white min-h-screen flex flex-col relative">
+
+    <!-- Background Overlay -->
+    <div class="absolute inset-0 z-0 opactiy-60 hero-bg">
+        <div class="absolute inset-0 bg-dark/80 bg-gradient-to-t from-dark via-dark/50 to-transparent"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-50 px-6 py-6 flex justify-between items-center max-w-7xl mx-auto w-full">
+        <div class="flex items-center gap-2">
+            <div
+                class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg">
+                S</div>
+            <a href="index.html" class="font-bold text-xl tracking-tight">SiteFlow</a>
+        </div>
+
+        <div class="hidden md:flex gap-8 text-gray-400 text-sm font-medium">
+            <a href="product.html" class="text-white transition-colors">Product</a>
+            <a href="solutions.html" class="hover:text-white transition-colors">Solutions</a>
+            <a href="pricing.html" class="hover:text-white transition-colors">Pricing</a>
+            <a href="enterprise.html" class="hover:text-white transition-colors">Enterprise</a>
+        </div>
+
+        <div class="flex gap-4">
+            <a href="#" class="text-sm font-medium text-gray-300 hover:text-white py-2">Log in</a>
+            <a href="#"
+                class="text-sm font-medium bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200 transition-colors">Sign
+                up</a>
+        </div>
+    </nav>
+
+    <main class="relative z-10 flex-grow flex flex-col items-center w-full">
+
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8 mt-16 mb-24 relative">
+            <div
+                class="badge-anim inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold tracking-wide uppercase mb-8 backdrop-blur-md will-change-transform">
+                <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                The Engine
+            </div>
+
+            <h1 class="text-5xl md:text-7xl font-bold tracking-tight mb-8 leading-tight">
+                From Inspiration to <br>
+                <span class="text-gradient inline-block">Implementation.</span>
+            </h1>
+
+            <p class="hero-text max-w-2xl text-lg text-gray-400 mb-12 leading-relaxed mx-auto will-change-transform">
+                See how SiteFlow deconstructs the web's best designs and reconstructs them into pixel-perfect, clean
+                code for your brand.
+            </p>
+
+            <img src="assets/product_hero_bg.png" alt="Abstract Engine"
+                class="w-full max-w-4xl mx-auto rounded-2xl border border-white/10 shadow-2xl shadow-primary/20 opacity-80 animate-fade-in-up">
+        </section>
+
+        <!-- Feature 1: The Editor -->
+        <section
+            class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 flex flex-col md:flex-row items-center gap-16">
+            <div class="flex-1 space-y-6">
+                <h2 class="text-3xl md:text-4xl font-bold">A Visual Editor <br>That Writes Code</h2>
+                <p class="text-gray-400 leading-relaxed text-lg">
+                    Forget drag-and-drop constraints. Our editor exposes the underlying CSS variables and Tailwind
+                    classes visually. Change a token once, updates everywhere.
+                </p>
+                <ul class="space-y-3 text-gray-300">
+                    <li class="flex gap-3"><svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg> Live Preview</li>
+                    <li class="flex gap-3"><svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg> Component Isolation</li>
+                    <li class="flex gap-3"><svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7">
+                            </path>
+                        </svg> Instant Export</li>
+                </ul>
+            </div>
+            <div class="flex-1">
+                <div
+                    class="glass-panel p-2 rounded-xl border border-white/10 shadow-2xl hover-lift will-change-transform">
+                    <img src="assets/product_editor_ui.png" alt="Editor UI" class="rounded-lg w-full h-auto">
+                </div>
+            </div>
+        </section>
+
+        <!-- Feature 2: The Pipeline -->
+        <section class="w-full bg-white/5 py-24 border-y border-white/5">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row-reverse items-center gap-16">
+                <div class="flex-1 space-y-6">
+                    <h2 class="text-3xl md:text-4xl font-bold">Reverse Engineering <br>at Scale</h2>
+                    <p class="text-gray-400 leading-relaxed text-lg">
+                        Our computer vision models analyze screenshots and DOM structures to understand the "vibe" of a
+                        site, translating it into a reusable design system.
+                    </p>
+                </div>
+                <div class="flex-1">
+                    <div
+                        class="glass-panel p-8 rounded-3xl border border-white/10 shadow-2xl hover-lift will-change-transform relative overflow-hidden">
+                        <div class="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent"></div>
+                        <img src="assets/product_pipeline_diagram.png" alt="Pipeline Diagram"
+                            class="relative z-10 w-full h-auto rounded-xl">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 border-b border-white/5">
+            <h2 class="text-3xl md:text-5xl font-bold text-center mb-16">The Workflow</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+                <div class="p-6">
+                    <div
+                        class="w-16 h-16 rounded-full bg-primary/20 text-primary flex items-center justify-center text-2xl font-bold mx-auto mb-6 border border-primary/20">
+                        1</div>
+                    <h3 class="text-xl font-bold mb-3">Scan & Learn</h3>
+                    <p class="text-gray-400">Feed our AI 3-5 URLs. It analyzes layout patterns, typography scales, and
+                        color harmonies.</p>
+                </div>
+                <div class="p-6 relative">
+                    <div
+                        class="hidden md:block absolute top-10 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-white/10 to-transparent">
+                    </div>
+                    <div
+                        class="relative w-16 h-16 rounded-full bg-secondary/20 text-secondary flex items-center justify-center text-2xl font-bold mx-auto mb-6 border border-secondary/20">
+                        2</div>
+                    <h3 class="text-xl font-bold mb-3">Synthesize System</h3>
+                    <p class="text-gray-400">We extract a unified design system (tokens, components) that blends the
+                        best traits of your inputs.</p>
+                </div>
+                <div class="p-6">
+                    <div
+                        class="w-16 h-16 rounded-full bg-accent/20 text-accent flex items-center justify-center text-2xl font-bold mx-auto mb-6 border border-accent/20">
+                        3</div>
+                    <h3 class="text-xl font-bold mb-3">Generate & Deploy</h3>
+                    <p class="text-gray-400">Get a fully responsive, semantic HTML/Tailwind site deployed to a global
+                        edge network instantly.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- CMS Integration -->
+        <section class="w-full bg-white/5 py-24">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-16">
+                <div class="flex-1">
+                    <div
+                        class="glass-panel p-8 rounded-3xl border border-white/10 shadow-2xl hover-lift will-change-transform">
+                        <div
+                            class="aspect-video rounded-xl bg-gray-900 border border-white/5 flex items-center justify-center relative overflow-hidden">
+                            <!-- Placeholder for CMS UI, using a simple code block representation for now -->
+                            <div class="w-full p-4 font-mono text-xs text-green-400 opacity-70">
+                                {<br>
+                                &nbsp;&nbsp;"collection": "blog_posts",<br>
+                                &nbsp;&nbsp;"fields": [<br>
+                                &nbsp;&nbsp;&nbsp;&nbsp;"title", "slug", "content", "cover_image"<br>
+                                &nbsp;&nbsp;]<br>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 space-y-6">
+                    <div
+                        class="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-green-500/30 bg-green-500/10 text-green-400 text-xs font-semibold uppercase tracking-wide">
+                        Headless CMS</div>
+                    <h2 class="text-3xl md:text-4xl font-bold">Content is King. <br>Managing it is Queen.</h2>
+                    <p class="text-gray-400 leading-relaxed text-lg">
+                        Don't just build a shell. SiteFlow provisions a headless CMS tailored to your content needs.
+                        Define collections, visual editing, and instant API generation automatically.
+                    </p>
+                    <ul class="grid grid-cols-2 gap-4 text-gray-300">
+                        <li class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div> Visual Page Builder
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div> REST & GraphQL API
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div> Asset CDN
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-green-500"></div> Multi-language
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Specs -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <h2 class="text-3xl font-bold text-center mb-12">Built for Performance</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="glass-panel p-6 rounded-2xl text-center hover-lift">
+                    <div class="text-4xl font-bold text-white mb-2"><span class="counter" data-target="99">0</span>+
+                    </div>
+                    <div class="text-sm text-gray-400 uppercase tracking-widest">Lighthouse Score</div>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl text-center hover-lift">
+                    <div class="text-4xl font-bold text-white mb-2"><span class="counter" data-target="50">0</span>ms
+                    </div>
+                    <div class="text-sm text-gray-400 uppercase tracking-widest">TTFB (Edge)</div>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl text-center hover-lift">
+                    <div class="text-4xl font-bold text-white mb-2"><span class="counter" data-target="100">0</span>%
+                    </div>
+                    <div class="text-sm text-gray-400 uppercase tracking-widest">Semantic HTML</div>
+                </div>
+                <div class="glass-panel p-6 rounded-2xl text-center hover-lift">
+                    <div class="text-4xl font-bold text-white mb-2">AA</div>
+                    <div class="text-sm text-gray-400 uppercase tracking-widest">WCAG Compliant</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA -->
+        <section class="w-full text-center py-24">
+            <h2 class="text-3xl font-bold mb-6">Ready to see it in action?</h2>
+            <a href="#"
+                class="inline-block px-8 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition-transform">Start
+                Free Trial</a>
+        </section>
+
+        <!-- Footer -->
+        <footer class="w-full border-t border-white/5 py-12 text-center text-gray-600 text-sm">
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="#" class="hover:text-gray-400">Twitter</a>
+                <a href="#" class="hover:text-gray-400">GitHub</a>
+                <a href="#" class="hover:text-gray-400">Discord</a>
+            </div>
+            <p>&copy; 2024 SiteFlow AI. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero
+        gsap.from("h1", { y: 50, opacity: 0, duration: 1, delay: 0.2, ease: "power3.out" });
+        gsap.from(".hero-text", { y: 30, opacity: 0, duration: 1, delay: 0.4, ease: "power3.out" });
+
+        // Sections
+        gsap.utils.toArray("section h2").forEach(elem => {
+            gsap.from(elem, {
+                scrollTrigger: {
+                    trigger: elem,
+                    start: "top 85%"
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.8
+            });
+        });
+
+        // Counters
+        gsap.utils.toArray(".counter").forEach(counter => {
+            gsap.to(counter, {
+                innerText: counter.getAttribute("data-target"),
+                duration: 2,
+                snap: { innerText: 1 },
+                ease: "power2.out",
+                scrollTrigger: {
+                    trigger: counter,
+                    start: "top 85%"
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

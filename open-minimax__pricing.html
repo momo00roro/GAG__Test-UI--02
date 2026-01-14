@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing Plans - SiteFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        border: 'hsl(240 3.7% 15.9%)',
+                        background: 'hsl(240 10% 3.9%)',
+                        foreground: 'hsl(0 0% 98%)',
+                        primary: {
+                            DEFAULT: 'hsl(263 70% 50%)',
+                            foreground: 'hsl(0 0% 100%)',
+                        },
+                        secondary: {
+                            DEFAULT: 'hsl(240 3.7% 15.9%)',
+                            foreground: 'hsl(0 0% 98%)',
+                        },
+                        muted: {
+                            DEFAULT: 'hsl(240 3.7% 15.9%)',
+                            foreground: 'hsl(240 5% 64.9%)',
+                        },
+                        card: { DEFAULT: 'hsl(240 10% 3.9%)', foreground: 'hsl(0 0% 98%)' },
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        .gradient-border { background: linear-gradient(135deg, hsl(263 70% 50%), hsl(280 70% 40%), hsl(300 70% 30%)); padding: 1px; }
+        .gradient-border > div { background: hsl(240 10% 3.9%); }
+        .glow { box-shadow: 0 0 80px -20px rgba(139, 92, 246, 0.3), 0 0 40px -10px rgba(139, 92, 246, 0.2); }
+        .card-hover { transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
+        .card-hover:hover { transform: translateY(-8px); }
+        .feature-row { transition: background-color 0.2s ease; }
+        .feature-row:hover { background-color: hsl(240 3.7% 15.9% / 0.5); }
+        .switch-track { transition: all 0.3s ease; }
+        .switch-thumb { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .bg-mesh { background-image: radial-gradient(at 40% 20%, hsla(263, 70%, 50%, 0.15) 0px, transparent 50%), radial-gradient(at 80% 0%, hsla(280, 70%, 40%, 0.1) 0px, transparent 50%), radial-gradient(at 0% 50%, hsla(300, 70%, 30%, 0.1) 0px, transparent 50%); }
+    </style>
+</head>
+
+<body class="bg-background text-foreground antialiased min-h-screen">
+    <div class="fixed inset-0 bg-mesh pointer-events-none"></div>
+    <div class="fixed inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(139,92,246,0.1),transparent_50%)] pointer-events-none"></div>
+
+    <nav class="fixed w-full z-50 border-b border-border/40 bg-background/80 backdrop-blur-xl">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-lg transition-transform group-hover:scale-110">S</div>
+                    <span class="font-bold text-lg text-foreground">SiteFlow</span>
+                </a>
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="product.html" class="text-sm text-muted-foreground hover:text-foreground transition-all hover:scale-105">Product</a>
+                    <a href="solutions.html" class="text-sm text-muted-foreground hover:text-foreground transition-all hover:scale-105">Solutions</a>
+                    <a href="price-plans.html" class="text-sm text-foreground font-medium">Pricing</a>
+                    <a href="enterprise.html" class="text-sm text-muted-foreground hover:text-foreground transition-all hover:scale-105">Enterprise</a>
+                </div>
+                <div class="flex items-center gap-4">
+                    <a href="#" class="text-sm text-muted-foreground hover:text-foreground transition-colors hidden sm:block">Log in</a>
+                    <a href="#" class="inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-md bg-primary text-primary-foreground hover:bg-primary/90 transition-all hover:shadow-lg hover:shadow-primary/25 hover:-translate-y-0.5">
+                        Get Started
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="relative pt-32 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold mb-8 animate-pulse-slow">
+                    <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                    Simple Pricing
+                </div>
+                <h1 class="text-5xl md:text-6xl font-bold tracking-tight mb-6">
+                    Choose your <span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-pink-400 to-rose-400 animate-gradient">perfect plan</span>
+                </h1>
+                <p class="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
+                    Start free, scale as you grow. No hidden fees, cancel anytime. 
+                    <span class="text-foreground">Transparent pricing for everyone.</span>
+                </p>
+            </div>
+
+            <div x-data="{ annual: true }" class="mb-20">
+                <div class="flex items-center justify-center gap-4">
+                    <span :class="!annual ? 'text-foreground scale-110' : 'text-muted-foreground scale-100'" class="text-sm font-semibold transition-all cursor-pointer" @click="annual = false">Monthly</span>
+                    <button @click="annual = !annual" class="relative w-16 h-8 rounded-full bg-secondary border border-border transition-all focus:outline-none focus:ring-2 focus:ring-primary/50" :class="annual && 'bg-primary/20 border-primary/50'">
+                        <span class="switch-thumb absolute top-1 left-1 w-6 h-6 rounded-full bg-gradient-to-r from-white to-gray-200 shadow-lg" :class="annual && 'translate-x-8'"></span>
+                    </button>
+                    <span :class="annual ? 'text-foreground scale-110' : 'text-muted-foreground scale-100'" class="text-sm font-semibold transition-all cursor-pointer" @click="annual = true">Annual</span>
+                    <span class="ml-2 px-3 py-1 rounded-full bg-gradient-to-r from-green-500/20 to-emerald-500/20 text-green-400 text-xs font-bold border border-green-500/30 animate-float">Save 20%</span>
+                </div>
+            </div>
+
+            <div x-data="{ annual: true }" class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
+                <div class="relative rounded-2xl border border-border bg-card/50 p-8 flex flex-col card-hover backdrop-blur-sm group">
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative mb-6">
+                        <h3 class="text-xl font-bold text-foreground mb-1">Starter</h3>
+                        <p class="text-sm text-muted-foreground">For individuals and small projects</p>
+                    </div>
+                    <div class="relative mb-6">
+                        <span x-show="!annual" class="text-5xl font-bold text-foreground">$0</span>
+                        <span x-show="annual" class="text-5xl font-bold text-foreground">$0</span>
+                        <span class="text-muted-foreground ml-1">/month</span>
+                        <p class="text-xs text-muted-foreground mt-1">Free forever</p>
+                    </div>
+                    <ul class="relative space-y-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span>Up to <strong class="text-foreground">3 projects</strong></span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span><strong class="text-foreground">1GB</strong> storage</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span>Community support</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-primary" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span>Basic analytics</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="relative w-full py-3.5 px-4 rounded-xl border border-border bg-secondary/50 text-foreground text-sm font-semibold text-center hover:bg-secondary transition-all hover:border-primary/50 group-hover:border-primary/30">
+                        Get Started Free
+                    </a>
+                </div>
+
+                <div class="relative rounded-2xl gradient-border glow animate-float">
+                    <div class="rounded-[15px] bg-card p-8 flex flex-col h-full relative overflow-hidden">
+                        <div class="absolute top-0 right-0 w-40 h-40 bg-primary/10 rounded-full blur-3xl"></div>
+                        <div class="absolute bottom-0 left-0 w-40 h-40 bg-pink-500/10 rounded-full blur-3xl"></div>
+                        <div class="relative flex items-center justify-between mb-6">
+                            <div>
+                                <h3 class="text-xl font-bold text-foreground mb-1">Pro</h3>
+                                <p class="text-sm text-muted-foreground">For growing teams</p>
+                            </div>
+                            <span class="px-3 py-1.5 rounded-full bg-gradient-to-r from-primary to-pink-500 text-white text-xs font-bold shadow-lg shadow-primary/30">Popular</span>
+                        </div>
+                        <div class="relative mb-6">
+                            <span x-show="!annual" class="text-5xl font-bold text-foreground">$29</span>
+                            <span x-show="annual" class="text-5xl font-bold text-foreground">$23</span>
+                            <span class="text-muted-foreground ml-1">/month</span>
+                            <p x-show="annual" class="text-xs text-green-400 mt-1 font-medium">Billed annually</p>
+                        </div>
+                        <ul class="relative space-y-4 mb-8 flex-1">
+                            <li class="flex items-center gap-3 text-sm text-foreground">
+                                <span class="w-5 h-5 rounded-full bg-gradient-to-br from-primary to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                                <span><strong>Unlimited</strong> projects</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm text-foreground">
+                                <span class="w-5 h-5 rounded-full bg-gradient-to-br from-primary to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                                <span><strong>100GB</strong> storage</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm text-foreground">
+                                <span class="w-5 h-5 rounded-full bg-gradient-to-br from-primary to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                                <span>Priority support</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm text-foreground">
+                                <span class="w-5 h-5 rounded-full bg-gradient-to-br from-primary to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                                <span>Advanced analytics</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm text-foreground">
+                                <span class="w-5 h-5 rounded-full bg-gradient-to-br from-primary to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                                <span>Custom domains</span>
+                            </li>
+                            <li class="flex items-center gap-3 text-sm text-foreground">
+                                <span class="w-5 h-5 rounded-full bg-gradient-to-br from-primary to-pink-500 flex items-center justify-center flex-shrink-0 shadow-lg shadow-primary/30"><svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                                <span>Team collaboration</span>
+                            </li>
+                        </ul>
+                        <a href="#" class="relative w-full py-3.5 px-4 rounded-xl bg-gradient-to-r from-primary to-pink-500 text-white text-sm font-bold text-center hover:from-primary/90 hover:to-pink-500/90 transition-all shadow-lg shadow-primary/30 hover:shadow-xl hover:shadow-primary/40 hover:-translate-y-0.5">
+                            Start Free Trial
+                        </a>
+                    </div>
+                </div>
+
+                <div class="relative rounded-2xl border border-border bg-card/50 p-8 flex flex-col card-hover backdrop-blur-sm group">
+                    <div class="absolute inset-0 rounded-2xl bg-gradient-to-br from-rose-500/5 to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div class="relative mb-6">
+                        <h3 class="text-xl font-bold text-foreground mb-1">Enterprise</h3>
+                        <p class="text-sm text-muted-foreground">For large organizations</p>
+                    </div>
+                    <div class="relative mb-6">
+                        <span class="text-5xl font-bold text-foreground">Custom</span>
+                        <p class="text-xs text-muted-foreground mt-1">Contact for pricing</p>
+                    </div>
+                    <ul class="relative space-y-4 mb-8 flex-1">
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-rose-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span>Everything in <strong class="text-foreground">Pro</strong></span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-rose-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span><strong class="text-foreground">Unlimited</strong> storage</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-rose-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span>Dedicated support</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-rose-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span>SSO & SAML</span>
+                        </li>
+                        <li class="flex items-center gap-3 text-sm text-muted-foreground">
+                            <span class="w-5 h-5 rounded-full bg-rose-500/20 flex items-center justify-center flex-shrink-0"><svg class="w-3 h-3 text-rose-400" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg></span>
+                            <span>SLA guarantee</span>
+                        </li>
+                    </ul>
+                    <a href="#" class="relative w-full py-3.5 px-4 rounded-xl border border-rose-500/30 bg-rose-500/10 text-foreground text-sm font-semibold text-center hover:bg-rose-500/20 transition-all group-hover:border-rose-500/50">
+                        Contact Sales
+                    </a>
+                </div>
+            </div>
+
+            <div class="mb-24">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-2xl font-bold text-foreground">Compare all features</h2>
+                    <div class="hidden sm:flex items-center gap-2 text-sm text-muted-foreground">
+                        <span class="w-3 h-3 rounded-full bg-primary/40"></span> Available
+                        <span class="w-3 h-3 rounded-full bg-muted ml-4"></span> Not included
+                    </div>
+                </div>
+                <div class="rounded-2xl border border-border bg-card/50 backdrop-blur-sm overflow-hidden">
+                    <table class="w-full border-collapse">
+                        <thead>
+                            <tr class="border-b border-border bg-secondary/30">
+                                <th class="text-left py-5 px-6 text-sm font-semibold text-muted-foreground w-1/4">Features</th>
+                                <th class="text-center py-5 px-6 text-sm font-semibold text-foreground">Starter</th>
+                                <th class="text-center py-5 px-6 text-sm font-semibold text-primary">Pro</th>
+                                <th class="text-center py-5 px-6 text-sm font-semibold text-foreground">Enterprise</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-border">
+                            <tr class="feature-row bg-secondary/10">
+                                <td colspan="4" class="py-4 px-6 text-xs font-bold text-muted-foreground uppercase tracking-wider">Usage Limits</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Projects</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground font-medium">3</td>
+                                <td class="py-4 px-6 text-sm text-center font-semibold bg-primary/5 text-primary">Unlimited</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground">Unlimited</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Storage</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground font-medium">1GB</td>
+                                <td class="py-4 px-6 text-sm text-center font-semibold bg-primary/5 text-primary">100GB</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground">Unlimited</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Bandwidth</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground font-medium">10GB/mo</td>
+                                <td class="py-4 px-6 text-sm text-center font-semibold bg-primary/5 text-primary">1TB/mo</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground">Unlimited</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Team members</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground font-medium">1</td>
+                                <td class="py-4 px-6 text-sm text-center font-semibold bg-primary/5 text-primary">10</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground">Unlimited</td>
+                            </tr>
+                            <tr class="feature-row bg-secondary/10">
+                                <td colspan="4" class="py-4 px-6 text-xs font-bold text-muted-foreground uppercase tracking-wider">Core Features</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Custom domains</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center bg-primary/5">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">SSL certificates</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center bg-primary/5">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Advanced analytics</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center bg-primary/5">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">API access</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center bg-primary/5">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                            </tr>
+                            <tr class="feature-row bg-secondary/10">
+                                <td colspan="4" class="py-4 px-6 text-xs font-bold text-muted-foreground uppercase tracking-wider">Security & Compliance</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">SSO / SAML</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center bg-primary/5">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Audit logs</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center bg-primary/5">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">SOC 2 compliance</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center bg-primary/5">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg></span>
+                                </td>
+                            </tr>
+                            <tr class="feature-row bg-secondary/10">
+                                <td colspan="4" class="py-4 px-6 text-xs font-bold text-muted-foreground uppercase tracking-wider">Support</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Support type</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground font-medium">Community</td>
+                                <td class="py-4 px-6 text-sm text-center font-semibold bg-primary/5 text-primary">Priority</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground">Dedicated</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">Response time</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground font-medium">48h</td>
+                                <td class="py-4 px-6 text-sm text-center font-semibold bg-primary/5 text-primary">4h</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground">1h</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-4 px-6 text-sm text-muted-foreground">SLA guarantee</td>
+                                <td class="py-4 px-6 text-center">
+                                    <span class="w-6 h-6 rounded-full bg-muted/30 flex items-center justify-center mx-auto"><svg class="w-4 h-4 text-muted-foreground/50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></span>
+                                </td>
+                                <td class="py-4 px-6 text-sm text-center font-semibold bg-primary/5 text-primary">99.9%</td>
+                                <td class="py-4 px-6 text-sm text-center text-foreground font-medium">99.99%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="relative rounded-3xl border border-border bg-gradient-to-br from-secondary/50 via-card to-secondary/30 p-10 md:p-14 text-center overflow-hidden">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent"></div>
+                <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(139,92,246,0.1),transparent_70%)]"></div>
+                <div class="relative">
+                    <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-primary/10 mb-6">
+                        <svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                    </div>
+                    <h3 class="text-3xl font-bold mb-4">Still have questions?</h3>
+                    <p class="text-muted-foreground mb-8 max-w-lg mx-auto text-lg">Our team is ready to help you find the perfect plan for your needs. Get in touch and we'll get back to you within hours.</p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#" class="inline-flex items-center justify-center px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-pink-500 text-white text-sm font-bold hover:from-primary/90 hover:to-pink-500/90 transition-all shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 hover:-translate-y-0.5">
+                            Talk to Sales
+                        </a>
+                        <a href="#" class="inline-flex items-center justify-center px-8 py-4 rounded-xl border border-border bg-secondary/50 text-foreground text-sm font-semibold hover:bg-secondary transition-all hover:border-primary/30">
+                            View Documentation
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-border bg-card/50 backdrop-blur-sm py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-6 h-6 rounded bg-primary flex items-center justify-center text-white font-bold text-xs transition-transform group-hover:scale-110">S</div>
+                    <span class="font-semibold text-foreground">SiteFlow</span>
+                </a>
+                <div class="flex gap-8 text-sm text-muted-foreground">
+                    <a href="#" class="hover:text-foreground transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-foreground transition-colors">Terms</a>
+                    <a href="#" class="hover:text-foreground transition-colors">Contact</a>
+                </div>
+                <p class="text-sm text-muted-foreground">&copy; 2024 SiteFlow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+
+</html>

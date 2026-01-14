@@ -1,0 +1,1564 @@
+<!DOCTYPE html>
+<html lang="en" class="antialiased" x-data="themeStore" :class="{ 'dark': isDark }">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteFlow - The Operating System for Modern SaaS</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <!-- Iconify for Solar Linear Icons -->
+    <script src="https://code.iconify.design/3/3.1.0/iconify.min.js"></script>
+    <!-- Lenis Smooth Scrolling -->
+    <script src="https://unpkg.com/lenis@1.1.18/dist/lenis.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                container: {
+                    center: true,
+                    padding: "2rem",
+                    screens: {
+                        "2xl": "1400px",
+                    },
+                },
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        border: "hsl(var(--border))",
+                        input: "hsl(var(--input))",
+                        ring: "hsl(var(--ring))",
+                        background: "hsl(var(--background))",
+                        foreground: "hsl(var(--foreground))",
+                        primary: {
+                            DEFAULT: "hsl(var(--primary))",
+                            foreground: "hsl(var(--primary-foreground))",
+                        },
+                        secondary: {
+                            DEFAULT: "hsl(var(--secondary))",
+                            foreground: "hsl(var(--secondary-foreground))",
+                        },
+                        destructive: {
+                            DEFAULT: "hsl(var(--destructive))",
+                            foreground: "hsl(var(--destructive-foreground))",
+                        },
+                        muted: {
+                            DEFAULT: "hsl(var(--muted))",
+                            foreground: "hsl(var(--muted-foreground))",
+                        },
+                        accent: {
+                            DEFAULT: "hsl(var(--accent))",
+                            foreground: "hsl(var(--accent-foreground))",
+                        },
+                        popover: {
+                            DEFAULT: "hsl(var(--popover))",
+                            foreground: "hsl(var(--popover-foreground))",
+                        },
+                        card: {
+                            DEFAULT: "hsl(var(--card))",
+                            foreground: "hsl(var(--card-foreground))",
+                        },
+                    },
+                    borderRadius: {
+                        lg: "var(--radius)",
+                        md: "calc(var(--radius) - 2px)",
+                        sm: "calc(var(--radius) - 4px)",
+                    },
+                    keyframes: {
+                        "accordion-down": {
+                            from: { height: "0" },
+                            to: { height: "var(--radix-accordion-content-height)" },
+                        },
+                        "accordion-up": {
+                            from: { height: "var(--radix-accordion-content-height)" },
+                            to: { height: "0" },
+                        },
+                        "float": {
+                            "0%, 100%": { transform: "translateY(0)" },
+                            "50%": { transform: "translateY(-10px)" },
+                        }
+                    },
+                    animation: {
+                        "accordion-down": "accordion-down 0.2s ease-out",
+                        "accordion-up": "accordion-up 0.2s ease-out",
+                        "float": "float 6s ease-in-out infinite",
+                    },
+                },
+            },
+        }
+
+        document.addEventListener('alpine:init', () => {
+            Alpine.store('theme', {
+                isDark: localStorage.getItem('theme') === 'dark',
+                toggle() {
+                    this.isDark = !this.isDark;
+                    localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+                    if (this.isDark) {
+                        document.documentElement.classList.add('dark');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                    }
+                }
+            });
+            // Initial check
+            if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+        })
+    </script>
+    <style type="text/tailwindcss">
+        @layer base {
+            :root {
+                --background: 0 0% 100%;
+                --foreground: 222.2 84% 4.9%;
+                --card: 0 0% 100%;
+                --card-foreground: 222.2 84% 4.9%;
+                --popover: 0 0% 100%;
+                --popover-foreground: 222.2 84% 4.9%;
+                --primary: 221.2 83.2% 53.3%;
+                --primary-foreground: 210 40% 98%;
+                --secondary: 210 40% 96.1%;
+                --secondary-foreground: 222.2 47.4% 11.2%;
+                --muted: 210 40% 96.1%;
+                --muted-foreground: 215.4 16.3% 46.9%;
+                --accent: 210 40% 96.1%;
+                --accent-foreground: 222.2 47.4% 11.2%;
+                --destructive: 0 84.2% 60.2%;
+                --destructive-foreground: 210 40% 98%;
+                --border: 214.3 31.8% 91.4%;
+                --input: 214.3 31.8% 91.4%;
+                --ring: 221.2 83.2% 53.3%;
+                --radius: 0.5rem;
+            }
+        
+            .dark {
+                --background: 222.2 84% 4.9%;
+                --foreground: 210 40% 98%;
+                --card: 222.2 84% 4.9%;
+                --card-foreground: 210 40% 98%;
+                --popover: 222.2 84% 4.9%;
+                --popover-foreground: 210 40% 98%;
+                --primary: 217.2 91.2% 59.8%;
+                --primary-foreground: 222.2 47.4% 11.2%;
+                --secondary: 217.2 32.6% 17.5%;
+                --secondary-foreground: 210 40% 98%;
+                --muted: 217.2 32.6% 17.5%;
+                --muted-foreground: 215 20.2% 65.1%;
+                --accent: 217.2 32.6% 17.5%;
+                --accent-foreground: 210 40% 98%;
+                --destructive: 0 62.8% 30.6%;
+                --destructive-foreground: 210 40% 98%;
+                --border: 217.2 32.6% 17.5%;
+                --input: 217.2 32.6% 17.5%;
+                --ring: 224.3 76.3% 48%;
+            }
+        }
+        
+        @layer base {
+          * {
+            @apply border-border;
+          }
+          body {
+            @apply bg-background text-foreground;
+          }
+        }
+
+        [x-cloak] { display: none !important; }
+
+        /* Lenis Smooth Scroll Requirements */
+        html.lenis, html.lenis body {
+            height: auto;
+        }
+
+        .lenis.lenis-smooth {
+            scroll-behavior: auto !important;
+        }
+
+        .lenis.lenis-smooth [data-lenis-prevent] {
+            overscroll-behavior: contain;
+        }
+
+        .lenis.lenis-stopped {
+            overflow: hidden;
+        }
+
+        .lenis.lenis-scrolling iframe {
+            pointer-events: none;
+        }
+    </style>
+
+    <style>
+        /* ========================================
+           CLIP INTRO ANIMATION
+           ======================================== */
+        @keyframes clip-reveal-up {
+            0% {
+                clip-path: inset(100% 0 0 0);
+            }
+
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        @keyframes clip-reveal-center {
+            0% {
+                clip-path: inset(50% 50% 50% 50%);
+            }
+
+            100% {
+                clip-path: inset(0 0 0 0);
+            }
+        }
+
+        .clip-intro {
+            animation: clip-reveal-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .clip-intro-center {
+            animation: clip-reveal-center 1s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
+        .clip-intro-delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .clip-intro-delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .clip-intro-delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .clip-intro-delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        .clip-intro-delay-5 {
+            animation-delay: 0.5s;
+        }
+
+        /* ========================================
+           FLASHLIGHT CARD EFFECT
+           ======================================== */
+        .flashlight-card {
+            --x: 50%;
+            --y: 50%;
+            position: relative;
+            overflow: hidden;
+            background: hsl(var(--card));
+        }
+
+        .flashlight-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle 250px at var(--x) var(--y),
+                    hsl(var(--primary) / 0.15),
+                    transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .flashlight-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: radial-gradient(circle 150px at var(--x) var(--y),
+                    hsl(var(--primary) / 0.5),
+                    transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 0;
+            border-radius: inherit;
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask-composite: xor;
+            -webkit-mask-composite: xor;
+            padding: 1px;
+        }
+
+        .flashlight-card:hover::before,
+        .flashlight-card:hover::after {
+            opacity: 1;
+        }
+
+        .flashlight-card>* {
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ========================================
+           SCROLL REVEAL ANIMATION
+           ======================================== */
+        .reveal-item {
+            transform: translateY(30px);
+            filter: blur(5px);
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal-item.in-view {
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        /* Stagger children */
+        .reveal-item:nth-child(1) {
+            transition-delay: 0s;
+        }
+
+        .reveal-item:nth-child(2) {
+            transition-delay: 0.1s;
+        }
+
+        .reveal-item:nth-child(3) {
+            transition-delay: 0.2s;
+        }
+
+        .reveal-item:nth-child(4) {
+            transition-delay: 0.3s;
+        }
+
+        .reveal-item:nth-child(5) {
+            transition-delay: 0.4s;
+        }
+
+        /* ========================================
+           NOODLES & BEAMS
+           ======================================== */
+        .noodle-container {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .noodle-path {
+            fill: none;
+            stroke: hsl(var(--border));
+            stroke-width: 2;
+        }
+
+        .dark .noodle-path {
+            stroke: hsl(var(--border));
+        }
+
+        @keyframes beam-flow {
+            0% {
+                stroke-dashoffset: 200;
+            }
+
+            100% {
+                stroke-dashoffset: -200;
+            }
+        }
+
+        .beam-path {
+            fill: none;
+            stroke: url(#beam-gradient);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 50 150;
+            animation: beam-flow 3s linear infinite;
+        }
+
+        .beam-path-2 {
+            animation-delay: -1s;
+        }
+
+        .beam-path-3 {
+            animation-delay: -2s;
+        }
+
+        /* ========================================
+           CURSOR FOLLOWER TRAIL
+           ======================================== */
+        .cursor-container {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 9999;
+            overflow: hidden;
+        }
+
+        .cursor-dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: hsl(var(--primary));
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: opacity 0.15s ease;
+        }
+
+        .cursor-trail {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: hsl(var(--primary) / 0.5);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Hide custom cursor on touch devices */
+        @media (hover: none) {
+            .cursor-container {
+                display: none;
+            }
+        }
+
+        /* ========================================
+           LOGO MARQUEE
+           ======================================== */
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .marquee-container {
+            position: relative;
+            overflow: hidden;
+            mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+            -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+        }
+
+        .marquee-track {
+            display: flex;
+            width: max-content;
+            animation: marquee 20s linear infinite;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        .marquee-item {
+            flex-shrink: 0;
+            padding: 0 2rem;
+        }
+
+        /* ========================================
+           PRICING CAROUSEL
+           ======================================== */
+        .pricing-carousel {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pricing-track {
+            display: flex;
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .pricing-slide {
+            flex: 0 0 100%;
+            padding: 0 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .pricing-slide {
+                flex: 0 0 33.333%;
+            }
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .carousel-btn:hover {
+            background: hsl(var(--accent));
+            border-color: hsl(var(--primary));
+        }
+
+        .carousel-btn-prev {
+            left: 0;
+        }
+
+        .carousel-btn-next {
+            right: 0;
+        }
+
+        .carousel-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .carousel-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: hsl(var(--muted));
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .carousel-dot.active {
+            background: hsl(var(--primary));
+            width: 24px;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body x-data="{ 
+    mobileMenuOpen: false,
+    isDark: localStorage.getItem('theme') === 'dark',
+    toggleTheme() {
+        this.isDark = !this.isDark;
+        localStorage.setItem('theme', this.isDark ? 'dark' : 'light');
+        if (this.isDark) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    }
+}" class="min-h-screen bg-background font-sans antialiased">
+
+    <!-- Navigation -->
+    <header
+        class="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <div class="container flex h-14 items-center">
+            <div class="mr-4 hidden md:flex">
+                <a class="mr-6 flex items-center space-x-2" href="#">
+                    <div
+                        class="h-6 w-6 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs">
+                        S</div>
+                    <span class="hidden font-bold sm:inline-block">SiteFlow</span>
+                </a>
+                <nav class="flex items-center space-x-6 text-sm font-medium">
+                    <a class="transition-colors hover:text-foreground/80 text-foreground/60"
+                        href="product.html">Product</a>
+                    <a class="transition-colors hover:text-foreground/80 text-foreground/60"
+                        href="solutions.html">Solutions</a>
+                    <a class="transition-colors hover:text-foreground/80 text-foreground/60"
+                        href="pricing.html">Pricing</a>
+                    <a class="transition-colors hover:text-foreground/80 text-foreground/60"
+                        href="enterprise.html">Enterprise</a>
+                </nav>
+            </div>
+
+            <!-- Mobile Menu Trigger -->
+            <button @click="mobileMenuOpen = !mobileMenuOpen"
+                class="inline-flex items-center justify-center rounded-md p-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 md:hidden mr-2">
+                <span class="iconify h-5 w-5" data-icon="solar:hamburger-menu-linear"></span>
+                <span class="sr-only">Toggle Menu</span>
+            </button>
+            <div class="flex flex-1 items-center justify-between space-x-2 md:justify-end">
+                <div class="w-full flex-1 md:w-auto md:flex-none">
+                    <!-- Search could go here -->
+                </div>
+                <nav class="flex items-center gap-2">
+                    <button @click="toggleTheme()"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground h-9 w-9 px-0">
+                        <span x-show="!isDark" class="iconify h-5 w-5" data-icon="solar:sun-2-linear"></span>
+                        <span x-show="isDark" x-cloak class="iconify h-5 w-5" data-icon="solar:moon-linear"></span>
+                        <span class="sr-only">Toggle theme</span>
+                    </button>
+                    <a href="#"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-9 px-4 py-2">Log
+                        in</a>
+                    <a href="#"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">Get
+                        Started</a>
+                </nav>
+            </div>
+        </div>
+        <!-- Mobile Menu Content -->
+        <div x-show="mobileMenuOpen" x-collapse class="border-b md:hidden bg-background">
+            <div class="container py-4">
+                <nav class="grid gap-2 text-lg font-medium">
+                    <a href="product.html"
+                        class="flex items-center gap-2 text-foreground/60 hover:text-foreground">Product</a>
+                    <a href="solutions.html"
+                        class="flex items-center gap-2 text-foreground/60 hover:text-foreground">Solutions</a>
+                    <a href="pricing.html"
+                        class="flex items-center gap-2 text-foreground/60 hover:text-foreground">Pricing</a>
+                    <a href="enterprise.html"
+                        class="flex items-center gap-2 text-foreground/60 hover:text-foreground">Enterprise</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-1">
+        <!-- Hero Section -->
+        <section class="relative space-y-6 pb-8 pt-6 md:pb-12 md:pt-10 lg:py-32 overflow-hidden">
+            <!-- Noodles Background -->
+            <div class="noodle-container">
+                <svg class="w-full h-full" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMid slice">
+                    <defs>
+                        <linearGradient id="beam-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color: transparent" />
+                            <stop offset="50%" style="stop-color: hsl(221.2, 83.2%, 53.3%)" />
+                            <stop offset="100%" style="stop-color: transparent" />
+                        </linearGradient>
+                    </defs>
+                    <!-- Noodle Lines -->
+                    <path class="noodle-path" d="M-50,100 Q300,150 600,80 T1250,200" />
+                    <path class="noodle-path" d="M-50,300 Q400,350 700,280 T1250,400" />
+                    <path class="noodle-path" d="M-50,500 Q250,450 550,520 T1250,450" />
+                    <!-- Animated Beams -->
+                    <path class="beam-path" d="M-50,100 Q300,150 600,80 T1250,200" />
+                    <path class="beam-path beam-path-2" d="M-50,300 Q400,350 700,280 T1250,400" />
+                    <path class="beam-path beam-path-3" d="M-50,500 Q250,450 550,520 T1250,450" />
+                </svg>
+            </div>
+
+            <div class="container relative z-10 flex max-w-[64rem] flex-col items-center gap-4 text-center">
+                <a href="#"
+                    class="clip-intro clip-intro-delay-1 rounded-2xl bg-muted px-4 py-1.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+                    New v2.0 Released <span class="ml-1 text-muted-foreground">→</span>
+                </a>
+                <h1
+                    class="clip-intro clip-intro-delay-2 font-heading text-4xl font-bold sm:text-5xl md:text-6xl lg:text-7xl">
+                    Scale your SaaS <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">with
+                        Confidence.</span>
+                </h1>
+                <p
+                    class="clip-intro clip-intro-delay-3 max-w-[42rem] leading-normal text-muted-foreground sm:text-xl sm:leading-8">
+                    The all-in-one platform to build, launch, and grow your digital product. Automate your devops,
+                    streamline billing, and focus on shipping code.
+                </p>
+                <div class="clip-intro clip-intro-delay-4 space-x-4">
+                    <a href="#"
+                        class="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-11 px-8">
+                        <span class="iconify" data-icon="solar:rocket-2-linear"></span>
+                        Get Started
+                    </a>
+                    <a href="#"
+                        class="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-11 px-8">
+                        <span class="iconify" data-icon="solar:play-circle-linear"></span>
+                        View Demo
+                    </a>
+                </div>
+            </div>
+
+            <!-- Hero Image -->
+            <div class="container mt-16 max-w-5xl relative z-10">
+                <div
+                    class="clip-intro-center clip-intro-delay-5 rounded-xl border bg-slate-900 text-slate-100 shadow-2xl overflow-hidden animate-float">
+                    <!-- Browser Header -->
+                    <div class="border-b border-slate-700 bg-slate-800 p-2 flex items-center gap-2">
+                        <div class="h-3 w-3 rounded-full bg-red-500"></div>
+                        <div class="h-3 w-3 rounded-full bg-yellow-500"></div>
+                        <div class="h-3 w-3 rounded-full bg-green-500"></div>
+                        <div class="flex-1 mx-4">
+                            <div
+                                class="bg-slate-700 rounded-md px-3 py-1 text-xs text-slate-400 max-w-xs mx-auto text-center">
+                                app.siteflow.io/dashboard
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Dashboard Content -->
+                    <div class="flex h-[400px] md:h-[450px]">
+                        <!-- Sidebar -->
+                        <div
+                            class="hidden sm:flex w-16 bg-slate-800/50 border-r border-slate-700 flex-col items-center py-4 gap-4">
+                            <div
+                                class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white font-bold text-sm">
+                                S</div>
+                            <div class="flex-1 flex flex-col gap-3 mt-4">
+                                <div
+                                    class="w-8 h-8 rounded-lg bg-slate-700 flex items-center justify-center text-primary">
+                                    <span class="iconify" data-icon="solar:home-2-linear"
+                                        style="font-size: 18px;"></span>
+                                </div>
+                                <div
+                                    class="w-8 h-8 rounded-lg hover:bg-slate-700/50 flex items-center justify-center text-slate-400">
+                                    <span class="iconify" data-icon="solar:chart-2-linear"
+                                        style="font-size: 18px;"></span>
+                                </div>
+                                <div
+                                    class="w-8 h-8 rounded-lg hover:bg-slate-700/50 flex items-center justify-center text-slate-400">
+                                    <span class="iconify" data-icon="solar:users-group-rounded-linear"
+                                        style="font-size: 18px;"></span>
+                                </div>
+                                <div
+                                    class="w-8 h-8 rounded-lg hover:bg-slate-700/50 flex items-center justify-center text-slate-400">
+                                    <span class="iconify" data-icon="solar:folder-linear"
+                                        style="font-size: 18px;"></span>
+                                </div>
+                                <div
+                                    class="w-8 h-8 rounded-lg hover:bg-slate-700/50 flex items-center justify-center text-slate-400">
+                                    <span class="iconify" data-icon="solar:settings-linear"
+                                        style="font-size: 18px;"></span>
+                                </div>
+                            </div>
+                            <div class="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-500"></div>
+                        </div>
+                        <!-- Main Content -->
+                        <div class="flex-1 p-4 md:p-6 overflow-hidden">
+                            <!-- Header -->
+                            <div class="flex items-center justify-between mb-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-white">Dashboard</h3>
+                                    <p class="text-xs text-slate-400">Welcome back, Alex</p>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <div
+                                        class="hidden md:flex items-center gap-2 bg-slate-800 rounded-lg px-3 py-1.5 text-xs text-slate-400">
+                                        <span class="iconify" data-icon="solar:magnifer-linear"
+                                            style="font-size: 14px;"></span>
+                                        Search...
+                                    </div>
+                                    <div
+                                        class="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-slate-400">
+                                        <span class="iconify" data-icon="solar:bell-linear"
+                                            style="font-size: 16px;"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Stats Cards -->
+                            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
+                                <div class="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs text-slate-400">Revenue</span>
+                                        <span class="iconify text-green-400" data-icon="solar:arrow-up-linear"
+                                            style="font-size: 12px;"></span>
+                                    </div>
+                                    <p class="text-xl font-bold text-white">$48,234</p>
+                                    <p class="text-xs text-green-400">+12.5%</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs text-slate-400">Users</span>
+                                        <span class="iconify text-green-400" data-icon="solar:arrow-up-linear"
+                                            style="font-size: 12px;"></span>
+                                    </div>
+                                    <p class="text-xl font-bold text-white">12,847</p>
+                                    <p class="text-xs text-green-400">+8.2%</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs text-slate-400">Conversion</span>
+                                        <span class="iconify text-green-400" data-icon="solar:arrow-up-linear"
+                                            style="font-size: 12px;"></span>
+                                    </div>
+                                    <p class="text-xl font-bold text-white">3.24%</p>
+                                    <p class="text-xs text-green-400">+2.1%</p>
+                                </div>
+                                <div class="bg-slate-800/50 rounded-lg p-3 border border-slate-700">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="text-xs text-slate-400">Uptime</span>
+                                        <span class="iconify text-primary" data-icon="solar:check-circle-linear"
+                                            style="font-size: 12px;"></span>
+                                    </div>
+                                    <p class="text-xl font-bold text-white">99.99%</p>
+                                    <p class="text-xs text-slate-400">All systems</p>
+                                </div>
+                            </div>
+                            <!-- Chart -->
+                            <div class="bg-slate-800/30 rounded-lg p-4 border border-slate-700 mb-4">
+                                <div class="flex items-center justify-between mb-4">
+                                    <h4 class="text-sm font-medium text-white">Revenue Overview</h4>
+                                    <div class="flex gap-2">
+                                        <span class="text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">7D</span>
+                                        <span class="text-xs bg-primary/20 text-primary px-2 py-1 rounded">30D</span>
+                                        <span class="text-xs bg-slate-700 px-2 py-1 rounded text-slate-300">90D</span>
+                                    </div>
+                                </div>
+                                <svg class="w-full h-24" viewBox="0 0 400 80" preserveAspectRatio="none">
+                                    <defs>
+                                        <linearGradient id="chartGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                                            <stop offset="0%"
+                                                style="stop-color: hsl(221.2, 83.2%, 53.3%); stop-opacity: 0.3" />
+                                            <stop offset="100%"
+                                                style="stop-color: hsl(221.2, 83.2%, 53.3%); stop-opacity: 0" />
+                                        </linearGradient>
+                                    </defs>
+                                    <!-- Area Fill -->
+                                    <path d="M0,70 Q50,60 100,50 T200,35 T300,25 T400,15 L400,80 L0,80 Z"
+                                        fill="url(#chartGradient)" />
+                                    <!-- Line -->
+                                    <path d="M0,70 Q50,60 100,50 T200,35 T300,25 T400,15" fill="none"
+                                        stroke="hsl(221.2, 83.2%, 53.3%)" stroke-width="2" />
+                                    <!-- Dot -->
+                                    <circle cx="400" cy="15" r="4" fill="hsl(221.2, 83.2%, 53.3%)" />
+                                </svg>
+                            </div>
+                            <!-- Recent Activity (Compact) -->
+                            <div
+                                class="hidden md:block bg-slate-800/30 rounded-lg border border-slate-700 overflow-hidden">
+                                <div class="flex items-center justify-between px-4 py-2 border-b border-slate-700">
+                                    <h4 class="text-xs font-medium text-white">Recent Activity</h4>
+                                    <span class="text-xs text-primary">View all</span>
+                                </div>
+                                <div class="divide-y divide-slate-700">
+                                    <div class="flex items-center gap-3 px-4 py-2">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-green-500/20 flex items-center justify-center">
+                                            <span class="iconify text-green-400" data-icon="solar:arrow-up-linear"
+                                                style="font-size: 12px;"></span>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs text-white truncate">New subscription - Pro Plan</p>
+                                        </div>
+                                        <span class="text-xs text-slate-400">2m ago</span>
+                                    </div>
+                                    <div class="flex items-center gap-3 px-4 py-2">
+                                        <div
+                                            class="w-6 h-6 rounded-full bg-blue-500/20 flex items-center justify-center">
+                                            <span class="iconify text-blue-400" data-icon="solar:user-plus-linear"
+                                                style="font-size: 12px;"></span>
+                                        </div>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs text-white truncate">New user registered</p>
+                                        </div>
+                                        <span class="text-xs text-slate-400">5m ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Proof -->
+        <section class="py-12 md:py-16 lg:py-20 border-y bg-muted/50">
+            <div class="container text-center">
+                <p class="reveal-item text-sm font-semibold text-muted-foreground uppercase tracking-widest mb-8">
+                    Powering next-gen companies</p>
+
+                <!-- Logo Marquee -->
+                <div class="marquee-container mx-auto max-w-5xl">
+                    <div class="marquee-track">
+                        <!-- First set of logos -->
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            ACME Corp
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            GlobalBank
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            StarkInd
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            Umbrella
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            WayneEnt
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            TechFlow
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            DataSync
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            CloudNine
+                        </div>
+                        <!-- Duplicate set for seamless loop -->
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            ACME Corp
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            GlobalBank
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            StarkInd
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            Umbrella
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            WayneEnt
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            TechFlow
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            DataSync
+                        </div>
+                        <div
+                            class="marquee-item flex items-center justify-center text-xl font-bold text-muted-foreground opacity-60">
+                            CloudNine
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Grid - Bento Layout -->
+        <section class="container relative space-y-6 py-8 md:py-12 lg:py-24">
+            <div class="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center">
+                <h2 class="reveal-item font-heading text-3xl leading-[1.1] sm:text-3xl md:text-6xl font-bold">Everything
+                    you need to
+                    ship</h2>
+                <p class="reveal-item max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+                    Stop wrestling with infrastructure. SiteFlow gives you a complete toolkit to build scalable
+                    applications from day one.
+                </p>
+            </div>
+
+            <!-- Bento Grid -->
+            <div class="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-[180px]">
+                <!-- Feature 1 - Large (spans 2 cols, 2 rows) -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-background p-2 transition-all hover:shadow-lg group md:col-span-2 md:row-span-2">
+                    <div
+                        class="flex h-full flex-col justify-between rounded-lg p-6 bg-gradient-to-br from-primary/5 to-transparent">
+                        <span class="iconify text-primary group-hover:scale-110 transition-transform"
+                            data-icon="solar:bolt-linear" style="font-size: 56px;"></span>
+                        <div class="space-y-2">
+                            <h3 class="text-xl font-bold">Lightning Fast</h3>
+                            <p class="text-sm text-muted-foreground">Deployed on the edge with < 50ms latency worldwide.
+                                    Our global CDN ensures your users get instant responses no matter where they
+                                    are.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 2 - Medium (spans 2 cols) -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-background p-2 transition-all hover:shadow-lg group md:col-span-2">
+                    <div class="flex h-full flex-col justify-between rounded-lg p-6">
+                        <span class="iconify text-primary group-hover:scale-110 transition-transform"
+                            data-icon="solar:shield-keyhole-linear" style="font-size: 48px;"></span>
+                        <div class="space-y-2">
+                            <h3 class="font-bold">Enterprise Security</h3>
+                            <p class="text-sm text-muted-foreground">SOC 2 Type II compliant out of the box.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 3 - Medium (spans 2 cols) -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-background p-2 transition-all hover:shadow-lg group md:col-span-2">
+                    <div class="flex h-full flex-col justify-between rounded-lg p-6">
+                        <span class="iconify text-primary group-hover:scale-110 transition-transform"
+                            data-icon="solar:database-linear" style="font-size: 48px;"></span>
+                        <div class="space-y-2">
+                            <h3 class="font-bold">Managed Database</h3>
+                            <p class="text-sm text-muted-foreground">Postgres, Redis, and MySQL instantly provisioned.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 4 - Wide (spans 4 cols) -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-background p-2 transition-all hover:shadow-lg group md:col-span-4">
+                    <div class="flex h-full items-center gap-6 rounded-lg p-6">
+                        <span class="iconify text-primary group-hover:scale-110 transition-transform shrink-0"
+                            data-icon="solar:code-square-linear" style="font-size: 56px;"></span>
+                        <div class="space-y-2">
+                            <h3 class="text-lg font-bold">Developer Experience First</h3>
+                            <p class="text-sm text-muted-foreground">Built by developers, for developers. Intuitive
+                                APIs, comprehensive docs, and SDKs in every major language. Ship features, not
+                                infrastructure.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 5 - Small -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-background p-2 transition-all hover:shadow-lg group md:col-span-2">
+                    <div class="flex h-full flex-col justify-between rounded-lg p-6">
+                        <span class="iconify text-primary group-hover:scale-110 transition-transform"
+                            data-icon="solar:chart-2-linear" style="font-size: 40px;"></span>
+                        <div class="space-y-1">
+                            <h3 class="font-bold">Real-time Analytics</h3>
+                            <p class="text-xs text-muted-foreground">Monitor everything live.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 6 - Small -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-background p-2 transition-all hover:shadow-lg group md:col-span-2">
+                    <div class="flex h-full flex-col justify-between rounded-lg p-6">
+                        <span class="iconify text-primary group-hover:scale-110 transition-transform"
+                            data-icon="solar:refresh-circle-linear" style="font-size: 40px;"></span>
+                        <div class="space-y-1">
+                            <h3 class="font-bold">Auto Updates</h3>
+                            <p class="text-xs text-muted-foreground">Zero-downtime deployments.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Feature 7 - Small -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-background p-2 transition-all hover:shadow-lg group md:col-span-2">
+                    <div class="flex h-full flex-col justify-between rounded-lg p-6">
+                        <span class="iconify text-primary group-hover:scale-110 transition-transform"
+                            data-icon="solar:users-group-rounded-linear" style="font-size: 40px;"></span>
+                        <div class="space-y-1">
+                            <h3 class="font-bold">Team Collaboration</h3>
+                            <p class="text-xs text-muted-foreground">Unlimited team members.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Preview -->
+        <section class="container py-8 md:py-12 lg:py-24 border-t">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
+                <div class="max-w-2xl">
+                    <h2 class="reveal-item text-3xl font-bold tracking-tight mb-4">Simple, transparent pricing</h2>
+                    <p class="reveal-item text-muted-foreground text-lg">No hidden fees. No credit card required to
+                        start.</p>
+                </div>
+                <a href="pricing.html"
+                    class="reveal-item inline-flex items-center gap-1 text-primary font-medium hover:underline">
+                    View all plans
+                    <span class="iconify" data-icon="solar:arrow-right-linear"></span>
+                </a>
+            </div>
+
+            <!-- Pricing Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Starter -->
+                <div class="reveal-item flashlight-card rounded-xl border bg-card text-card-foreground shadow-sm p-8">
+                    <h3 class="font-semibold text-lg">Starter</h3>
+                    <div class="my-4 flex items-baseline"><span class="text-4xl font-bold">$0</span><span
+                            class="text-muted-foreground ml-1">/mo</span></div>
+                    <p class="text-sm text-muted-foreground mb-6">Perfect for side projects and hobbyists.</p>
+                    <ul class="space-y-3 mb-8 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="iconify h-4 w-4 text-primary" data-icon="solar:check-circle-linear"></span>
+                            3 Projects
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="iconify h-4 w-4 text-primary" data-icon="solar:check-circle-linear"></span>
+                            Basic Analytics
+                        </li>
+                    </ul>
+                    <a href="#"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full">Get
+                        Started</a>
+                </div>
+
+                <!-- Pro -->
+                <div
+                    class="reveal-item flashlight-card rounded-xl border bg-card text-card-foreground shadow-sm p-8 relative border-primary overflow-visible">
+                    <div
+                        class="absolute -top-3 right-4 bg-primary text-primary-foreground text-xs font-bold px-3 py-1 rounded-full">
+                        POPULAR</div>
+                    <h3 class="font-semibold text-lg text-primary">Pro</h3>
+                    <div class="my-4 flex items-baseline"><span class="text-4xl font-bold">$29</span><span
+                            class="text-muted-foreground ml-1">/mo</span></div>
+                    <p class="text-sm text-muted-foreground mb-6">For growing teams and startups.</p>
+                    <ul class="space-y-3 mb-8 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="iconify h-4 w-4 text-primary" data-icon="solar:check-circle-linear"></span>
+                            Unlimited Projects
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="iconify h-4 w-4 text-primary" data-icon="solar:check-circle-linear"></span>
+                            Custom Domains
+                        </li>
+                    </ul>
+                    <a href="#"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-10 px-4 py-2 w-full">Start
+                        Free Trial</a>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="reveal-item flashlight-card rounded-xl border bg-card text-card-foreground shadow-sm p-8">
+                    <h3 class="font-semibold text-lg">Enterprise</h3>
+                    <div class="my-4 flex items-baseline"><span class="text-4xl font-bold">Custom</span></div>
+                    <p class="text-sm text-muted-foreground mb-6">For large organizations with specific needs.</p>
+                    <ul class="space-y-3 mb-8 text-sm">
+                        <li class="flex items-center gap-2">
+                            <span class="iconify h-4 w-4 text-primary" data-icon="solar:check-circle-linear"></span>
+                            Dedicated Support
+                        </li>
+                        <li class="flex items-center gap-2">
+                            <span class="iconify h-4 w-4 text-primary" data-icon="solar:check-circle-linear"></span>
+                            SLA Guarantee
+                        </li>
+                    </ul>
+                    <a href="enterprise.html"
+                        class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 w-full">Contact
+                        Sales</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Additional Features - Carousel -->
+        <section class="container py-8 md:py-12 lg:py-24 border-t">
+            <div class="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center mb-12">
+                <h2 class="reveal-item font-heading text-3xl leading-[1.1] sm:text-3xl md:text-5xl font-bold">Why teams
+                    choose SiteFlow</h2>
+                <p class="reveal-item max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+                    Built for developers who care about speed, security, and scalability.
+                </p>
+            </div>
+
+            <!-- Features Carousel -->
+            <div class="pricing-carousel max-w-6xl mx-auto" x-data="{ 
+                currentSlide: 0, 
+                totalSlides: 4,
+                autoplayInterval: null,
+                startAutoplay() {
+                    this.autoplayInterval = setInterval(() => {
+                        this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+                    }, 4000);
+                },
+                stopAutoplay() {
+                    clearInterval(this.autoplayInterval);
+                },
+                prev() {
+                    this.stopAutoplay();
+                    this.currentSlide = (this.currentSlide - 1 + this.totalSlides) % this.totalSlides;
+                    this.startAutoplay();
+                },
+                next() {
+                    this.stopAutoplay();
+                    this.currentSlide = (this.currentSlide + 1) % this.totalSlides;
+                    this.startAutoplay();
+                },
+                goTo(index) {
+                    this.stopAutoplay();
+                    this.currentSlide = index;
+                    this.startAutoplay();
+                }
+            }" x-init="startAutoplay()" @mouseenter="stopAutoplay()" @mouseleave="startAutoplay()">
+
+                <!-- Navigation Arrows -->
+                <button @click="prev()" class="carousel-btn carousel-btn-prev" aria-label="Previous">
+                    <span class="iconify" data-icon="solar:alt-arrow-left-linear" style="font-size: 20px;"></span>
+                </button>
+                <button @click="next()" class="carousel-btn carousel-btn-next" aria-label="Next">
+                    <span class="iconify" data-icon="solar:alt-arrow-right-linear" style="font-size: 20px;"></span>
+                </button>
+
+                <!-- Cards Track -->
+                <div class="pricing-track" :style="`transform: translateX(-${currentSlide * 100}%)`">
+                    <!-- Feature 1 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:rocket-2-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Deploy in Seconds</h3>
+                            <p class="text-muted-foreground">Push to git and your app is live. Zero configuration
+                                required. Get from code to production in under 30 seconds.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:chart-2-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Real-time Analytics</h3>
+                            <p class="text-muted-foreground">Monitor performance with live dashboards and custom alerts.
+                                Track every metric that matters to your business.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:users-group-rounded-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Team Collaboration</h3>
+                            <p class="text-muted-foreground">Invite unlimited team members with role-based permissions.
+                                Work together seamlessly on every project.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:shield-check-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">99.99% Uptime SLA</h3>
+                            <p class="text-muted-foreground">Enterprise-grade reliability backed by our SLA guarantee.
+                                Your apps stay online, always.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Carousel Dots -->
+                <div class="carousel-dots">
+                    <template x-for="i in totalSlides" :key="i">
+                        <button class="carousel-dot" :class="{ 'active': currentSlide === i - 1 }"
+                            @click="goTo(i - 1)"></button>
+                    </template>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQs -->
+        <section class="container py-8 md:py-12 lg:py-24 border-t">
+            <div class="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center mb-12">
+                <h2 class="reveal-item font-heading text-3xl leading-[1.1] sm:text-3xl md:text-5xl font-bold">Frequently
+                    Asked Questions</h2>
+                <p class="reveal-item max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+                    Everything you need to know about SiteFlow.
+                </p>
+            </div>
+            <div class="mx-auto max-w-3xl space-y-4" x-data="{ openFaq: null }">
+                <!-- FAQ 1 -->
+                <div class="reveal-item rounded-lg border bg-card overflow-hidden">
+                    <button @click="openFaq = openFaq === 1 ? null : 1"
+                        class="flex w-full items-center justify-between p-4 text-left font-medium hover:bg-muted/50 transition-colors">
+                        <span>How does the 14-day free trial work?</span>
+                        <span class="iconify transition-transform" :class="{ 'rotate-180': openFaq === 1 }"
+                            data-icon="solar:alt-arrow-down-linear" style="font-size: 20px;"></span>
+                    </button>
+                    <div x-show="openFaq === 1" x-collapse class="px-4 pb-4 text-muted-foreground text-sm">
+                        Start your free trial with full access to all Pro features. No credit card required. At the end
+                        of 14 days, you can choose to upgrade or continue with our free Starter plan.
+                    </div>
+                </div>
+                <!-- FAQ 2 -->
+                <div class="reveal-item rounded-lg border bg-card overflow-hidden">
+                    <button @click="openFaq = openFaq === 2 ? null : 2"
+                        class="flex w-full items-center justify-between p-4 text-left font-medium hover:bg-muted/50 transition-colors">
+                        <span>Can I change my plan later?</span>
+                        <span class="iconify transition-transform" :class="{ 'rotate-180': openFaq === 2 }"
+                            data-icon="solar:alt-arrow-down-linear" style="font-size: 20px;"></span>
+                    </button>
+                    <div x-show="openFaq === 2" x-collapse class="px-4 pb-4 text-muted-foreground text-sm">
+                        Yes! You can upgrade, downgrade, or cancel your plan at any time. Changes take effect
+                        immediately, and we'll prorate any charges.
+                    </div>
+                </div>
+                <!-- FAQ 3 -->
+                <div class="reveal-item rounded-lg border bg-card overflow-hidden">
+                    <button @click="openFaq = openFaq === 3 ? null : 3"
+                        class="flex w-full items-center justify-between p-4 text-left font-medium hover:bg-muted/50 transition-colors">
+                        <span>What kind of support do you offer?</span>
+                        <span class="iconify transition-transform" :class="{ 'rotate-180': openFaq === 3 }"
+                            data-icon="solar:alt-arrow-down-linear" style="font-size: 20px;"></span>
+                    </button>
+                    <div x-show="openFaq === 3" x-collapse class="px-4 pb-4 text-muted-foreground text-sm">
+                        All plans include email support. Pro plans get priority support with 24-hour response times.
+                        Enterprise customers receive dedicated account management and 24/7 phone support.
+                    </div>
+                </div>
+                <!-- FAQ 4 -->
+                <div class="reveal-item rounded-lg border bg-card overflow-hidden">
+                    <button @click="openFaq = openFaq === 4 ? null : 4"
+                        class="flex w-full items-center justify-between p-4 text-left font-medium hover:bg-muted/50 transition-colors">
+                        <span>Is my data secure?</span>
+                        <span class="iconify transition-transform" :class="{ 'rotate-180': openFaq === 4 }"
+                            data-icon="solar:alt-arrow-down-linear" style="font-size: 20px;"></span>
+                    </button>
+                    <div x-show="openFaq === 4" x-collapse class="px-4 pb-4 text-muted-foreground text-sm">
+                        Absolutely. We're SOC 2 Type II certified, use AES-256 encryption at rest, and TLS 1.3 in
+                        transit. Your data is backed up daily across multiple geographic regions.
+                    </div>
+                </div>
+                <!-- FAQ 5 -->
+                <div class="reveal-item rounded-lg border bg-card overflow-hidden">
+                    <button @click="openFaq = openFaq === 5 ? null : 5"
+                        class="flex w-full items-center justify-between p-4 text-left font-medium hover:bg-muted/50 transition-colors">
+                        <span>Do you offer discounts for startups or non-profits?</span>
+                        <span class="iconify transition-transform" :class="{ 'rotate-180': openFaq === 5 }"
+                            data-icon="solar:alt-arrow-down-linear" style="font-size: 20px;"></span>
+                    </button>
+                    <div x-show="openFaq === 5" x-collapse class="px-4 pb-4 text-muted-foreground text-sm">
+                        Yes! We offer 50% off for eligible startups and 25% off for registered non-profits. Contact our
+                        sales team with proof of eligibility to apply.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="container py-8 md:py-12 lg:py-24">
+            <div
+                class="reveal-item mx-auto max-w-4xl rounded-2xl bg-gradient-to-r from-primary to-blue-600 p-8 md:p-12 text-center text-white relative overflow-hidden">
+                <!-- Background Pattern -->
+                <div class="absolute inset-0 opacity-10">
+                    <svg class="w-full h-full" viewBox="0 0 400 200" preserveAspectRatio="xMidYMid slice">
+                        <circle cx="50" cy="50" r="80" fill="white" />
+                        <circle cx="350" cy="150" r="100" fill="white" />
+                    </svg>
+                </div>
+                <div class="relative z-10">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">Ready to scale your SaaS?</h2>
+                    <p class="text-lg text-white/80 mb-8 max-w-2xl mx-auto">
+                        Join over 10,000 developers who trust SiteFlow to power their applications. Start your free
+                        trial today.
+                    </p>
+                    <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                        <a href="#"
+                            class="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium bg-white text-primary hover:bg-white/90 h-11 px-8 shadow-lg transition-all hover:shadow-xl">
+                            <span class="iconify" data-icon="solar:rocket-2-linear"></span>
+                            Start Free Trial
+                        </a>
+                        <a href="#"
+                            class="inline-flex items-center justify-center gap-2 rounded-md text-sm font-medium border border-white/30 text-white hover:bg-white/10 h-11 px-8 transition-colors">
+                            <span class="iconify" data-icon="solar:chat-round-dots-linear"></span>
+                            Talk to Sales
+                        </a>
+                    </div>
+                    <p class="mt-6 text-sm text-white/60">No credit card required • 14-day free trial • Cancel anytime
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="border-t bg-muted/50">
+        <div class="container py-12">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+                <div>
+                    <div class="flex items-center gap-2 mb-6">
+                        <div
+                            class="h-6 w-6 rounded-md bg-primary flex items-center justify-center text-primary-foreground font-bold text-xs">
+                            S</div>
+                        <span class="font-bold text-lg">SiteFlow</span>
+                    </div>
+                    <p class="text-muted-foreground text-sm">Build better, ship faster.</p>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-sm">Product</h4>
+                    <ul class="space-y-2 text-sm text-muted-foreground">
+                        <li><a href="#" class="hover:text-foreground">Features</a></li>
+                        <li><a href="#" class="hover:text-foreground">Integrations</a></li>
+                        <li><a href="#" class="hover:text-foreground">Pricing</a></li>
+                        <li><a href="#" class="hover:text-foreground">Changelog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-sm">Resources</h4>
+                    <ul class="space-y-2 text-sm text-muted-foreground">
+                        <li><a href="#" class="hover:text-foreground">Documentation</a></li>
+                        <li><a href="#" class="hover:text-foreground">API Reference</a></li>
+                        <li><a href="#" class="hover:text-foreground">Community</a></li>
+                        <li><a href="#" class="hover:text-foreground">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-bold mb-4 text-sm">Company</h4>
+                    <ul class="space-y-2 text-sm text-muted-foreground">
+                        <li><a href="#" class="hover:text-foreground">About</a></li>
+                        <li><a href="#" class="hover:text-foreground">Careers</a></li>
+                        <li><a href="#" class="hover:text-foreground">Legal</a></li>
+                        <li><a href="#" class="hover:text-foreground">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                class="border-t pt-8 flex flex-col md:flex-row justify-between items-center text-sm text-muted-foreground">
+                <p>&copy; 2024 SiteFlow Inc. All rights reserved.</p>
+                <div class="flex gap-6 mt-4 md:mt-0">
+                    <a href="#" class="hover:text-foreground flex items-center gap-1">
+                        <span class="iconify" data-icon="solar:letter-linear"></span>
+                        Twitter
+                    </a>
+                    <a href="#" class="hover:text-foreground flex items-center gap-1">
+                        <span class="iconify" data-icon="solar:code-square-linear"></span>
+                        GitHub
+                    </a>
+                    <a href="#" class="hover:text-foreground flex items-center gap-1">
+                        <span class="iconify" data-icon="solar:chat-round-dots-linear"></span>
+                        Discord
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JavaScript for Lenis, Flashlight & Scroll Reveal -->
+    <script>
+        // Lenis Smooth Scrolling
+        const lenis = new Lenis({
+            duration: 1.2,
+            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+            orientation: 'vertical',
+            gestureOrientation: 'vertical',
+            smoothWheel: true,
+            wheelMultiplier: 1,
+            touchMultiplier: 2,
+        });
+
+        function raf(time) {
+            lenis.raf(time);
+            requestAnimationFrame(raf);
+        }
+
+        requestAnimationFrame(raf);
+
+        // Flashlight Effect
+        document.querySelectorAll('.flashlight-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                card.style.setProperty('--x', `${x}px`);
+                card.style.setProperty('--y', `${y}px`);
+            });
+        });
+
+        // Scroll Reveal with IntersectionObserver
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('in-view');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        document.querySelectorAll('.reveal-item').forEach(el => {
+            revealObserver.observe(el);
+        });
+    </script>
+
+    <!-- Cursor Follower Container -->
+    <div class="cursor-container" id="cursor-container"></div>
+
+    <!-- Cursor Follower JavaScript -->
+    <script>
+        (function () {
+            const container = document.getElementById('cursor-container');
+            const trailLength = 8;
+            const trailElements = [];
+            const positions = [];
+
+            let mouseX = 0;
+            let mouseY = 0;
+            let isVisible = false;
+
+            // Create the main cursor dot
+            const cursorDot = document.createElement('div');
+            cursorDot.className = 'cursor-dot';
+            cursorDot.style.opacity = '0';
+            container.appendChild(cursorDot);
+
+            // Create trail elements
+            for (let i = 0; i < trailLength; i++) {
+                const trail = document.createElement('div');
+                trail.className = 'cursor-trail';
+                trail.style.opacity = '0';
+                container.appendChild(trail);
+                trailElements.push(trail);
+                positions.push({ x: 0, y: 0 });
+            }
+
+            // Track mouse position
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+
+                if (!isVisible) {
+                    isVisible = true;
+                    cursorDot.style.opacity = '1';
+                    trailElements.forEach((trail, i) => {
+                        trail.style.opacity = String((1 - (i / trailLength)) * 0.6);
+                    });
+                }
+            });
+
+            // Hide cursor when mouse leaves
+            document.addEventListener('mouseleave', () => {
+                isVisible = false;
+                cursorDot.style.opacity = '0';
+                trailElements.forEach(trail => {
+                    trail.style.opacity = '0';
+                });
+            });
+
+            // Animation loop with lerp for smooth following
+            function animate() {
+                // Update main cursor position instantly
+                cursorDot.style.left = mouseX + 'px';
+                cursorDot.style.top = mouseY + 'px';
+
+                // Update trail positions with increasing delay (lerp)
+                let prevX = mouseX;
+                let prevY = mouseY;
+
+                for (let i = 0; i < trailLength; i++) {
+                    const delay = 0.15 + (i * 0.05); // Increasing delay for each trail element
+
+                    positions[i].x += (prevX - positions[i].x) * delay;
+                    positions[i].y += (prevY - positions[i].y) * delay;
+
+                    trailElements[i].style.left = positions[i].x + 'px';
+                    trailElements[i].style.top = positions[i].y + 'px';
+
+                    prevX = positions[i].x;
+                    prevY = positions[i].y;
+                }
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        })();
+    </script>
+
+</body>
+
+</html>

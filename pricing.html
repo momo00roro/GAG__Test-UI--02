@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteFlow - Pricing</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .hover-lift {
+            transition: transform 0.3s ease;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: { extend: { colors: { dark: '#050505', primary: '#A855F7', accent: '#F472B6' } } }
+        }
+    </script>
+</head>
+
+<body class="bg-dark text-white min-h-screen flex flex-col">
+
+    <!-- Nav -->
+    <nav class="px-6 py-6 flex justify-between items-center max-w-7xl mx-auto w-full">
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-lg bg-purple-600 flex items-center justify-center font-bold">S</div><a
+                href="index.html" class="font-bold text-xl">SiteFlow</a>
+        </div>
+        <div class="hidden md:flex gap-8 text-gray-400 text-sm font-medium">
+            <a href="product.html" class="hover:text-white">Product</a>
+            <a href="solutions.html" class="hover:text-white">Solutions</a>
+            <a href="pricing.html" class="text-white">Pricing</a>
+            <a href="enterprise.html" class="hover:text-white">Enterprise</a>
+        </div>
+        <div class="flex gap-4"><a href="#" class="text-gray-300 hover:text-white py-2">Log in</a><a href="#"
+                class="bg-white text-black px-4 py-2 rounded-full">Sign up</a></div>
+    </nav>
+
+    <main class="flex-grow max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-20">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl md:text-6xl font-bold mb-6">Simple, transparent pricing</h1>
+            <p class="text-gray-400">No hidden fees. Cancel anytime.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Free -->
+            <div class="glass-panel p-8 rounded-3xl hover-lift flex flex-col h-full">
+                <h3 class="text-xl font-semibold mb-2">Hobby</h3>
+                <div class="text-4xl font-bold mb-6">$0</div>
+                <ul class="space-y-4 text-gray-400 mb-8 flex-grow">
+                    <li>• 1 Project</li>
+                    <li>• Community Support</li>
+                    <li>• SiteFlow Branding</li>
+                </ul>
+                <a href="#"
+                    class="block w-full py-3 border border-white/20 rounded-xl text-center hover:bg-white hover:text-black transition-colors mt-auto">Start
+                    Free</a>
+            </div>
+
+            <!-- Pro -->
+            <div
+                class="glass-panel p-8 rounded-3xl hover-lift border-primary/50 bg-gray-900/50 relative flex flex-col h-full">
+                <div
+                    class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary px-3 py-1 rounded-full text-xs font-bold uppercase">
+                    Popular</div>
+                <h3 class="text-xl font-semibold mb-2 text-primary">Pro</h3>
+                <div class="text-4xl font-bold mb-6">$29<span class="text-base font-normal text-gray-500">/mo</span>
+                </div>
+                <ul class="space-y-4 text-gray-300 mb-8 flex-grow">
+                    <li>• Unlimited Projects</li>
+                    <li>• Custom Domains</li>
+                    <li>• No Branding</li>
+                    <li>• Analytics</li>
+                </ul>
+                <a href="#"
+                    class="block w-full py-3 bg-primary text-white rounded-xl text-center hover:opacity-90 mt-auto">Get
+                    Pro</a>
+            </div>
+
+            <!-- Agency -->
+            <div class="glass-panel p-8 rounded-3xl hover-lift flex flex-col h-full">
+                <h3 class="text-xl font-semibold mb-2">Agency</h3>
+                <div class="text-4xl font-bold mb-6">$99<span class="text-base font-normal text-gray-500">/mo</span>
+                </div>
+                <ul class="space-y-4 text-gray-400 mb-8 flex-grow">
+                    <li>• Priority Support</li>
+                    <li>• Team Seats (5)</li>
+                    <li>• Client Billing</li>
+                    <li>• White Labeling</li>
+                </ul>
+                <a href="#"
+                    class="block w-full py-3 border border-white/20 rounded-xl text-center hover:bg-white hover:text-black transition-colors mt-auto">Contact
+                    Sales</a>
+            </div>
+        </div>
+
+        <!-- Feature Comparison -->
+        <div class="mt-32">
+            <h2 class="text-3xl font-bold text-center mb-16">Feature Comparison</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-white/10 text-gray-400 text-sm uppercase">
+                            <th class="py-4 px-6 font-medium">Core Features</th>
+                            <th class="py-4 px-6 font-medium">Hobby</th>
+                            <th class="py-4 px-6 font-medium text-primary">Pro</th>
+                            <th class="py-4 px-6 font-medium">Agency</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-gray-300">
+                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td class="py-4 px-6">Projects</td>
+                            <td class="py-4 px-6">1</td>
+                            <td class="py-4 px-6">Unlimited</td>
+                            <td class="py-4 px-6">Unlimited</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td class="py-4 px-6">Custom Domains</td>
+                            <td class="py-4 px-6 text-gray-500">-</td>
+                            <td class="py-4 px-6 text-green-400">Included</td>
+                            <td class="py-4 px-6 text-green-400">Included</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td class="py-4 px-6">Editors</td>
+                            <td class="py-4 px-6">1</td>
+                            <td class="py-4 px-6">3 Included</td>
+                            <td class="py-4 px-6">Unlimited</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td class="py-4 px-6">Code Export</td>
+                            <td class="py-4 px-6 text-gray-500">-</td>
+                            <td class="py-4 px-6 text-green-400">HTML/React</td>
+                            <td class="py-4 px-6 text-green-400">Advanced</td>
+                        </tr>
+                        <tr class="border-b border-white/5 hover:bg-white/5 transition-colors">
+                            <td class="py-4 px-6">Support SLA</td>
+                            <td class="py-4 px-6 text-gray-500">Community</td>
+                            <td class="py-4 px-6">24h Response</td>
+                            <td class="py-4 px-6 text-purple-400">1h Dedicated</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="mt-32 max-w-3xl mx-auto">
+            <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <!-- item 1 -->
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <button
+                        class="faq-toggle w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors">
+                        <span class="font-medium">Can I export the code?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 text-gray-400">
+                        Yes! On Pro and Agency plans, you can export clean, semantic HTML/CSS (Tailwind) or React
+                        components at any time. You own the code.
+                    </div>
+                </div>
+                <!-- item 2 -->
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <button
+                        class="faq-toggle w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors">
+                        <span class="font-medium">Do you host the sites?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 text-gray-400">
+                        We provide high-performance edge hosting by default. However, since you can export the code, you
+                        are free to host it on Vercel, Netlify, or your own VPS.
+                    </div>
+                </div>
+                <!-- item 3 -->
+                <div class="glass-panel rounded-xl overflow-hidden">
+                    <button
+                        class="faq-toggle w-full px-6 py-4 flex justify-between items-center text-left hover:bg-white/5 transition-colors">
+                        <span class="font-medium">What happens if I cancel?</span>
+                        <svg class="w-5 h-5 transform transition-transform" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7">
+                            </path>
+                        </svg>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 text-gray-400">
+                        Your sites remain online, but you will lose access to the visual editor and CMS updates. You can
+                        re-subscribe at any time to regain access.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center py-12 text-gray-600 text-sm border-t border-white/5">
+        <p>&copy; 2024 SiteFlow AI.</p>
+    </footer>
+
+    <script>
+        gsap.from(".pricing-card-wrapper", { y: 50, opacity: 0, duration: 0.8, stagger: 0.1 });
+
+        // FAQ Accordion
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const content = button.nextElementSibling;
+                const icon = button.querySelector('svg');
+
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+    </script>
+</body>
+
+</html>

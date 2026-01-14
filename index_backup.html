@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteFlow - AI Website Builder</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Performance Optimization */
+        .will-change-transform {
+            will-change: transform;
+        }
+
+        /* Smooth Hover Transitions */
+        .hover-lift {
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease-out;
+        }
+
+        .neon-glow {
+            text-shadow: 0 0 10px rgba(168, 85, 247, 0.5), 0 0 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .hero-bg {
+            background-image: url('assets/background.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#050505',
+                        primary: '#A855F7', // Purple 500
+                        secondary: '#3B82F6', // Blue 500
+                        accent: '#F472B6', // Pink 400
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'marquee': 'marquee 25s linear infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0)' },
+                            '100%': { transform: 'translateX(-100%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+
+<body class="bg-dark text-white min-h-screen flex flex-col relative">
+
+    <!-- Background Overlay -->
+    <div class="absolute inset-0 z-0 opactiy-60 hero-bg">
+        <div class="absolute inset-0 bg-dark/80 bg-gradient-to-t from-dark via-dark/50 to-transparent"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="relative z-50 px-6 py-6 flex justify-between items-center max-w-7xl mx-auto w-full">
+        <div class="flex items-center gap-2">
+            <div
+                class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-secondary flex items-center justify-center font-bold text-lg">
+                S</div>
+            <span class="font-bold text-xl tracking-tight">SiteFlow</span>
+        </div>
+
+        <div class="hidden md:flex gap-8 text-gray-400 text-sm font-medium">
+            <a href="product.html" class="hover:text-white transition-colors">Product</a>
+            <a href="solutions.html" class="hover:text-white transition-colors">Solutions</a>
+            <a href="pricing.html" class="hover:text-white transition-colors">Pricing</a>
+            <a href="enterprise.html" class="hover:text-white transition-colors">Enterprise</a>
+        </div>
+
+        <div class="flex gap-4">
+            <a href="#" class="text-sm font-medium text-gray-300 hover:text-white py-2">Log in</a>
+            <a href="#"
+                class="text-sm font-medium bg-white text-black px-4 py-2 rounded-full hover:bg-gray-200 transition-colors">Sign
+                up</a>
+        </div>
+    </nav>
+
+    <main class="relative z-10 flex-grow flex flex-col items-center w-full">
+
+        <!-- Hero Section -->
+        <section class="max-w-7xl mx-auto text-center px-4 sm:px-6 lg:px-8 mt-10 mb-20 relative">
+            <!-- Badge -->
+            <div
+                class="badge-anim inline-flex items-center gap-2 px-3 py-1 rounded-full border border-primary/30 bg-primary/10 text-primary text-xs font-semibold tracking-wide uppercase mb-8 backdrop-blur-md will-change-transform">
+                <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
+                AI-Powered Design Systems
+            </div>
+
+            <!-- Headline -->
+            <h1 class="text-5xl md:text-7xl lg:text-8xl font-bold tracking-tight mb-8 leading-tight">
+                <span class="inline-block">Design at the speed of</span> <br>
+                <span
+                    class="inline-block text-transparent bg-clip-text bg-gradient-to-r from-secondary via-primary to-accent neon-glow">human
+                    thought.</span>
+            </h1>
+
+            <!-- Subheadline -->
+            <p
+                class="hero-text max-w-2xl text-lg md:text-xl text-gray-400 mb-10 leading-relaxed mx-auto will-change-transform">
+                SiteFlow studies 3-5 existing websites to form a unified design system and generates a production-ready
+                website with working CMS and forms in one shot.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="flex flex-col sm:flex-row gap-4 w-full justify-center mb-16">
+                <a href="#"
+                    class="hero-btn group relative px-8 py-4 bg-white text-black font-bold rounded-full overflow-hidden transition-transform hover:scale-105 will-change-transform">
+                    <div
+                        class="absolute inset-0 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 opacity-0 group-hover:opacity-20 transition-opacity">
+                    </div>
+                    <span class="relative flex items-center gap-2">
+                        Start Generating
+                        <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none"
+                            stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
+                        </svg>
+                    </span>
+                </a>
+                <a href="#"
+                    class="hero-btn px-8 py-4 glass-panel text-white font-medium rounded-full hover:bg-white/10 transition-colors will-change-transform">
+                    View Showcase
+                </a>
+            </div>
+
+            <!-- Floating Elements (Decorative) -->
+            <div class="relative w-full max-w-5xl mx-auto h-64 md:h-96 hidden md:block pointer-events-none">
+                <div
+                    class="floating-card absolute left-0 top-0 glass-panel p-6 rounded-2xl w-64 transform -rotate-6 border-l-4 border-l-secondary shadow-2xl shadow-secondary/20 animate-pulse-slow will-change-transform">
+                    <div class="flex gap-2 mb-4">
+                        <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                        <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="h-2 w-1/2 bg-gray-700 rounded"></div>
+                        <div class="h-2 w-3/4 bg-gray-700 rounded"></div>
+                        <div class="h-24 bg-gray-800 rounded border border-gray-700"></div>
+                    </div>
+                </div>
+
+                <div class="floating-card absolute right-0 bottom-10 glass-panel p-6 rounded-2xl w-72 transform rotate-3 border-l-4 border-l-accent shadow-2xl shadow-accent/20 animate-pulse-slow will-change-transform"
+                    style="animation-delay: 1s;">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-full bg-gradient-to-tr from-accent to-primary"></div>
+                        <div>
+                            <div class="h-2 w-20 bg-gray-700 rounded mb-1"></div>
+                            <div class="h-2 w-12 bg-gray-800 rounded"></div>
+                        </div>
+                    </div>
+                    <div class="h-2 w-full bg-gray-700 rounded mb-2"></div>
+                    <div class="h-2 w-full bg-gray-700 rounded mb-2"></div>
+                    <div class="h-8 w-1/3 bg-primary rounded mt-4"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Client Logos Carousel -->
+        <section class="w-full py-12 border-y border-white/5 bg-black/20 overflow-hidden">
+            <p class="text-center text-sm text-gray-500 mb-8 uppercase tracking-widest font-semibold">Trusted by
+                Innovative Teams</p>
+            <div class="relative flex overflow-x-hidden group">
+                <div class="py-2 animate-marquee whitespace-nowrap flex gap-16 px-8">
+                    <img src="assets/client_logo_1.png" alt="Client 1"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_2.png" alt="Client 2"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_3.png" alt="Client 3"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_1.png" alt="Client 4"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_2.png" alt="Client 5"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <!-- Duplicate for infinite scroll -->
+                    <img src="assets/client_logo_1.png" alt="Client 1"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_2.png" alt="Client 2"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_3.png" alt="Client 3"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_1.png" alt="Client 4"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                    <img src="assets/client_logo_2.png" alt="Client 5"
+                        class="h-20 w-auto object-contain opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Value Proposition -->
+        <section id="features" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div
+                    class="glass-panel p-8 rounded-3xl hover:bg-white/5 transition-colors group hover-lift will-change-transform">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-primary/20 text-primary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Distill Design DNA</h3>
+                    <p class="text-gray-400 leading-relaxed">Simply paste 3-5 urls. Our AI extracts the typography,
+                        color palettes, and spacing rules to create a unified system.</p>
+                </div>
+                <!-- Card 2 -->
+                <div
+                    class="glass-panel p-8 rounded-3xl hover:bg-white/5 transition-colors group border border-primary/20 shadow-[0_0_30px_rgba(168,85,247,0.15)] hover-lift will-change-transform">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-secondary/20 text-secondary flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">One-Shot Gen</h3>
+                    <p class="text-gray-400 leading-relaxed">Don't build section by section. Generate a full, multi-page
+                        website with cohesive styles in less than 60 seconds.</p>
+                </div>
+                <!-- Card 3 -->
+                <div
+                    class="glass-panel p-8 rounded-3xl hover:bg-white/5 transition-colors group hover-lift will-change-transform">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-accent/20 text-accent flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4">
+                            </path>
+                        </svg>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Backend Included</h3>
+                    <p class="text-gray-400 leading-relaxed">Not just a mockup. You get a working backend, CMS for blog
+                        posts, and functional contact forms out of the box.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <h2 class="text-3xl md:text-5xl font-bold text-center mb-16">Loved by Builders</h2>
+            <div id="testimonials-grid" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div
+                    class="testimonial-card testimonial-card-anim bg-white/5 p-8 rounded-2xl border border-white/5 relative hover-lift">
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="assets/avatar_1.png" alt="User"
+                            class="w-12 h-12 rounded-full object-cover ring-2 ring-primary/50">
+                        <div>
+                            <h4 class="font-bold">Sarah Jenks</h4>
+                            <p class="text-xs text-primary">CEO, StartScale</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">"SiteFlow cut our web dev time by 90%. We just fed it our moodboard
+                        URLs and it built exactly what we needed."</p>
+                </div>
+                <!-- Testimonial 2 -->
+                <div
+                    class="testimonial-card testimonial-card-anim bg-white/5 p-8 rounded-2xl border border-white/5 relative hover-lift">
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="assets/avatar_2.png" alt="User"
+                            class="w-12 h-12 rounded-full object-cover ring-2 ring-secondary/50">
+                        <div>
+                            <h4 class="font-bold">Marcus Chen</h4>
+                            <p class="text-xs text-secondary">Freelance Designer</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">"The design system extraction is magic. It understood the nuances of
+                        the typography I wanted better than I did."</p>
+                </div>
+                <!-- Testimonial 3 -->
+                <div
+                    class="testimonial-card testimonial-card-anim bg-white/5 p-8 rounded-2xl border border-white/5 relative hover-lift">
+                    <div class="flex items-center gap-4 mb-6">
+                        <img src="assets/avatar_3.png" alt="User"
+                            class="w-12 h-12 rounded-full object-cover ring-2 ring-accent/50">
+                        <div>
+                            <h4 class="font-bold">Elena Rodriguez</h4>
+                            <p class="text-xs text-accent">CTO, FinFlow</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-300 italic">"Finally, a builder that gives me clean code and a working CMS. I
+                        didn't have to touch a single server config."</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing -->
+        <section id="pricing" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative">
+            <div
+                class="absolute inset-0 bg-gradient-to-b from-primary/5 via-transparent to-transparent pointer-events-none">
+            </div>
+            <h2 class="text-3xl md:text-5xl font-bold text-center mb-6">Simple Pricing</h2>
+            <p class="section-desc text-center text-gray-400 mb-16">Start free, upgrade when you're ready to scale.</p>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Basic -->
+                <div
+                    class="p-8 rounded-3xl border border-white/10 hover:border-white/20 transition-colors bg-dark/50 backdrop-blur-sm hover-lift will-change-transform">
+                    <h3 class="text-lg font-semibold text-gray-400 mb-2">Starter</h3>
+                    <div class="text-4xl font-bold mb-6">$0</div>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> 1 Project</li>
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> SiteFlow Branding</li>
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> Community Support</li>
+                    </ul>
+                    <a href="#"
+                        class="block w-full py-3 rounded-xl border border-white/20 text-center font-semibold hover:bg-white hover:text-black transition-colors">Start
+                        Free</a>
+                </div>
+                <!-- Pro -->
+                <div
+                    class="p-8 rounded-3xl border border-primary/50 bg-gray-900/80 backdrop-blur-sm relative transform md:-translate-y-4 shadow-2xl shadow-primary/20 hover-lift will-change-transform">
+                    <div
+                        class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-gradient-to-r from-primary to-accent px-4 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                        Most Popular</div>
+                    <h3 class="text-lg font-semibold text-primary mb-2">Pro</h3>
+                    <div class="text-4xl font-bold mb-6">$29<span class="text-lg text-gray-500 font-normal">/mo</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-200">
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> Unlimited Projects</li>
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> Custom Domains</li>
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> CMS & Database</li>
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-primary" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> No Branding</li>
+                    </ul>
+                    <a href="#"
+                        class="block w-full py-3 rounded-xl bg-gradient-to-r from-primary to-accent text-white text-center font-bold hover:opacity-90 transition-opacity box-shadow-glow">Get
+                        Started</a>
+                </div>
+                <!-- Agency -->
+                <div
+                    class="p-8 rounded-3xl border border-white/10 hover:border-white/20 transition-colors bg-dark/50 backdrop-blur-sm hover-lift will-change-transform">
+                    <h3 class="text-lg font-semibold text-gray-400 mb-2">Agency</h3>
+                    <div class="text-4xl font-bold mb-6">$99<span class="text-lg text-gray-500 font-normal">/mo</span>
+                    </div>
+                    <ul class="space-y-4 mb-8 text-sm text-gray-300">
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> Priority Support</li>
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> Team Collaboration</li>
+                        <li class="flex gap-2"><svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7"></path>
+                            </svg> API Access</li>
+                    </ul>
+                    <a href="#"
+                        class="block w-full py-3 rounded-xl border border-white/20 text-center font-semibold hover:bg-white hover:text-black transition-colors">Contact
+                        Sales</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
+            <h2 class="text-3xl font-bold text-center mb-12">Frequently Asked Questions</h2>
+            <div class="space-y-4">
+                <details class="group bg-white/5 rounded-2xl p-6 open:bg-white/10 transition-colors cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium list-none">
+                        <span>How does the design system extraction work?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                                width="24">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 group-open:animate-fadeIn">
+                        We use computer vision and DOM analysis to ingest the visual properties of the URLs you provide.
+                        This includes font stacks, color contrast ratios, border radii, and spacing scales.
+                    </p>
+                </details>
+                <details class="group bg-white/5 rounded-2xl p-6 open:bg-white/10 transition-colors cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium list-none">
+                        <span>Can I export the code?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                                width="24">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 group-open:animate-fadeIn">
+                        Yes! You can export as a React/Next.js project, raw HTML/CSS, or deploy directly to our edge
+                        network.
+                    </p>
+                </details>
+                <details class="group bg-white/5 rounded-2xl p-6 open:bg-white/10 transition-colors cursor-pointer">
+                    <summary class="flex justify-between items-center font-medium list-none">
+                        <span>Is the generated code accessible?</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24"
+                                width="24">
+                                <path d="M6 9l6 6 6-6"></path>
+                            </svg>
+                        </span>
+                    </summary>
+                    <p class="text-gray-400 mt-4 group-open:animate-fadeIn">
+                        Absolutely. SiteFlow prioritizes WCAG 2.1 AA standards, ensuring proper semantic HTML,
+                        aria-labels, and contrast ratios.
+                    </p>
+                </details>
+            </div>
+        </section>
+
+        <!-- Contact Us -->
+        <section id="contact" class="w-full bg-gradient-to-t from-primary/10 to-transparent py-24">
+            <div class="max-w-2xl mx-auto px-4 text-center">
+                <h2 class="text-3xl font-bold mb-4">Ready to flow?</h2>
+                <p class="section-desc text-gray-400 mb-10">Join 10,000+ designers building the web of tomorrow.</p>
+
+                <form class="text-left space-y-4 bg-black/40 p-8 rounded-3xl backdrop-blur-md border border-white/10">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs uppercase text-gray-500 font-bold mb-2">First Name</label>
+                            <input type="text"
+                                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                placeholder="Jane">
+                        </div>
+                        <div>
+                            <label class="block text-xs uppercase text-gray-500 font-bold mb-2">Last Name</label>
+                            <input type="text"
+                                class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                                placeholder="Doe">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-gray-500 font-bold mb-2">Email</label>
+                        <input type="email"
+                            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors"
+                            placeholder="jane@example.com">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase text-gray-500 font-bold mb-2">Message</label>
+                        <textarea
+                            class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-primary transition-colors h-32"
+                            placeholder="Tell us about your project..."></textarea>
+                    </div>
+                    <button type="submit"
+                        class="w-full bg-white text-black font-bold py-4 rounded-xl hover:bg-gray-200 transition-colors">Send
+                        Message</button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="w-full border-t border-white/5 py-12 text-center text-gray-600 text-sm">
+            <div class="flex justify-center gap-6 mb-8">
+                <a href="#" class="hover:text-gray-400">Twitter</a>
+                <a href="#" class="hover:text-gray-400">GitHub</a>
+                <a href="#" class="hover:text-gray-400">Discord</a>
+            </div>
+            <p>&copy; 2024 SiteFlow AI. All rights reserved.</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Register ScrollTrigger
+        gsap.registerPlugin(ScrollTrigger);
+
+        // --- Hero Animation Sequence ---
+        const tlHero = gsap.timeline({ defaults: { ease: "power3.out" } });
+
+        tlHero.from(".badge-anim", {
+            y: 20,
+            opacity: 0,
+            duration: 0.8,
+            delay: 0.2
+        })
+            .from("h1 span", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.1,
+                skewY: 5
+            }, "-=0.4")
+            .from(".hero-text", {
+                y: 20,
+                opacity: 0,
+                duration: 0.8
+            }, "-=0.6")
+            .from(".hero-btn", {
+                scale: 0.8,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.1,
+                ease: "back.out(1.7)"
+            }, "-=0.4")
+            .from(".floating-card", {
+                y: 50,
+                opacity: 0,
+                duration: 1,
+                stagger: 0.2
+            }, "-=0.8");
+
+        // --- Scroll Animations ---
+
+        // General Section Reveal
+        gsap.utils.toArray("section h2, section p.section-desc").forEach(elem => {
+            gsap.from(elem, {
+                scrollTrigger: {
+                    trigger: elem,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 30,
+                opacity: 0,
+                duration: 0.8
+            });
+        });
+
+        // Feature Cards Stagger
+        gsap.from("#features .glass-panel", {
+            scrollTrigger: {
+                trigger: "#features",
+                start: "top 75%"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.15
+        });
+
+        // Testimonials Stagger
+        gsap.from(".testimonial-card", {
+            scrollTrigger: {
+                trigger: ".testimonial-card", // Triggers on the first one found usually, better to trigger parent
+                trigger: ".testimonial-card",
+                start: "top 80%"
+            },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1
+        });
+
+        // Correcting testimonial trigger to use parent container for better batching
+        ScrollTrigger.batch(".testimonial-card", {
+            start: "top 85%",
+            onEnter: batch => gsap.to(batch, { autoAlpha: 1, y: 0, stagger: 0.15, overwrite: true }),
+            onLeave: batch => gsap.set(batch, { autoAlpha: 0, y: 30, overwrite: true }), // Optional: fade out
+            onEnterBack: batch => gsap.to(batch, { autoAlpha: 1, y: 0, stagger: 0.15, overwrite: true }),
+            onLeaveBack: batch => gsap.set(batch, { autoAlpha: 0, y: 30, overwrite: true })
+        });
+        // Actually, let's keep it simple with standard from() for now as batch can be tricky with inline overrides.
+        // Re-implementing Testimonials Simple Stagger
+        gsap.from(".testimonial-card-anim", {
+            scrollTrigger: {
+                trigger: "#testimonials-grid",
+                start: "top 80%"
+            },
+            y: 40,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1
+        });
+
+        // Pricing Cards
+        gsap.from("#pricing .grid > div", {
+            scrollTrigger: {
+                trigger: "#pricing .grid",
+                start: "top 80%"
+            },
+            y: 40,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,12 @@
+{
+  "permission": {
+    "skill": {
+      "*": "allow"
+    }
+  },
+  "$schema": "https://opencode.ai/config.json",
+  "keybinds": {
+    "input_newline": "shift+return,ctrl+j,alt+return,shift+enter",
+    "input_submit": "return"
+  }
+}
