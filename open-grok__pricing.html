@@ -164,8 +164,8 @@
             <div x-data="{ annual: true }" class="mb-16">
                 <div class="flex items-center justify-center gap-4">
                     <button type="button" @click="annual = false" class="text-sm transition-colors" :class="!annual ? 'text-text' : 'text-textMuted'">Monthly</button>
-                    <button type="button" @click="annual = !annual" class="relative w-11 h-6 rounded-full bg-surface border border-border switch-toggle overflow-hidden" :class="annual ? 'bg-white' : 'bg-surface'" aria-label="Toggle billing period">
-                        <span class="switch-dot absolute top-1 left-0.5 w-4 h-4 rounded-full shadow-sm" :class="annual ? 'translate-x-5 bg-black' : 'translate-x-0 bg-white'"></span>
+                    <button type="button" @click="annual = !annual" class="relative w-11 h-6 rounded-full bg-surface border border-border switch-toggle overflow-hidden" :class="annual ? 'bg-surface' : 'bg-white'" aria-label="Toggle billing period">
+                        <span class="switch-dot absolute top-1 left-0.5 w-4 h-4 rounded-full shadow-sm" :class="annual ? 'translate-x-5 bg-white' : 'translate-x-0 bg-white border border-black'"></span>
                     </button>
                     <button type="button" @click="annual = true" class="text-sm transition-colors" :class="annual ? 'text-text' : 'text-textMuted'">Yearly</button>
                     <span class="ml-1 px-2 py-0.5 rounded-full bg-white/10 text-textMuted text-xs font-medium">Save 20%</span>

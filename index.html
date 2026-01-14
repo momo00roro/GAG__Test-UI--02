@@ -1148,6 +1148,7 @@
             <div class="pricing-carousel max-w-6xl mx-auto" x-data="{ 
                 currentSlide: 0, 
                 totalSlides: 4,
+                slidesPerView: 3,
                 autoplayInterval: null,
                 startAutoplay() {
                     this.autoplayInterval = setInterval(() => {
@@ -1183,7 +1184,7 @@
                 </button>
 
                 <!-- Cards Track -->
-                <div class="pricing-track" :style="`transform: translateX(-${currentSlide * 100}%)`">
+                <div class="pricing-track" :style="`transform: translateX(-${currentSlide * 33.333}%)`">
                     <!-- Feature 1 -->
                     <div class="pricing-slide">
                         <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
@@ -1239,6 +1240,118 @@
                                 Your apps stay online, always.</p>
                         </div>
                     </div>
+
+                    <!-- Feature 5 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:lock-keyhole-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Advanced Security</h3>
+                            <p class="text-muted-foreground">SOC 2 Type II certified with end-to-end encryption. Your
+                                data is protected at every layer.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:globe-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Global CDN</h3>
+                            <p class="text-muted-foreground">Content delivered from 200+ edge locations worldwide.
+                                Lightning-fast load times everywhere.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 7 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:code-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Developer APIs</h3>
+                            <p class="text-muted-foreground">RESTful APIs and SDKs for every major language. Integrate
+                                with your existing workflow effortlessly.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 8 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:database-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Managed Databases</h3>
+                            <p class="text-muted-foreground">Postgres, MySQL, Redis provisioned in seconds. Automatic
+                                backups and scaling included.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 9 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:refresh-circle-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Auto Scaling</h3>
+                            <p class="text-muted-foreground">Scale from zero to millions of users automatically. Pay
+                                only for what you use.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 10 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:settings-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Custom Environments</h3>
+                            <p class="text-muted-foreground">Staging, preview, and production environments with isolated
+                                configurations for each.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 11 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:chat-round-dots-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">24/7 Support</h3>
+                            <p class="text-muted-foreground">Expert support team available around the clock. Get help
+                                when you need it, every time.</p>
+                        </div>
+                    </div>
+
+                    <!-- Feature 12 -->
+                    <div class="pricing-slide">
+                        <div class="reveal-item flashlight-card rounded-xl border bg-card p-8 text-center h-full">
+                            <div
+                                class="mx-auto mb-6 w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                                <span class="iconify text-primary" data-icon="solar:history-linear"
+                                    style="font-size: 32px;"></span>
+                            </div>
+                            <h3 class="font-bold text-xl mb-3">Instant Rollbacks</h3>
+                            <p class="text-muted-foreground">One-click rollback to any previous deployment. Deploy with
+                                confidence knowing you can undo.</p>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Carousel Dots -->
@@ -1247,6 +1360,168 @@
                         <button class="carousel-dot" :class="{ 'active': currentSlide === i - 1 }"
                             @click="goTo(i - 1)"></button>
                     </template>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Bento Grid -->
+        <section class="container py-8 md:py-12 lg:py-24 border-t">
+            <div class="mx-auto flex max-w-[58rem] flex-col items-center space-y-4 text-center mb-12">
+                <h2 class="reveal-item font-heading text-3xl leading-[1.1] sm:text-3xl md:text-5xl font-bold">Trusted by
+                    industry leaders</h2>
+                <p class="reveal-item max-w-[85%] leading-normal text-muted-foreground sm:text-lg sm:leading-7">
+                    See how top companies are scaling faster with SiteFlow.
+                </p>
+            </div>
+
+            <!-- Testimonials Bento Grid -->
+            <div class="mx-auto max-w-6xl grid grid-cols-1 md:grid-cols-4 lg:grid-cols-6 gap-4 auto-rows-[200px]">
+                <!-- Testimonial 1 - Large -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-card p-6 transition-all hover:shadow-lg md:col-span-2 md:row-span-2">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <div class="flex items-center gap-1 mb-4">
+                                <span class="iconify text-yellow-500" data-icon="solar:star-bold"
+                                    style="font-size: 16px;"></span>
+                                <span class="iconify text-yellow-500" data-icon="solar:star-bold"
+                                    style="font-size: 16px;"></span>
+                                <span class="iconify text-yellow-500" data-icon="solar:star-bold"
+                                    style="font-size: 16px;"></span>
+                                <span class="iconify text-yellow-500" data-icon="solar:star-bold"
+                                    style="font-size: 16px;"></span>
+                                <span class="iconify text-yellow-500" data-icon="solar:star-bold"
+                                    style="font-size: 16px;"></span>
+                            </div>
+                            <p class="text-primary text-4xl font-bold mb-2">3x faster</p>
+                            <p class="text-muted-foreground mb-4">"SiteFlow cut our deployment time from 45 minutes to
+                                under 15. Our engineering team now ships 3x more features per sprint."</p>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary font-bold">
+                                JK</div>
+                            <div>
+                                <p class="font-semibold text-sm">James Kim</p>
+                                <p class="text-xs text-muted-foreground">VP Engineering, TechScale Inc.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 - Medium -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-card p-6 transition-all hover:shadow-lg md:col-span-2">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <p class="text-primary text-2xl font-bold mb-2">$2.4M saved</p>
+                            <p class="text-sm text-muted-foreground">"Eliminated our entire DevOps team overhead by
+                                switching to SiteFlow's managed infrastructure."</p>
+                        </div>
+                        <div class="flex items-center gap-3 mt-4">
+                            <div
+                                class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-500 font-bold text-xs">
+                                SL</div>
+                            <div>
+                                <p class="font-semibold text-xs">Sarah Lee</p>
+                                <p class="text-xs text-muted-foreground">CFO, FinanceFlow</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 - Medium -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-card p-6 transition-all hover:shadow-lg md:col-span-2">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <p class="text-primary text-2xl font-bold mb-2">99.99% uptime</p>
+                            <p class="text-sm text-muted-foreground">"Zero downtime in 18 months. Our customers trust us
+                                because SiteFlow never lets us down."</p>
+                        </div>
+                        <div class="flex items-center gap-3 mt-4">
+                            <div
+                                class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-500 font-bold text-xs">
+                                MR</div>
+                            <div>
+                                <p class="font-semibold text-xs">Michael Rodriguez</p>
+                                <p class="text-xs text-muted-foreground">CTO, DataSync Corp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 4 - Wide -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-card p-6 transition-all hover:shadow-lg md:col-span-4">
+                    <div class="flex flex-col md:flex-row md:items-center gap-4 h-full">
+                        <div class="flex-1">
+                            <p class="text-primary text-3xl font-bold mb-2">150% revenue growth</p>
+                            <p class="text-muted-foreground">"After migrating to SiteFlow, we could finally focus on
+                                product instead of infrastructure. Our revenue grew 150% in just 8 months."</p>
+                        </div>
+                        <div class="flex items-center gap-3 md:border-l md:pl-6">
+                            <div
+                                class="w-12 h-12 rounded-full bg-purple-500/20 flex items-center justify-center text-purple-500 font-bold">
+                                AP</div>
+                            <div>
+                                <p class="font-semibold">Alex Patel</p>
+                                <p class="text-sm text-muted-foreground">CEO, GrowthMetrics</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 5 - Small -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-card p-6 transition-all hover:shadow-lg md:col-span-2">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <p class="text-primary text-xl font-bold mb-1">40% cost reduction</p>
+                            <p class="text-xs text-muted-foreground">"Serverless scaling saved us 40% on cloud costs."
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-3">
+                            <div
+                                class="w-7 h-7 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-500 font-bold text-xs">
+                                EW</div>
+                            <p class="text-xs font-medium">Emma Wilson, CloudFirst</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 6 - Small -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-card p-6 transition-all hover:shadow-lg md:col-span-2">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <p class="text-primary text-xl font-bold mb-1">10M+ requests/day</p>
+                            <p class="text-xs text-muted-foreground">"Handles our traffic spikes effortlessly."</p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-3">
+                            <div
+                                class="w-7 h-7 rounded-full bg-cyan-500/20 flex items-center justify-center text-cyan-500 font-bold text-xs">
+                                DK</div>
+                            <p class="text-xs font-medium">David Kim, ScaleAPI</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Testimonial 7 - Small -->
+                <div
+                    class="reveal-item flashlight-card relative overflow-hidden rounded-xl border bg-card p-6 transition-all hover:shadow-lg md:col-span-2">
+                    <div class="flex flex-col justify-between h-full">
+                        <div>
+                            <p class="text-primary text-xl font-bold mb-1">5 min onboarding</p>
+                            <p class="text-xs text-muted-foreground">"New devs are productive in under 5 minutes."</p>
+                        </div>
+                        <div class="flex items-center gap-2 mt-3">
+                            <div
+                                class="w-7 h-7 rounded-full bg-pink-500/20 flex items-center justify-center text-pink-500 font-bold text-xs">
+                                LM</div>
+                            <p class="text-xs font-medium">Lisa Martinez, DevHire</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
