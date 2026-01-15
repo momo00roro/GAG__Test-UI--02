@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - SiteFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
+                    colors: {
+  primary: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+  secondary: { 900: '#0f172a' },
+  accent: { 500: '#f97316', 600: '#ea580c' },
+  border: '#1a1a1a'
+}
+                }
+            }
+        }
+                }
+            }
+        }
+    </script>
+    <style>
+        [x-cloak] { display: none !important; }
+        html { scroll-behavior: smooth; }
+        body { -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
+
+        #webgl-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+
+        .tilt-card {
+            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+        }
+        .tilt-card:hover {
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.3);
+        }
+        .tilt-glow {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            filter: blur(40px);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .tilt-card:hover .tilt-glow {
+            opacity: 0.6;
+        }
+
+        .magnetic-btn {
+            position: relative;
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+        }
+        .magnetic-btn-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1);
+        }
+
+        .switch-toggle { transition: background-color 0.25s ease; }
+        .switch-dot { transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
+
+        .nav-link { position: relative; }
+        .nav-link::after { content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px; background: currentColor; transition: width 0.2s ease; }
+        .nav-link:hover::after { width: 100%; }
+
+        .feature-row { transition: background-color 0.12s ease; }
+        .feature-row:hover { background-color: rgba(255,255,255,0.03); }
+
+        .price-pop { animation: pricePop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        @keyframes pricePop { 0% { transform: scale(1); } 50% { transform: scale(1.08); } 100% { transform: scale(1); } }
+
+        .check-icon { transition: transform 0.2s ease; }
+        .check-icon:hover { transform: scale(1.15); }
+
+        .section-glow { position: absolute; width: 600px; height: 600px; border-radius: 50%; filter: blur(100px); opacity: 0.15; pointer-events: none; }
+        .pricing-grid { perspective: 1000px; }
+        .floating { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-5px); } }
+
+        /* Force dark theme colors */
+        .bg-background { background-color: #050505 !important; }
+        .text-text { color: #ededed !important; }
+        .text-textMuted { color: #737373 !important; }
+        .bg-surface { background-color: #0a0a0a !important; }
+        .bg-surfaceHover { background-color: #111111 !important; }
+        .border-border { border-color: #1a1a1a !important; }
+    </style>
+</head>
+
+    <body class="bg-background text-text antialiased min-h-screen selection:bg-white selection:text-black overflow-x-hidden">
+
+    <nav x-data="{ mobileMenuOpen: false }" class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+        <div class="max-w-5xl mx-auto px-5">
+            <div class="flex justify-between items-center h-14">
+                <a href="index.html" class="flex items-center gap-2 group">
+                    <div class="w-6 h-6 bg-white text-black flex items-center justify-center font-medium text-xs transition-transform group-hover:scale-105">S</div>
+                    <span class="font-medium text-sm text-text">SiteFlow</span>
+                </a>
+                <div class="hidden sm:flex items-center gap-6">
+                    <a href="product.html" class="nav-link text-sm text-textMuted hover:text-text transition-colors">Product</a>
+                    <a href="solutions.html" class="nav-link text-sm text-textMuted hover:text-text transition-colors">Solutions</a>
+                    <a href="price-plans.html" class="nav-link text-sm text-text font-medium">Pricing</a>
+                    <a href="enterprise.html" class="nav-link text-sm text-textMuted hover:text-text transition-colors">Enterprise</a>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a href="#" class="hidden sm:block text-sm text-textMuted hover:text-text transition-colors">Log in</a>
+                    <a href="#" class="magnetic-btn inline-flex items-center justify-center px-3.5 py-1.5 text-sm font-medium text-black bg-white rounded-md">
+                        <span class="magnetic-btn-content">Get Started</span>
+                    </a>
+                    <button type="button" aria-label="Toggle mobile menu" @click="mobileMenuOpen = !mobileMenuOpen" class="sm:hidden p-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div x-show="mobileMenuOpen" x-transition class="sm:hidden absolute top-full left-0 right-0 bg-background/95 backdrop-blur-md border-b border-border">
+                <div class="px-5 py-4 space-y-4">
+                    <a href="product.html" class="block text-sm text-textMuted hover:text-text transition-colors">Product</a>
+                    <a href="solutions.html" class="block text-sm text-textMuted hover:text-text transition-colors">Solutions</a>
+                    <a href="price-plans.html" class="block text-sm text-text font-medium">Pricing</a>
+                    <a href="enterprise.html" class="block text-sm text-textMuted hover:text-text transition-colors">Enterprise</a>
+                    <a href="#" class="block text-sm text-textMuted hover:text-text transition-colors">Log in</a>
+                    <a href="#" class="magnetic-btn inline-flex items-center justify-center px-3.5 py-1.5 text-sm font-medium text-black bg-white rounded-md w-full">
+                        <span class="magnetic-btn-content">Get Started</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-24 pb-20 relative">
+        <div class="section-glow bg-white top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+
+        <div class="max-w-5xl mx-auto px-5 relative">
+            <div class="text-center max-w-lg mx-auto mb-12">
+                <p class="text-sm font-medium text-textMuted mb-3">Pricing</p>
+                <h1 class="text-3xl font-semibold tracking-tight text-text mb-3">
+                    Simple, transparent pricing
+                </h1>
+                <p class="text-base text-textMuted">
+                    Start free, scale as you grow. No hidden fees, cancel anytime.
+                </p>
+            </div>
+
+            <div x-data="{ annual: true }" class="mb-16">
+                <div class="flex items-center justify-center gap-4">
+                    <button type="button" @click="annual = false" class="text-sm transition-colors" :class="!annual ? 'text-text' : 'text-textMuted'">Monthly</button>
+                    <button type="button" @click="annual = !annual" class="relative w-11 h-6 rounded-full bg-surface border border-border switch-toggle overflow-hidden" :class="annual ? 'bg-surface' : 'bg-white'" aria-label="Toggle billing period">
+                        <span class="switch-dot absolute top-1 left-0.5 w-4 h-4 rounded-full shadow-sm" :class="annual ? 'translate-x-5 bg-white' : 'translate-x-0 bg-white border border-black'"></span>
+                    </button>
+                    <button type="button" @click="annual = true" class="text-sm transition-colors" :class="annual ? 'text-text' : 'text-textMuted'">Yearly</button>
+                    <span class="ml-1 px-2 py-0.5 rounded-full bg-white/10 text-textMuted text-xs font-medium">Save 20%</span>
+                </div>
+            </div>
+
+            <div x-data="{ annual: true }" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-20 pricing-grid">
+                <div class="tilt-card bg-surface border border-border rounded-xl p-6 relative overflow-hidden group">
+                    <div class="tilt-glow"></div>
+                    <div class="mb-5">
+                        <h3 class="text-base font-medium text-text mb-1">Starter</h3>
+                        <p class="text-sm text-textMuted">For individuals</p>
+                    </div>
+                    <div class="mb-5">
+                        <span class="text-3xl font-medium text-text">$0</span>
+                        <span class="text-sm text-textMuted">/mo</span>
+                    </div>
+                    <ul class="space-y-2.5 mb-6">
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>3 projects</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>1GB storage</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Community support</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Basic analytics</span>
+                        </li>
+                    </ul>
+                     <button type="button" class="magnetic-btn w-full py-2.5 px-4 rounded-lg border border-border text-sm text-text text-center hover:bg-surfaceHover">
+                         <span class="magnetic-btn-content">Get Started</span>
+                     </button>
+                </div>
+
+                 <div class="tilt-card floating bg-white text-black rounded-xl p-6 relative overflow-hidden group">
+                     <div class="tilt-glow"></div>
+                     <div class="absolute top-2 right-2 bg-black text-white text-xs px-2 py-1 rounded-full font-medium">Popular</div>
+                    <div class="mb-5">
+                        <h3 class="text-base font-medium text-black mb-1">Pro</h3>
+                        <p class="text-sm text-gray-600">For teams</p>
+                    </div>
+                    <div class="mb-5">
+                        <span class="text-3xl font-medium text-black" :class="annual ? 'price-pop' : ''" x-text="annual ? '$23' : '$29'"></span>
+                        <span class="text-sm text-gray-600">/mo</span>
+                    </div>
+                    <ul class="space-y-2.5 mb-6">
+                        <li class="flex items-center gap-2.5 text-sm text-gray-800">
+                            <svg class="w-4 h-4 text-black check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Unlimited projects</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-gray-800">
+                            <svg class="w-4 h-4 text-black check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>100GB storage</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-gray-800">
+                            <svg class="w-4 h-4 text-black check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Priority support</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-gray-800">
+                            <svg class="w-4 h-4 text-black check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Advanced analytics</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-gray-800">
+                            <svg class="w-4 h-4 text-black check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Custom domains</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-gray-800">
+                            <svg class="w-4 h-4 text-black check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0-l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Team collaboration</span>
+                        </li>
+                    </ul>
+                     <button type="button" class="magnetic-btn w-full py-2.5 px-4 rounded-lg bg-black text-white text-sm font-medium text-center hover:bg-gray-800">
+                         <span class="magnetic-btn-content">Start Free Trial</span>
+                     </button>
+                </div>
+
+                <div class="tilt-card bg-surface border border-border rounded-xl p-6 relative overflow-hidden group">
+                    <div class="tilt-glow"></div>
+                    <div class="mb-5">
+                        <h3 class="text-base font-medium text-text mb-1">Enterprise</h3>
+                        <p class="text-sm text-textMuted">For organizations</p>
+                    </div>
+                    <div class="mb-5">
+                        <span class="text-3xl font-medium text-text">Custom</span>
+                    </div>
+                    <ul class="space-y-2.5 mb-6">
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Everything in Pro</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Unlimited storage</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>Dedicated support</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                             <span>SSO &amp; SAML</span>
+                        </li>
+                        <li class="flex items-center gap-2.5 text-sm text-textMuted">
+                            <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
+                            <span>SLA guarantee</span>
+                        </li>
+                    </ul>
+                     <button type="button" class="magnetic-btn w-full py-2.5 px-4 rounded-lg border border-border text-sm text-text text-center hover:bg-surfaceHover">
+                         <span class="magnetic-btn-content">Contact Sales</span>
+                     </button>
+                </div>
+            </div>
+
+            <div class="mb-16">
+                <h2 class="text-lg font-medium text-text mb-6">Compare features</h2>
+                <div class="border border-border rounded-xl overflow-hidden">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b border-border bg-surface">
+                                <th scope="col" class="text-left py-3 px-4 text-xs font-medium text-textMuted uppercase tracking-wider">Features</th>
+                                <th scope="col" class="text-center py-3 px-4 text-xs font-medium text-text">Starter</th>
+                                <th scope="col" class="text-center py-3 px-4 text-xs font-medium text-text bg-white/5">Pro</th>
+                                <th scope="col" class="text-center py-3 px-4 text-xs font-medium text-text">Enterprise</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">Projects</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">3</td>
+                                <td class="py-3 px-4 text-sm text-center text-text bg-white/5 font-medium border-b border-border">Unlimited</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">Unlimited</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">Storage</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">1GB</td>
+                                <td class="py-3 px-4 text-sm text-center text-text bg-white/5 font-medium border-b border-border">100GB</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">Unlimited</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">Bandwidth</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">10GB/mo</td>
+                                <td class="py-3 px-4 text-sm text-center text-text bg-white/5 font-medium border-b border-border">1TB/mo</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">Unlimited</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">Team members</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">1</td>
+                                <td class="py-3 px-4 text-sm text-center text-text bg-white/5 font-medium border-b border-border">10</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">Unlimited</td>
+                            </tr>
+                            <tr class="bg-surface">
+                                <td class="py-3 px-4 text-xs font-medium text-textMuted uppercase tracking-wider">Core Features</td>
+                                <td colspan="3"></td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">Custom domains</td>
+                                <td class="py-3 px-4 text-center border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-textMuted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </td>
+                                <td class="py-3 px-4 text-center bg-white/5 border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </td>
+                                <td class="py-3 px-4 text-center border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">API access</td>
+                                <td class="py-3 px-4 text-center border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-textMuted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </td>
+                                <td class="py-3 px-4 text-center bg-white/5 border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </td>
+                                <td class="py-3 px-4 text-center border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">SSO / SAML</td>
+                                <td class="py-3 px-4 text-center border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-textMuted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </td>
+                                <td class="py-3 px-4 text-center bg-white/5 border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-textMuted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </td>
+                                <td class="py-3 px-4 text-center border-b border-border">
+                                    <svg class="w-4 h-4 mx-auto text-text" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                </td>
+                            </tr>
+                            <tr class="bg-surface">
+                                <td class="py-3 px-4 text-xs font-medium text-textMuted uppercase tracking-wider">Support</td>
+                                <td colspan="3"></td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted border-b border-border">Response time</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">48h</td>
+                                <td class="py-3 px-4 text-sm text-center text-text bg-white/5 font-medium border-b border-border">4h</td>
+                                <td class="py-3 px-4 text-sm text-center text-text border-b border-border">1h</td>
+                            </tr>
+                            <tr class="feature-row">
+                                <td class="py-3 px-4 text-sm text-textMuted">SLA guarantee</td>
+                                <td class="py-3 px-4 text-center">
+                                    <svg class="w-4 h-4 mx-auto text-textMuted/40" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </td>
+                                <td class="py-3 px-4 text-sm text-center text-text bg-white/5 font-medium">99.9%</td>
+                                <td class="py-3 px-4 text-sm text-center text-text font-medium">99.99%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+             </div>
+
+             <div class="mb-16">
+                 <h2 class="text-lg font-medium text-text mb-6">Frequently Asked Questions</h2>
+                  <div class="space-y-0">
+                      <div x-data="{ open: false }" class="border-b border-border">
+                          <h3 @click="open = !open" class="cursor-pointer flex items-center justify-between text-base font-medium text-text py-4">
+                              <span>What is included in the free plan?</span>
+                              <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </h3>
+                          <p x-show="open" x-transition class="text-sm text-textMuted pb-4">The free plan includes 3 projects, 1GB storage, community support, and basic analytics to get you started with SiteFlow.</p>
+                      </div>
+                      <div x-data="{ open: false }" class="border-b border-border">
+                          <h3 @click="open = !open" class="cursor-pointer flex items-center justify-between text-base font-medium text-text py-4">
+                              <span>Can I change or cancel my plan anytime?</span>
+                              <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </h3>
+                          <p x-show="open" x-transition class="text-sm text-textMuted pb-4">Yes, you can upgrade, downgrade, or cancel your plan at any time. Changes take effect immediately, and we offer a 30-day money-back guarantee.</p>
+                      </div>
+                      <div x-data="{ open: false }" class="border-b border-border">
+                          <h3 @click="open = !open" class="cursor-pointer flex items-center justify-between text-base font-medium text-text py-4">
+                              <span>Is there a discount for annual billing?</span>
+                              <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </h3>
+                          <p x-show="open" x-transition class="text-sm text-textMuted pb-4">Yes, save 20% when you choose annual billing on any paid plan. This applies to both Pro and Enterprise tiers.</p>
+                      </div>
+                      <div x-data="{ open: false }" class="border-b border-border">
+                          <h3 @click="open = !open" class="cursor-pointer flex items-center justify-between text-base font-medium text-text py-4">
+                              <span>What payment methods do you accept?</span>
+                              <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </h3>
+                          <p x-show="open" x-transition class="text-sm text-textMuted pb-4">We accept all major credit cards, PayPal, and bank transfers for Enterprise customers. All payments are processed securely.</p>
+                      </div>
+                      <div x-data="{ open: false }" class="border-b border-border">
+                          <h3 @click="open = !open" class="cursor-pointer flex items-center justify-between text-base font-medium text-text py-4">
+                              <span>Do you offer enterprise discounts?</span>
+                              <svg class="w-4 h-4 transition-transform" :class="open ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                          </h3>
+                          <p x-show="open" x-transition class="text-sm text-textMuted pb-4">Yes, custom pricing is available for organizations with specific needs. Contact our sales team for a tailored quote and potential discounts.</p>
+                      </div>
+                  </div>
+             </div>
+
+             <div class="border border-border rounded-xl p-8">
+                <div class="max-w-md mx-auto text-center">
+                    <h3 class="text-lg font-medium text-text mb-2">Have questions?</h3>
+                    <p class="text-sm text-textMuted mb-5">Our team is ready to help you find the perfect plan.</p>
+                    <div class="flex flex-col sm:flex-row gap-2.5 justify-center">
+                        <a href="#" class="magnetic-btn inline-flex items-center justify-center px-5 py-2 rounded-lg bg-white text-black text-sm">
+                            <span class="magnetic-btn-content">Talk to Sales</span>
+                        </a>
+                        <a href="#" class="magnetic-btn inline-flex items-center justify-center px-5 py-2 rounded-lg border border-border text-sm text-text">
+                            <span class="magnetic-btn-content">View Docs</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="border-t border-border py-8">
+        <div class="max-w-5xl mx-auto px-5">
+            <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                <div class="flex items-center gap-2">
+                    <div class="w-5 h-5 bg-white text-black flex items-center justify-center font-medium text-xs">S</div>
+                    <span class="text-sm font-medium text-text">SiteFlow</span>
+                </div>
+                <div class="flex gap-6 text-sm text-textMuted">
+                    <a href="#" class="hover:text-text transition-colors">Privacy</a>
+                    <a href="#" class="hover:text-text transition-colors">Terms</a>
+                    <a href="#" class="hover:text-text transition-colors">Contact</a>
+                </div>
+                <p class="text-sm text-textMuted/60">&copy; 2024</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Magnetic Button Effect
+        document.querySelectorAll('.magnetic-btn').forEach(btn => {
+            const content = btn.querySelector('.magnetic-btn-content');
+            const rect = btn.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            const strength = 35;
+
+            btn.addEventListener('mousemove', (e) => {
+                const x = e.clientX - centerX;
+                const y = e.clientY - centerY;
+                const distance = Math.sqrt(x * x + y * y);
+                const maxDistance = 150;
+
+                if (distance < maxDistance) {
+                    const percent = 1 - distance / maxDistance;
+                    const pullX = x * percent * (strength / 100);
+                    const pullY = y * percent * (strength / 100);
+                    content.style.transform = `translate(${pullX}px, ${pullY}px)`;
+                }
+            });
+
+            btn.addEventListener('mouseleave', () => {
+                content.style.transform = '';
+            });
+        });
+
+        // 3D Tilt Effect for Cards
+        document.querySelectorAll('.tilt-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                const x = e.clientX - centerX;
+                const y = e.clientY - centerY;
+                const rotateX = (y / (rect.height / 2)) * -10;
+                const rotateY = (x / (rect.width / 2)) * 10;
+                card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(0)`;
+            });
+
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = '';
+            });
+        });
+    </script>
+</body>
+
+</html>
