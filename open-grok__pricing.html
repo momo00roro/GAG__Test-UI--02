@@ -19,13 +19,11 @@
                 extend: {
                     fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] },
                     colors: {
-                        background: '#050505',
-                        surface: '#0a0a0a',
-                        surfaceHover: '#111111',
-                        border: '#1a1a1a',
-                        text: '#ededed',
-                        textMuted: '#737373',
-                    }
+  primary: { 50: '#eff6ff', 500: '#3b82f6', 600: '#2563eb', 700: '#1d4ed8' },
+  secondary: { 900: '#0f172a' },
+  accent: { 500: '#f97316', 600: '#ea580c' },
+  border: '#1a1a1a'
+}
                 }
             }
         }
@@ -297,7 +295,7 @@
                                 <th scope="col" class="text-center py-3 px-4 text-xs font-medium text-text">Enterprise</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-border">
+                        <tbody class="divide-y" style="--tw-divide-color: #1a1a1a;">
                             <tr class="feature-row">
                                 <td class="py-3 px-4 text-sm text-textMuted">Projects</td>
                                 <td class="py-3 px-4 text-sm text-center text-text">3</td>
