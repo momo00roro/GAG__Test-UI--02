@@ -628,78 +628,39 @@
             pointer-events: none;
         }
 
+        /* ========================================
+            IGNUM-STYLE GRID EFFECTS
+            ==================================== */
+        #interactive-bg {
+            display: grid;
+            width: 100vw;
+            height: 100vh;
+        }
+
         .grid-cell {
-            background: transparent;
+            background-color: transparent;
             border: 1px solid rgba(255, 255, 255, 0.03);
+            transition: background-color 0.5s ease, border-color 0.5s ease;
         }
 
-        .dark .grid-cell {
-            border-color: rgba(255, 255, 255, 0.05);
+        /* Active/Ripple State */
+        .grid-cell.active-cell {
+            background-color: rgba(59, 130, 246, 0.15);
+            border-color: rgba(37, 99, 235, 0.2);
+            transition: background-color 0s, border-color 0s;
         }
 
-        .grid-cell.highlighted {
-            background: rgba(59, 130, 246, 0.25);
-            border-color: rgba(37, 99, 235, 0.4);
-            animation: cellFade 1.5s ease-out forwards;
-        }
-
-        @keyframes cellFade {
-            0% {
-                background: rgba(59, 130, 246, 0.25);
-                border-color: rgba(37, 99, 235, 0.4);
-            }
-            100% {
-                background: transparent;
-                border-color: rgba(255, 255, 255, 0.03);
-            }
-        }
-
-        .dark .grid-cell {
-            border-color: rgba(255, 255, 255, 0.05);
-        }
-
-        .grid-cell.highlighted {
-            background: rgba(59, 130, 246, 0.25);
-            border-color: rgba(37, 99, 235, 0.4);
-            transition: background-color 0.15s ease-out, border-color 0.15s ease-out;
-        }
-
-        .grid-cell.revealing {
-            position: relative;
-            z-index: 100;
-        }
-
-        .grid-cell.revealing::before {
-            content: '';
-            position: absolute;
-            inset: -1px;
-            background: rgba(59, 130, 246, 0.9);
-            border: 2px solid rgba(37, 99, 235, 1);
-            border-radius: 2px;
-            transform: scale(1);
-            opacity: 1;
-            box-shadow: 0 0 50px rgba(59, 130, 246, 0.9), 0 0 100px rgba(37, 99, 235, 0.6);
-            animation: explode 2.5s ease-out forwards;
-        }
-
-        @keyframes explode {
-            0% {
-                transform: scale(0.8);
-                opacity: 1;
-            }
-            10% {
-                transform: scale(1.2);
-                opacity: 1;
-            }
-            100% {
-                transform: scale(1.5);
-                opacity: 0;
-            }
+        /* Cursor Glow */
+        #cursor-glow {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, hsl(217 91% 60% / 0.15) 0%, transparent 70%);
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
 
-<body x-data="{ 
+    <body x-data="{ 
     mobileMenuOpen: false,
     isDark: localStorage.getItem('theme') === 'dark',
     toggleTheme() {
@@ -716,11 +677,9 @@
     <!-- Cursor Trailing Circle (Torch) -->
     <div id="cursor-torch" class="cursor-torch"></div>
 
-    <!-- Background Mouseover Grid -->
-    <div id="grid-overlay" class="grid-overlay"></div>
-
-    <!-- Interactive Content Wrapper (allows clicks to pass through to grid) -->
-    <div class="relative z-10" data-grid-target>
+    <!-- Ignum-style Background -->
+    <div id="interactive-bg" class="fixed inset-0 z-[-1] grid pointer-events-none"></div>
+    <div id="cursor-glow" class="fixed top-0 left-0 pointer-events-none z-[-1] rounded-full mix-blend-screen opacity-0 transition-opacity duration-300"></div>
 
     <!-- Navigation -->
     <header
@@ -2690,140 +2649,126 @@
         })();
 
         // ========================================
-        // BACKGROUND MOUSEOVER GRID WITH TRAIL
+        // IGNUM-STYLE GRID EFFECTS (from open-minimax__pricing.html)
         // ========================================
-        (function initGridOverlay() {
-            const gridOverlay = document.getElementById('grid-overlay');
-            const cellSize = 50;
-            let cols, rows;
-            let cells = [];
-            let trailCells = [];
-            const maxTrailLength = 12;
+        document.addEventListener('DOMContentLoaded', function () {
+            const bgContainer = document.getElementById('interactive-bg');
+            const cursorGlow = document.getElementById('cursor-glow');
+            const minCellSize = 50;
+            let gridCols = 0;
+            let gridRows = 0;
 
-            function createGrid() {
-                gridOverlay.innerHTML = '';
-                cells = [];
-                trailCells = [];
+            let targetX = window.innerWidth / 2;
+            let targetY = window.innerHeight / 2;
+            let currentX = targetX;
+            let currentY = targetY;
+            let isHovering = false;
 
-                cols = Math.ceil(window.innerWidth / cellSize);
-                rows = Math.ceil(window.innerHeight / cellSize);
+            function initGrid() {
+                bgContainer.innerHTML = '';
+                const width = window.innerWidth;
+                const height = window.innerHeight;
 
-                gridOverlay.style.display = 'grid';
-                gridOverlay.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-                gridOverlay.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+                gridCols = Math.ceil(width / minCellSize);
+                gridRows = Math.ceil(height / minCellSize);
 
-                for (let i = 0; i < cols * rows; i++) {
+                bgContainer.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
+                bgContainer.style.gridTemplateRows = `repeat(${gridRows}, 1fr)`;
+
+                const fragment = document.createDocumentFragment();
+                for (let i = 0; i < gridCols * gridRows; i++) {
                     const cell = document.createElement('div');
                     cell.className = 'grid-cell';
-                    cell.dataset.index = i;
-                    gridOverlay.appendChild(cell);
-                    cells.push(cell);
+                    cell.dataset.col = i % gridCols;
+                    cell.dataset.row = Math.floor(i / gridCols);
+                    fragment.appendChild(cell);
                 }
+                bgContainer.appendChild(fragment);
             }
 
-            function getCellFromPosition(x, y) {
-                const col = Math.floor(x / cellSize);
-                const row = Math.floor(y / cellSize);
-                const index = row * cols + col;
+            let resizeTimeout;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimeout);
+                resizeTimeout = setTimeout(initGrid, 200);
+            });
 
-                if (index >= 0 && index < cells.length) {
-                    return cells[index];
+            initGrid();
+
+            window.addEventListener('mousemove', (e) => {
+                targetX = e.clientX;
+                targetY = e.clientY;
+                if (!isHovering) {
+                    isHovering = true;
+                    cursorGlow.style.opacity = '1';
                 }
-                return null;
+
+                const cellWidth = window.innerWidth / gridCols;
+                const cellHeight = window.innerHeight / gridRows;
+
+                const col = Math.floor(e.clientX / cellWidth);
+                const row = Math.floor(e.clientY / cellHeight);
+
+                const index = row * gridCols + col;
+                const cell = bgContainer.children[index];
+
+                if (cell) {
+                    cell.classList.add('active-cell');
+                    setTimeout(() => {
+                        cell.classList.remove('active-cell');
+                    }, 400);
+                }
+            });
+
+            function animateCursor() {
+                currentX += (targetX - currentX) * 0.1;
+                currentY += (targetY - currentY) * 0.1;
+
+                cursorGlow.style.transform = `translate(${currentX}px, ${currentY}px) translate(-50%, -50%)`;
+
+                requestAnimationFrame(animateCursor);
             }
+            animateCursor();
 
-            function clearTrail() {
-                trailCells.forEach(cell => {
-                    if (cell && !cell.classList.contains('revealed')) {
-                        cell.classList.remove('highlighted');
-                        cell.style.animation = 'none';
-                    }
-                });
-                trailCells = [];
-            }
+            window.addEventListener('click', (e) => {
+                const cellWidth = window.innerWidth / gridCols;
+                const cellHeight = window.innerHeight / gridRows;
 
-            let lastCol = -1;
-            let lastRow = -1;
+                const centerCol = Math.floor(e.clientX / cellWidth);
+                const centerRow = Math.floor(e.clientY / cellHeight);
 
-            document.addEventListener('mousemove', (e) => {
-                const col = Math.floor(e.clientX / cellSize);
-                const row = Math.floor(e.clientY / cellSize);
+                const radius = Math.floor(Math.random() * 5) + 2;
 
-                if (col !== lastCol || row !== lastRow) {
-                    const cell = getCellFromPosition(e.clientX, e.clientY);
-                    if (cell) {
-                        const alreadyInTrail = trailCells.includes(cell);
-                        if (!alreadyInTrail) {
-                            trailCells.push(cell);
-                            if (trailCells.length > 15) {
-                                const removed = trailCells.shift();
-                                if (removed && !removed.classList.contains('revealed')) {
-                                    removed.classList.remove('highlighted');
+                for (let r = centerRow - radius; r <= centerRow + radius; r++) {
+                    for (let c = centerCol - radius; c <= centerCol + radius; c++) {
+                        if (r >= 0 && r < gridRows && c >= 0 && c < gridCols) {
+                            const dx = c - centerCol;
+                            const dy = r - centerRow;
+                            const distance = Math.sqrt(dx * dx + dy * dy);
+
+                            if (distance <= radius) {
+                                const probability = 1 - (distance / radius) * 0.8;
+
+                                if (Math.random() < probability) {
+                                    const index = r * gridCols + c;
+                                    const cell = bgContainer.children[index];
+                                    if (cell) {
+                                        const delay = distance * 50 + Math.random() * 100;
+                                        const duration = 300 + Math.random() * 400;
+
+                                        setTimeout(() => {
+                                            cell.classList.add('active-cell');
+                                            setTimeout(() => {
+                                                cell.classList.remove('active-cell');
+                                            }, duration);
+                                        }, delay);
+                                    }
                                 }
                             }
                         }
-
-                        trailCells.forEach((c, i) => {
-                            if (c && !c.classList.contains('revealed') && !c.classList.contains('highlighted')) {
-                                c.classList.add('highlighted');
-                            }
-                        });
-                    }
-                    lastCol = col;
-                    lastRow = row;
-                }
-            });
-
-            document.addEventListener('mouseleave', clearTrail);
-
-            // ========================================
-            // CLICK-REVEAL RANDOM EXPLOSION EFFECT
-            // ========================================
-            document.addEventListener('click', (e) => {
-                const centerCol = Math.floor(e.clientX / cellSize);
-                const centerRow = Math.floor(e.clientY / cellSize);
-
-                const maxRadius = 5;
-                const explosionCells = [];
-
-                for (let row = centerRow - maxRadius; row <= centerRow + maxRadius; row++) {
-                    for (let col = centerCol - maxRadius; col <= centerCol + maxRadius; col++) {
-                        if (col >= 0 && col < cols && row >= 0 && row < rows) {
-                            const dist = Math.sqrt(Math.pow(col - centerCol, 2) + Math.pow(row - centerRow, 2));
-                            if (dist <= maxRadius) {
-                                const cellIndex = row * cols + col;
-                                const cell = cells[cellIndex];
-                                explosionCells.push({ cell, dist });
-                            }
-                        }
                     }
                 }
-
-                const scatterRadius = 3 + Math.random() * 4;
-
-                explosionCells.forEach((item) => {
-                    const { cell, dist } = item;
-                    if (cell && !cell.classList.contains('revealing') && dist <= scatterRadius) {
-                        const randomDelay = Math.random() * 350;
-                        const randomDuration = 1200 + Math.random() * 1800;
-
-                        cell.style.animationDuration = randomDuration + 'ms';
-                        cell.classList.add('revealing');
-
-                        setTimeout(() => {
-                            cell.classList.remove('revealing');
-                            cell.style.animationDuration = '';
-                        }, randomDelay + parseInt(randomDuration));
-                    }
-                });
             });
-
-            createGrid();
-
-            window.addEventListener('resize', () => {
-                createGrid();
-            });
-        })();
+        });
     </script>
 
 </body>
