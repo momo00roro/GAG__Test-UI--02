@@ -1182,11 +1182,9 @@
                 const centerCol = Math.floor(e.clientX / cellWidth);
                 const centerRow = Math.floor(e.clientY / cellHeight);
 
-                // Randomize Radius (2 to 6)
-                const radius = Math.floor(Math.random() * 5) + 2;
-
-                // Randomize Shape/Pattern chance
-                // Higher density near center, lower at edges
+                // Highlight clusters
+                // Radius 2-3 cells
+                const radius = 3;
 
                 for (let r = centerRow - radius; r <= centerRow + radius; r++) {
                     for (let c = centerCol - radius; c <= centerCol + radius; c++) {
@@ -1197,28 +1195,17 @@
                             const dy = r - centerRow;
                             const distance = Math.sqrt(dx * dx + dy * dy);
 
-                            // 1. Must be within current random radius
                             if (distance <= radius) {
-                                // 2. Add organic noise:
-                                // closer to center = higher chance to light up
-                                // edge = lower chance
-                                const probability = 1 - (distance / radius) * 0.8;
-
-                                if (Math.random() < probability) {
-                                    const index = r * gridCols + c;
-                                    const cell = bgContainer.children[index];
-                                    if (cell) {
-                                        // Randomize delay slightly for "glitch" feel
-                                        const delay = distance * 50 + Math.random() * 100;
-                                        const duration = 300 + Math.random() * 400;
-
+                                const index = r * gridCols + c;
+                                const cell = bgContainer.children[index];
+                                if (cell) {
+                                    // Delay based on distance for ripple effect
+                                    setTimeout(() => {
+                                        cell.classList.add('active-cell');
                                         setTimeout(() => {
-                                            cell.classList.add('active-cell');
-                                            setTimeout(() => {
-                                                cell.classList.remove('active-cell');
-                                            }, duration);
-                                        }, delay);
-                                    }
+                                            cell.classList.remove('active-cell');
+                                        }, 400);
+                                    }, distance * 50);
                                 }
                             }
                         }

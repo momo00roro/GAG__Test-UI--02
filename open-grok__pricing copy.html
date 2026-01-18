@@ -159,18 +159,19 @@
                 </p>
             </div>
 
-            <div x-data="{ annual: true }" class="mb-16">
-                <div class="flex items-center justify-center gap-4">
-                    <button type="button" @click="annual = false" class="text-sm transition-colors" :class="!annual ? 'text-text' : 'text-textMuted'">Monthly</button>
-                    <button type="button" @click="annual = !annual" class="relative w-11 h-6 rounded-full bg-surface border border-border switch-toggle overflow-hidden" :class="annual ? 'bg-surface' : 'bg-white'" aria-label="Toggle billing period">
-                        <span class="switch-dot absolute top-1 left-0.5 w-4 h-4 rounded-full shadow-sm" :class="annual ? 'translate-x-5 bg-white' : 'translate-x-0 bg-white border border-black'"></span>
-                    </button>
-                    <button type="button" @click="annual = true" class="text-sm transition-colors" :class="annual ? 'text-text' : 'text-textMuted'">Yearly</button>
-                    <span class="ml-1 px-2 py-0.5 rounded-full bg-white/10 text-textMuted text-xs font-medium">Save 20%</span>
-                </div>
-            </div>
+             <div x-data="{ annual: true }">
+                 <div class="mb-16">
+                     <div class="flex items-center justify-center gap-4">
+                         <button type="button" @click="annual = false" class="text-sm transition-colors" :class="!annual ? 'text-text' : 'text-textMuted'">Monthly</button>
+                         <button type="button" @click="annual = !annual" class="relative w-11 h-6 rounded-full bg-surface border border-border switch-toggle overflow-hidden" :class="annual ? 'bg-surface' : 'bg-white'" aria-label="Toggle billing period">
+                             <span class="switch-dot absolute top-1 left-0.5 w-4 h-4 rounded-full shadow-sm" :class="annual ? 'translate-x-5 bg-white' : 'translate-x-0 bg-white border border-black'"></span>
+                         </button>
+                         <button type="button" @click="annual = true" class="text-sm transition-colors" :class="annual ? 'text-text' : 'text-textMuted'">Yearly</button>
+                         <span class="ml-1 px-2 py-0.5 rounded-full bg-white/10 text-textMuted text-xs font-medium">Save 20%</span>
+                     </div>
+                 </div>
 
-            <div x-data="{ annual: true }" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-20 pricing-grid">
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-20 pricing-grid">
                 <div class="tilt-card bg-surface border border-border rounded-xl p-6 relative overflow-hidden group">
                     <div class="tilt-glow"></div>
                     <div class="mb-5">
@@ -204,7 +205,7 @@
                      </button>
                 </div>
 
-                 <div class="tilt-card floating bg-white text-black rounded-xl p-6 relative overflow-hidden group">
+                  <div class="tilt-card bg-white text-black rounded-xl p-6 relative overflow-hidden group">
                      <div class="tilt-glow"></div>
                      <div class="absolute top-2 right-2 bg-black text-white text-xs px-2 py-1 rounded-full font-medium">Popular</div>
                     <div class="mb-5">
@@ -252,9 +253,10 @@
                         <h3 class="text-base font-medium text-text mb-1">Enterprise</h3>
                         <p class="text-sm text-textMuted">For organizations</p>
                     </div>
-                    <div class="mb-5">
-                        <span class="text-3xl font-medium text-text">Custom</span>
-                    </div>
+                     <div class="mb-5">
+                         <span class="text-3xl font-medium text-text" x-text="annual ? '$99' : '$119'"></span>
+                         <span class="text-sm text-textMuted">/mo</span>
+                     </div>
                     <ul class="space-y-2.5 mb-6">
                         <li class="flex items-center gap-2.5 text-sm text-textMuted">
                             <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>

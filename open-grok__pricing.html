@@ -100,10 +100,105 @@
         .bg-surface { background-color: #0a0a0a !important; }
         .bg-surfaceHover { background-color: #111111 !important; }
         .border-border { border-color: #1a1a1a !important; }
+
+        /* ========================================
+            CURSOR TRAILING CIRCLE (TORCH EFFECT)
+            ======================================== */
+        .cursor-torch {
+            position: fixed;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(123, 123, 123, 0.15) 0%, rgba(123, 123, 123, 0.08) 30%, transparent 70%);
+            pointer-events: none;
+            z-index: 1;
+            transform: translate(-50%, -50%);
+            mix-blend-mode: screen;
+            opacity: 0;
+            transition: opacity 0.8s ease-out;
+        }
+
+        /* ========================================
+            BACKGROUND MOUSEOVER GRID WITH TRAIL
+            ======================================== */
+        .grid-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .grid-cell {
+            background: transparent;
+            border: 1px solid rgba(123, 123, 123, 0.03);
+        }
+
+        .grid-cell.highlighted {
+            background: rgba(123, 123, 123, 0.2);
+            border-color: rgba(123, 123, 123, 0.4);
+            animation: cellFade 1.5s ease-out forwards;
+        }
+
+        @keyframes cellFade {
+            0% {
+                background: rgba(123, 123, 123, 0.2);
+                border-color: rgba(123, 123, 123, 0.4);
+            }
+            100% {
+                background: transparent;
+                border-color: rgba(123, 123, 123, 0.03);
+            }
+        }
+
+        /* ========================================
+            CLICK-REVEAL EXPLOSION EFFECT
+            ======================================== */
+        .grid-cell.revealing {
+            position: relative;
+            z-index: 100;
+        }
+
+        .grid-cell.revealing::before {
+            content: '';
+            position: absolute;
+            inset: -8px;
+            background: 
+                linear-gradient(0deg, rgba(123, 123, 123, 0.9) 0%, transparent 50%),
+                linear-gradient(90deg, rgba(123, 123, 123, 0.9) 0%, transparent 50%),
+                linear-gradient(45deg, rgba(123, 123, 123, 0.9) 0%, transparent 50%),
+                linear-gradient(135deg, rgba(123, 123, 123, 0.9) 0%, transparent 50%);
+            border: 2px solid rgba(123, 123, 123, 1);
+            border-radius: 2px;
+            transform: scale(1);
+            opacity: 1;
+            box-shadow: 0 0 50px rgba(123, 123, 123, 0.8), 0 0 100px rgba(123, 123, 123, 0.5);
+            animation: explode 2.5s ease-out forwards;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: scale(0.8) rotate(0deg);
+                opacity: 1;
+            }
+            10% {
+                transform: scale(1.2) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(1.5) rotate(0deg);
+                opacity: 0;
+            }
+        }
     </style>
 </head>
 
-    <body class="bg-background text-text antialiased min-h-screen selection:bg-white selection:text-black overflow-x-hidden">
+    <body class="bg-background text-text antialiased min-h-screen selection:bg-white selection:text-black overflow-x-hidden relative">
+
+    <!-- Cursor Trailing Circle (Torch) -->
+    <div id="cursor-torch" class="cursor-torch"></div>
+
+    <!-- Background Mouseover Grid -->
+    <div id="grid-overlay" class="grid-overlay"></div>
 
     <nav x-data="{ mobileMenuOpen: false }" class="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
         <div class="max-w-5xl mx-auto px-5">
@@ -159,18 +254,19 @@
                 </p>
             </div>
 
-            <div x-data="{ annual: true }" class="mb-16">
-                <div class="flex items-center justify-center gap-4">
-                    <button type="button" @click="annual = false" class="text-sm transition-colors" :class="!annual ? 'text-text' : 'text-textMuted'">Monthly</button>
-                    <button type="button" @click="annual = !annual" class="relative w-11 h-6 rounded-full bg-surface border border-border switch-toggle overflow-hidden" :class="annual ? 'bg-surface' : 'bg-white'" aria-label="Toggle billing period">
-                        <span class="switch-dot absolute top-1 left-0.5 w-4 h-4 rounded-full shadow-sm" :class="annual ? 'translate-x-5 bg-white' : 'translate-x-0 bg-white border border-black'"></span>
-                    </button>
-                    <button type="button" @click="annual = true" class="text-sm transition-colors" :class="annual ? 'text-text' : 'text-textMuted'">Yearly</button>
-                    <span class="ml-1 px-2 py-0.5 rounded-full bg-white/10 text-textMuted text-xs font-medium">Save 20%</span>
-                </div>
-            </div>
+             <div x-data="{ annual: true }">
+                 <div class="mb-16">
+                     <div class="flex items-center justify-center gap-4">
+                         <button type="button" @click="annual = false" class="text-sm transition-colors" :class="!annual ? 'text-text' : 'text-textMuted'">Monthly</button>
+                         <button type="button" @click="annual = !annual" class="relative w-11 h-6 rounded-full bg-surface border border-border switch-toggle overflow-hidden" :class="annual ? 'bg-surface' : 'bg-white'" aria-label="Toggle billing period">
+                             <span class="switch-dot absolute top-1 left-0.5 w-4 h-4 rounded-full shadow-sm" :class="annual ? 'translate-x-5 bg-white' : 'translate-x-0 bg-white border border-black'"></span>
+                         </button>
+                         <button type="button" @click="annual = true" class="text-sm transition-colors" :class="annual ? 'text-text' : 'text-textMuted'">Yearly</button>
+                         <span class="ml-1 px-2 py-0.5 rounded-full bg-white/10 text-textMuted text-xs font-medium">Save 20%</span>
+                     </div>
+                 </div>
 
-            <div x-data="{ annual: true }" class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-20 pricing-grid">
+                 <div class="grid grid-cols-1 md:grid-cols-3 gap-3 mb-20 pricing-grid">
                 <div class="tilt-card bg-surface border border-border rounded-xl p-6 relative overflow-hidden group">
                     <div class="tilt-glow"></div>
                     <div class="mb-5">
@@ -204,7 +300,7 @@
                      </button>
                 </div>
 
-                 <div class="tilt-card floating bg-white text-black rounded-xl p-6 relative overflow-hidden group">
+                  <div class="tilt-card bg-white text-black rounded-xl p-6 relative overflow-hidden group">
                      <div class="tilt-glow"></div>
                      <div class="absolute top-2 right-2 bg-black text-white text-xs px-2 py-1 rounded-full font-medium">Popular</div>
                     <div class="mb-5">
@@ -252,9 +348,10 @@
                         <h3 class="text-base font-medium text-text mb-1">Enterprise</h3>
                         <p class="text-sm text-textMuted">For organizations</p>
                     </div>
-                    <div class="mb-5">
-                        <span class="text-3xl font-medium text-text">Custom</span>
-                    </div>
+                     <div class="mb-5">
+                         <span class="text-3xl font-medium text-text" x-text="annual ? '$99' : '$119'"></span>
+                         <span class="text-sm text-textMuted">/mo</span>
+                     </div>
                     <ul class="space-y-2.5 mb-6">
                         <li class="flex items-center gap-2.5 text-sm text-textMuted">
                             <svg class="w-4 h-4 text-text check-icon" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/></svg>
@@ -503,6 +600,190 @@
                 card.style.transform = '';
             });
         });
+
+        // ========================================
+        // CURSOR TRAILING CIRCLE (TORCH EFFECT)
+        // ========================================
+        (function initCursorTorch() {
+            const torch = document.getElementById('cursor-torch');
+            let mouseX = window.innerWidth / 2;
+            let mouseY = window.innerHeight / 2;
+            let torchX = mouseX;
+            let torchY = mouseY;
+            const lerpFactor = 0.08;
+            let isVisible = false;
+            let fadeTimeout;
+
+            function showTorch() {
+                if (!isVisible) {
+                    isVisible = true;
+                    torch.style.opacity = '1';
+                }
+                clearTimeout(fadeTimeout);
+                fadeTimeout = setTimeout(() => {
+                    isVisible = false;
+                    torch.style.opacity = '0';
+                }, 2000);
+            }
+
+            document.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+                showTorch();
+            });
+
+            document.addEventListener('click', showTorch);
+
+            function animate() {
+                torchX += (mouseX - torchX) * lerpFactor;
+                torchY += (mouseY - torchY) * lerpFactor;
+
+                torch.style.left = torchX + 'px';
+                torch.style.top = torchY + 'px';
+
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+        })();
+
+        // ========================================
+        // BACKGROUND MOUSEOVER GRID WITH TRAIL
+        // ========================================
+        (function initGridOverlay() {
+            const gridOverlay = document.getElementById('grid-overlay');
+            const cellSize = 50;
+            let cols, rows;
+            let cells = [];
+            let trailCells = [];
+            const maxTrailLength = 15;
+
+            function createGrid() {
+                gridOverlay.innerHTML = '';
+                cells = [];
+                trailCells = [];
+
+                cols = Math.ceil(window.innerWidth / cellSize);
+                rows = Math.ceil(window.innerHeight / cellSize);
+
+                gridOverlay.style.display = 'grid';
+                gridOverlay.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+                gridOverlay.style.gridTemplateRows = `repeat(${rows}, 1fr)`;
+
+                for (let i = 0; i < cols * rows; i++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.dataset.index = i;
+                    gridOverlay.appendChild(cell);
+                    cells.push(cell);
+                }
+            }
+
+            function getCellFromPosition(x, y) {
+                const col = Math.floor(x / cellSize);
+                const row = Math.floor(y / cellSize);
+                const index = row * cols + col;
+
+                if (index >= 0 && index < cells.length) {
+                    return cells[index];
+                }
+                return null;
+            }
+
+            function clearTrail() {
+                trailCells.forEach(cell => {
+                    if (cell && !cell.classList.contains('revealed')) {
+                        cell.classList.remove('highlighted');
+                        cell.style.animation = 'none';
+                    }
+                });
+                trailCells = [];
+            }
+
+            let lastCol = -1;
+            let lastRow = -1;
+
+            document.addEventListener('mousemove', (e) => {
+                const col = Math.floor(e.clientX / cellSize);
+                const row = Math.floor(e.clientY / cellSize);
+
+                if (col !== lastCol || row !== lastRow) {
+                    const cell = getCellFromPosition(e.clientX, e.clientY);
+                    if (cell) {
+                        const alreadyInTrail = trailCells.includes(cell);
+                        if (!alreadyInTrail) {
+                            trailCells.push(cell);
+                            if (trailCells.length > 15) {
+                                const removed = trailCells.shift();
+                                if (removed && !removed.classList.contains('revealed')) {
+                                    removed.classList.remove('highlighted');
+                                }
+                            }
+                        }
+
+                        trailCells.forEach((c, i) => {
+                            if (c && !c.classList.contains('revealed') && !c.classList.contains('highlighted')) {
+                                c.classList.add('highlighted');
+                            }
+                        });
+                    }
+                    lastCol = col;
+                    lastRow = row;
+                }
+            });
+
+            document.addEventListener('mouseleave', clearTrail);
+
+            // ========================================
+            // CLICK-REVEAL RANDOM EXPLOSION EFFECT
+            // ========================================
+            const scatterRadius = 3 + Math.random() * 4;
+
+            document.addEventListener('click', (e) => {
+                const centerCol = Math.floor(e.clientX / cellSize);
+                const centerRow = Math.floor(e.clientY / cellSize);
+
+                const maxRadius = 5;
+                const explosionCells = [];
+
+                for (let row = centerRow - maxRadius; row <= centerRow + maxRadius; row++) {
+                    for (let col = centerCol - maxRadius; col <= centerCol + maxRadius; col++) {
+                        if (col >= 0 && col < cols && row >= 0 && row < rows) {
+                            const dist = Math.sqrt(Math.pow(col - centerCol, 2) + Math.pow(row - centerRow, 2));
+                            if (dist <= maxRadius) {
+                                const cellIndex = row * cols + col;
+                                const cell = cells[cellIndex];
+                                explosionCells.push({ cell, dist });
+                            }
+                        }
+                    }
+                }
+
+                explosionCells.sort(() => Math.random() - 0.5);
+
+                explosionCells.forEach((item) => {
+                    const { cell, dist } = item;
+                    if (cell && !cell.classList.contains('revealing') && dist <= scatterRadius) {
+                        const randomDelay = Math.random() * 350;
+                        const randomDuration = 1200 + Math.random() * 1800;
+
+                        cell.style.animationDuration = randomDuration + 'ms';
+                        cell.classList.add('revealing');
+
+                        setTimeout(() => {
+                            cell.classList.remove('revealing');
+                            cell.style.animationDuration = '';
+                        }, randomDelay + parseInt(randomDuration));
+                    }
+                });
+            });
+
+            createGrid();
+
+            window.addEventListener('resize', () => {
+                createGrid();
+            });
+        })();
     </script>
 </body>
 
