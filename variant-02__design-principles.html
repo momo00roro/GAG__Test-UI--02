@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebFlow Studio | Digital Branding & Development</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            white: '#FFFFFF',
+            primary: '#135151',
+            secondary: '#c2a483',
+            'primary-light': '#1a6b6b',
+            'primary-dark': '#0d3a3a',
+          },
+          fontFamily: {
+            sans: ['Geist Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            display: ['Instrument Serif', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    [x-cloak] { display: none !important; }
+    
+    .reveal-on-scroll { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal-on-scroll.revealed { opacity: 1; transform: translateY(0); }
+    
+    .reveal-stagger > * { opacity: 0; transform: translateY(30px); transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal-stagger > *.revealed { opacity: 1; transform: translateY(0); }
+    
+    .reveal-scale { opacity: 0; transform: scale(0.95); transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+    .reveal-scale.revealed { opacity: 1; transform: scale(1); }
+    
+    .reveal-blur { opacity: 0; filter: blur(8px); transition: all 0.8s ease-out; }
+    .reveal-blur.revealed { opacity: 1; filter: blur(0); }
+    
+    .stagger-1 { transition-delay: 0.1s; }
+    .stagger-2 { transition-delay: 0.2s; }
+    .stagger-3 { transition-delay: 0.3s; }
+    .stagger-4 { transition-delay: 0.4s; }
+    .stagger-5 { transition-delay: 0.5s; }
+    
+    .card-hover { transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+    .card-hover:hover { transform: translateY(-8px); box-shadow: 0 24px 48px rgba(19, 81, 81, 0.12); }
+    
+    .floating { animation: floating 6s ease-in-out infinite; }
+    @keyframes floating {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+    
+    .pulse-subtle { animation: pulse-subtle 3s ease-in-out infinite; }
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.6; }
+    }
+    
+    .magnetic { transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .magnetic:hover { transform: scale(1.05); }
+    
+    .pattern-dots { background-image: radial-gradient(circle, #135151 1px, transparent 1px); background-size: 24px 24px; }
+    
+    .icon-circle { background: linear-gradient(135deg, #135151, #1a6b6b); }
+    
+    .section-divider {
+      background: linear-gradient(90deg, transparent 0%, #135151 20%, #135151 80%, transparent 100%);
+      height: 1px;
+    }
+    
+    .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #135151, #c2a483); width: var(--progress); z-index: 100; transition: width 0.1s; }
+    
+    .scroll-animate { opacity: 0; filter: blur(10px); transform: translateY(50px) scale(0.96); transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out; }
+    .scroll-animate.in-view { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+    
+    .scroll-animate-fade { opacity: 0; transform: translateY(35px); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+    .scroll-animate-fade.in-view { opacity: 1; transform: translateY(0); }
+    
+    .scroll-animate-scale { opacity: 0; transform: scale(0.92); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .scroll-animate-scale.in-view { opacity: 1; transform: scale(1); }
+    
+    .scroll-delay-1 { transition-delay: 0.1s; }
+    .scroll-delay-2 { transition-delay: 0.2s; }
+    .scroll-delay-3 { transition-delay: 0.3s; }
+    .scroll-delay-4 { transition-delay: 0.4s; }
+    .scroll-delay-5 { transition-delay: 0.5s; }
+  </style>
+</head>
+<body class="font-sans bg-white text-primary antialiased selection:bg-secondary selection:text-white">
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <header x-data="{ mobileMenu: false }" class="fixed w-full z-50 bg-white/98 backdrop-blur-md border-b border-primary/10"
+       x-init="$watch('mobileMenu', value => { document.body.style.overflow = value ? 'hidden' : ''; })">
+    <nav class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:bg-primary-light transition-colors">
+          <i data-lucide=" Hexagon" class="w-5 h-5 text-white"></i>
+        </div>
+        <span class="font-display text-2xl font-bold tracking-tight">WebFlow</span>
+      </a>
+      <div class="hidden lg:flex items-center gap-10">
+        <a href="#work" class="text-sm font-medium text-primary/70 hover:text-primary transition-colors">Work</a>
+        <a href="#services" class="text-sm font-medium text-primary/70 hover:text-primary transition-colors">Services</a>
+        <a href="#process" class="text-sm font-medium text-primary/70 hover:text-primary transition-colors">Process</a>
+        <a href="#about" class="text-sm font-medium text-primary/70 hover:text-primary transition-colors">About</a>
+      </div>
+      <a href="#contact" class="hidden sm:inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-light transition-colors">
+        <span>Start Project</span>
+        <i data-lucide=" ArrowUpRight" class="w-4 h-4"></i>
+      </a>
+      <button @click="mobileMenu = !mobileMenu" class="lg:hidden p-2 text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+      </button>
+    </nav>
+    <div x-show="mobileMenu" x-collapse 
+         class="lg:hidden fixed inset-0 bg-white z-50"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+      <div class="flex flex-col items-center justify-center h-full space-y-8 px-4">
+        <a href="#work" @click="mobileMenu = false" class="text-2xl font-display text-primary/70 hover:text-primary transition-colors">Work</a>
+        <a href="#services" @click="mobileMenu = false" class="text-2xl font-display text-primary/70 hover:text-primary transition-colors">Services</a>
+        <a href="#process" @click="mobileMenu = false" class="text-2xl font-display text-primary/70 hover:text-primary transition-colors">Process</a>
+        <a href="#about" @click="mobileMenu = false" class="text-2xl font-display text-primary/70 hover:text-primary transition-colors">About</a>
+        <a href="#contact" @click="mobileMenu = false" class="mt-8 px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-light transition-all">Start Project</a>
+      </div>
+      <button @click="mobileMenu = false" class="absolute top-6 right-6 p-2 text-primary/50 hover:text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <section class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      <div class="absolute inset-0 pattern-dots opacity-20"></div>
+      <div class="absolute top-1/4 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[100px]"></div>
+      <div class="absolute bottom-1/4 left-0 w-[400px] h-[400px] bg-secondary/10 rounded-full blur-[80px]"></div>
+      <div class="relative max-w-7xl mx-auto px-6 py-24 w-full">
+        <div class="max-w-4xl">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-full text-sm mb-10 scroll-animate">
+            <span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+            <span class="text-primary/70 font-medium">Premium WebFlow Partner</span>
+          </div>
+          <h1 class="font-display text-5xl md:text-7xl lg:text-8xl font-bold leading-[0.92] tracking-tight mb-10 scroll-animate scroll-delay-1">
+            <span class="text-primary">Crafting</span>
+            <span class="relative inline-block mx-3">
+              <span class="relative z-10 text-secondary italic">digital</span>
+              <svg class="absolute -bottom-2 left-0 w-full" viewBox="0 0 200 8" preserveAspectRatio="none">
+                <path d="M0,6 Q50,8 100,6 T200,6" stroke="#c2a483" stroke-width="3" fill="none"/>
+              </svg>
+            </span>
+            <span class="text-primary">experiences</span>
+          </h1>
+          <p class="text-lg md:text-xl text-primary/60 max-w-xl leading-relaxed mb-12 scroll-animate scroll-delay-2">
+            We are a strategic Webflow design studio specializing in premium website development and digital branding that transforms how brands connect with their audience.
+          </p>
+          <div class="flex flex-wrap gap-4 scroll-animate scroll-delay-3">
+            <a href="#contact" class="inline-flex items-center gap-3 px-8 py-4 bg-primary text-white font-medium rounded-xl hover:bg-primary-light transition-all hover:shadow-xl hover:shadow-primary/20">
+              <span>Start Your Journey</span>
+              <i data-lucide=" ChevronRight" class="w-5 h-5"></i>
+            </a>
+            <a href="#work" class="inline-flex items-center gap-3 px-8 py-4 border border-primary/20 text-primary font-medium rounded-xl hover:border-primary hover:bg-primary/5 transition-all">
+              <i data-lucide=" Eye" class="w-5 h-5"></i>
+              <span>Explore Work</span>
+            </a>
+          </div>
+          <div class="pt-12 scroll-animate scroll-delay-4">
+            <div class="flex flex-wrap items-center gap-x-10 gap-y-4 text-sm">
+              <div class="flex items-center gap-3">
+                <div class="flex -space-x-2">
+                  <div class="w-8 h-8 rounded-full bg-primary border-2 border-white flex items-center justify-center text-xs font-medium text-white">A</div>
+                  <div class="w-8 h-8 rounded-full bg-secondary border-2 border-white flex items-center justify-center text-xs font-medium text-white">B</div>
+                  <div class="w-8 h-8 rounded-full bg-primary-light border-2 border-white flex items-center justify-center text-xs font-medium text-white">C</div>
+                </div>
+                <span class="text-primary/60">Trusted by 200+ brands</span>
+              </div>
+              <div class="flex items-center gap-2 text-primary/60">
+                <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+                <span class="font-medium">4.9/5</span>
+                <span>Average rating</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-20 bg-primary text-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-wrap justify-center items-center gap-12 text-lg font-medium opacity-80">
+          <span class="flex items-center gap-2"><i data-lucide=" Box" class="w-5 h-5"></i> WebFlow</span>
+          <span class="flex items-center gap-2"><i data-lucide=" Code" class="w-5 h-5"></i> React</span>
+          <span class="flex items-center gap-2"><i data-lucide=" Palette" class="w-5 h-5"></i> Figma</span>
+          <span class="flex items-center gap-2"><i data-lucide=" Zap" class="w-5 h-5"></i> GSAP</span>
+          <span class="flex items-center gap-2"><i data-lucide=" Globe" class="w-5 h-5"></i> Headless</span>
+          <span class="flex items-center gap-2"><i data-lucide=" Cloud" class="w-5 h-5"></i> Vercel</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="services" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+          <div class="max-w-lg reveal-on-scroll">
+            <p class="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">Our Expertise</p>
+            <h2 class="font-display text-4xl lg:text-5xl font-bold tracking-tight text-primary">
+              Complete Web Solutions
+            </h2>
+          </div>
+          <p class="text-primary/60 max-w-md text-sm leading-relaxed reveal-on-scroll stagger-1">
+            From brand strategy to Webflow development, we offer comprehensive services designed to elevate your digital presence and drive meaningful results.
+          </p>
+        </div>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 card-hover reveal-stagger">
+            <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+              <i data-lucide=" Layout" class="w-7 h-7 text-white"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-3">WebFlow Design</h3>
+            <p class="text-primary/60 leading-relaxed mb-5 text-sm">
+              Award-winning Webflow designs that combine aesthetic excellence with intuitive user experiences and conversion optimization.
+            </p>
+            <ul class="space-y-2 text-sm text-primary/70">
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Custom layouts</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> CMS architecture</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Design systems</li>
+            </ul>
+          </div>
+          <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 card-hover reveal-stagger stagger-1">
+            <div class="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center mb-6">
+              <i data-lucide=" Code2" class="w-7 h-7 text-white"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-3">Custom Development</h3>
+            <p class="text-primary/60 leading-relaxed mb-5 text-sm">
+              Clean, performant code with custom interactions, animations, and seamless integrations using Webflow's powerful platform.
+            </p>
+            <ul class="space-y-2 text-sm text-primary/70">
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-primary"></i> Custom interactions</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-primary"></i> API integrations</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-primary"></i> Performance tuning</li>
+            </ul>
+          </div>
+          <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 card-hover reveal-stagger stagger-2">
+            <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+              <i data-lucide=" PenTool" class="w-7 h-7 text-white"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-3">Digital Branding</h3>
+            <p class="text-primary/60 leading-relaxed mb-5 text-sm">
+              Strategic brand identity design that elevates your digital presence with cohesive visual systems and messaging.
+            </p>
+            <ul class="space-y-2 text-sm text-primary/70">
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Brand strategy</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Visual identity</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Brand guidelines</li>
+            </ul>
+          </div>
+          <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 card-hover reveal-stagger">
+            <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+              <i data-lucide=" ShoppingCart" class="w-7 h-7 text-white"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-3">E-commerce</h3>
+            <p class="text-primary/60 leading-relaxed mb-5 text-sm">
+              Powerful Webflow e-commerce solutions with seamless checkout, inventory management, and optimized user journeys.
+            </p>
+            <ul class="space-y-2 text-sm text-primary/70">
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Product catalogs</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Payment gateway</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Inventory system</li>
+            </ul>
+          </div>
+          <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 card-hover reveal-stagger stagger-1">
+            <div class="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center mb-6">
+              <i data-lucide=" Search" class="w-7 h-7 text-white"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-3">SEO & Analytics</h3>
+            <p class="text-primary/60 leading-relaxed mb-5 text-sm">
+              Built-in SEO optimization and analytics integration to help your website rank and perform at its best.
+            </p>
+            <ul class="space-y-2 text-sm text-primary/70">
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-primary"></i> On-page SEO</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-primary"></i> Schema markup</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-primary"></i> Analytics setup</li>
+            </ul>
+          </div>
+          <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 card-hover reveal-stagger stagger-2">
+            <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+              <i data-lucide=" Lightbulb" class="w-7 h-7 text-white"></i>
+            </div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-3">Strategy & Consulting</h3>
+            <p class="text-primary/60 leading-relaxed mb-5 text-sm">
+              Strategic consulting to help teams build better digital products and stronger brand experiences.
+            </p>
+            <ul class="space-y-2 text-sm text-primary/70">
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Digital strategy</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> UX workshops</li>
+              <li class="flex items-center gap-2"><i data-lucide=" CheckCircle2" class="w-4 h-4 text-secondary"></i> Content strategy</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="work" class="py-24 bg-primary text-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-16">
+          <div class="reveal-on-scroll">
+            <p class="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">Selected Work</p>
+            <h2 class="font-display text-4xl lg:text-5xl font-bold tracking-tight">
+              Projects That Define Our Craft
+            </h2>
+          </div>
+          <a href="#" class="inline-flex items-center gap-2 text-white hover:text-secondary font-medium text-sm transition-colors reveal-on-scroll stagger-1">
+            <span>View All Projects</span>
+            <i data-lucide=" ArrowRight" class="w-5 h-5"></i>
+          </a>
+        </div>
+        <div class="grid lg:grid-cols-12 gap-8">
+          <div class="lg:col-span-8 reveal-scale">
+            <div class="relative aspect-[16/10] overflow-hidden rounded-2xl mb-4">
+              <div class="absolute inset-0 bg-primary/30 flex items-center justify-center">
+                <div class="text-center">
+                  <i data-lucide=" Monitor" class="w-20 h-20 text-white/20 mx-auto mb-4"></i>
+                  <p class="text-white/40 font-display text-xl">SaaS Platform Redesign</p>
+                </div>
+              </div>
+            </div>
+            <div class="flex items-end justify-between">
+              <div>
+                <h3 class="font-display text-2xl font-bold mb-1">TechFlow Dashboard</h3>
+                <p class="text-white/60 text-sm">WebFlow Development • CMS Integration</p>
+              </div>
+              <span class="px-3 py-1 bg-secondary/20 text-secondary text-sm rounded-full">2024</span>
+            </div>
+          </div>
+          <div class="lg:col-span-4 space-y-8">
+            <div class="reveal-scale stagger-1">
+              <div class="relative aspect-[4/3] overflow-hidden rounded-2xl mb-3">
+                <div class="absolute inset-0 bg-primary/30 flex items-center justify-center">
+                  <i data-lucide=" ShoppingBag" class="w-12 h-12 text-white/20"></i>
+                </div>
+              </div>
+              <h3 class="font-display text-lg font-bold mb-1">Lume Store</h3>
+              <p class="text-white/60 text-xs">E-commerce</p>
+            </div>
+            <div class="reveal-scale stagger-2">
+              <div class="relative aspect-[4/3] overflow-hidden rounded-2xl mb-3">
+                <div class="absolute inset-0 bg-primary/30 flex items-center justify-center">
+                  <i data-lucide=" Building2" class="w-12 h-12 text-white/20"></i>
+                </div>
+              </div>
+              <h3 class="font-display text-lg font-bold mb-1">Aura Architects</h3>
+              <p class="text-white/60 text-xs">Corporate Website</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="process" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid lg:grid-cols-2 gap-16 items-center">
+          <div class="reveal-on-scroll">
+            <p class="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">The Process</p>
+            <h2 class="font-display text-4xl lg:text-5xl font-bold tracking-tight text-primary mb-6">
+              Where Strategy Meets Execution
+            </h2>
+            <p class="text-primary/60 leading-relaxed mb-8">
+              Our proven methodology ensures every project delivers exceptional results. We combine strategic thinking with technical excellence to build websites that perform.
+            </p>
+            <div class="grid grid-cols-3 gap-8">
+              <div>
+                <p class="text-4xl font-display font-bold text-primary">150+</p>
+                <p class="text-sm text-primary/60 mt-1">Projects</p>
+              </div>
+              <div>
+                <p class="text-4xl font-display font-bold text-primary">98%</p>
+                <p class="text-sm text-primary/60 mt-1">On-Time Delivery</p>
+              </div>
+              <div>
+                <p class="text-4xl font-display font-bold text-primary">4.9</p>
+                <p class="text-sm text-primary/60 mt-1">Client Rating</p>
+              </div>
+            </div>
+          </div>
+          <div class="space-y-6">
+            <div class="p-6 bg-primary/5 rounded-xl border border-primary/10 reveal-stagger">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                  <i data-lucide=" Compass" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-primary mb-2">Discovery & Strategy</h3>
+                  <p class="text-sm text-primary/60 leading-relaxed">Immersive research phase where we understand your business, users, and goals through interviews, audits, and analysis.</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 bg-primary/5 rounded-xl border border-primary/10 reveal-stagger stagger-1">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center flex-shrink-0">
+                  <i data-lucide=" PenTool" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-primary mb-2">Design & Prototyping</h3>
+                  <p class="text-sm text-primary/60 leading-relaxed">Iterative design exploration from wireframes to high-fidelity prototypes, ensuring every interaction serves a purpose.</p>
+                </div>
+              </div>
+            </div>
+            <div class="p-6 bg-primary/5 rounded-xl border border-primary/10 reveal-stagger stagger-2">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center flex-shrink-0">
+                  <i data-lucide=" Code" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                  <h3 class="font-semibold text-primary mb-2">Development & Launch</h3>
+                  <p class="text-sm text-primary/60 leading-relaxed">Pixel-perfect WebFlow development with custom interactions, CMS setup, and rigorous testing before launch.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-24 bg-primary text-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-3xl mx-auto mb-16 reveal-on-scroll">
+          <p class="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">Pricing</p>
+          <h2 class="font-display text-4xl lg:text-5xl font-bold tracking-tight mb-6">
+            Transparent Investment
+          </h2>
+          <p class="text-white/70">Clear pricing that aligns with your project scope and goals. No hidden fees, no surprises.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div class="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 reveal-scale">
+            <h3 class="font-display text-2xl font-bold mb-2">Website</h3>
+            <p class="text-white/60 text-sm mb-4">Fixed scope, fixed timeline</p>
+            <div class="mb-6">
+              <span class="text-5xl font-display font-bold">$8K</span>
+              <span class="text-white/50">+</span>
+            </div>
+            <ul class="space-y-3 mb-8">
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Custom WebFlow design</li>
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> CMS integration</li>
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Responsive development</li>
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> SEO basics</li>
+            </ul>
+            <a href="#contact" class="block w-full py-3 text-center border border-white/20 text-white font-medium rounded-lg hover:bg-white hover:text-primary transition-all">Get Quote</a>
+          </div>
+          <div class="relative p-8 bg-white rounded-2xl shadow-2xl transform md:-translate-y-4 reveal-scale stagger-1">
+            <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-secondary text-white text-sm font-bold rounded-full">Most Popular</div>
+            <h3 class="font-display text-2xl font-bold text-primary mb-2">Studio</h3>
+            <p class="text-primary/60 text-sm mb-4">Ongoing partnership</p>
+            <div class="mb-6">
+              <span class="text-5xl font-display font-bold text-primary">$6K</span>
+              <span class="text-primary/50">/month</span>
+            </div>
+            <ul class="space-y-3 mb-8">
+              <li class="flex items-center gap-2 text-primary/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Dedicated designer</li>
+              <li class="flex items-center gap-2 text-primary/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Flexible scope</li>
+              <li class="flex items-center gap-2 text-primary/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Priority support</li>
+              <li class="flex items-center gap-2 text-primary/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Weekly sync calls</li>
+            </ul>
+            <a href="#contact" class="block w-full py-3 text-center bg-primary text-white font-medium rounded-lg hover:bg-primary-light transition-all">Start Partnership</a>
+          </div>
+          <div class="p-8 bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 reveal-scale stagger-2">
+            <h3 class="font-display text-2xl font-bold mb-2">E-commerce</h3>
+            <p class="text-white/60 text-sm mb-4">Full online store setup</p>
+            <div class="mb-6">
+              <span class="text-5xl font-display font-bold">$15K</span>
+            </div>
+            <ul class="space-y-3 mb-8">
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Product catalog</li>
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Payment integration</li>
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Inventory management</li>
+              <li class="flex items-center gap-2 text-white/80 text-sm"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Training session</li>
+            </ul>
+            <a href="#contact" class="block w-full py-3 text-center border border-white/20 text-white font-medium rounded-lg hover:bg-white hover:text-primary transition-all">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="py-24 bg-white">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="max-w-2xl mx-auto text-center mb-12 reveal-on-scroll">
+          <p class="text-sm font-semibold text-secondary uppercase tracking-wider mb-3">Get in Touch</p>
+          <h2 class="font-display text-4xl lg:text-5xl font-bold tracking-tight text-primary mb-4">
+            Ready to Start Your Project?
+          </h2>
+          <p class="text-primary/60">
+            Tell us about your project and we'll get back to you within 24 hours.
+          </p>
+        </div>
+        <div class="max-w-lg mx-auto reveal-on-scroll stagger-1">
+          <form class="space-y-5">
+            <div class="grid md:grid-cols-2 gap-5">
+              <div>
+                <label class="block text-xs font-medium text-primary/70 mb-1.5">Name</label>
+                <input type="text" class="w-full px-4 py-3 bg-primary/5 border border-primary/20 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="Your name">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-primary/70 mb-1.5">Email</label>
+                <input type="email" class="w-full px-4 py-3 bg-primary/5 border border-primary/20 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all" placeholder="hello@company.com">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-primary/70 mb-1.5">Project Type</label>
+              <select class="w-full px-4 py-3 bg-primary/5 border border-primary/20 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                <option>WebFlow Website</option>
+                <option>E-commerce Store</option>
+                <option>Brand Identity</option>
+                <option>Rebrand Project</option>
+                <option>Other</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-primary/70 mb-1.5">Budget Range</label>
+              <select class="w-full px-4 py-3 bg-primary/5 border border-primary/20 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all">
+                <option>$5,000 - $10,000</option>
+                <option>$10,000 - $25,000</option>
+                <option>$25,000 - $50,000</option>
+                <option>$50,000+</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-primary/70 mb-1.5">Tell us about your project</label>
+              <textarea rows="4" class="w-full px-4 py-3 bg-primary/5 border border-primary/20 rounded-xl text-sm focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none" placeholder="What are your goals? What's the timeline?"></textarea>
+            </div>
+            <button type="submit" class="w-full py-4 bg-primary text-white font-medium rounded-xl hover:bg-primary-light transition-all hover:shadow-xl hover:shadow-primary/20">
+              Send Inquiry
+            </button>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="bg-primary text-white/60 py-12 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-white/10 rounded-xl flex items-center justify-center">
+            <i data-lucide=" Hexagon" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="font-display font-bold text-white text-lg">WebFlow</span>
+        </div>
+        <div class="flex gap-8 text-sm">
+          <a href="#" class="hover:text-white transition-colors">Twitter</a>
+          <a href="#" class="hover:text-white transition-colors">LinkedIn</a>
+          <a href="#" class="hover:text-white transition-colors">Instagram</a>
+          <a href="#" class="hover:text-white transition-colors">Dribbble</a>
+        </div>
+        <p class="text-sm">&copy; 2024 WebFlow Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      lucide.createIcons();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.05
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            if (entry.target.classList.contains('reveal-on-scroll') || entry.target.parentElement?.classList.contains('reveal-stagger')) {
+              entry.target.classList.add('revealed');
+            } else {
+              entry.target.classList.add('in-view');
+            }
+          }
+        });
+      }, observerOptions);
+      
+      document.querySelectorAll('.scroll-animate, .scroll-animate-fade, .scroll-animate-scale, .reveal-on-scroll, .reveal-stagger > *').forEach(el => {
+        observer.observe(el);
+      });
+    });
+    window.addEventListener('scroll', () => {
+      const scrollProgress = document.getElementById('scrollProgress');
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      scrollProgress.style.width = scrollPercent + '%';
+    });
+  </script>
+</body>
+</html>

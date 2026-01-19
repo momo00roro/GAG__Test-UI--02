@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebFlow Studio | Premium Web Design & Development</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            white: '#FFFFFF',
+            primary: '#135151',
+            secondary: '#c2a483',
+            'primary-light': '#1a6b6b',
+            'primary-dark': '#0d3a3a',
+          },
+          fontFamily: {
+            sans: ['Geist Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            display: ['Instrument Serif', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    [x-cloak] { display: none !important; }
+    
+    .animate-on-scroll { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+    
+    .animate-blur-in { opacity: 0; filter: blur(10px); transition: opacity 0.8s ease-out, filter 0.8s ease-out; }
+    .animate-blur-in.visible { opacity: 1; filter: blur(0); }
+    
+    .animate-scale-in { opacity: 0; transform: scale(0.95); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .animate-scale-in.visible { opacity: 1; transform: scale(1); }
+    
+    .stagger-1 { transition-delay: 0.1s; }
+    .stagger-2 { transition-delay: 0.2s; }
+    .stagger-3 { transition-delay: 0.3s; }
+    .stagger-4 { transition-delay: 0.4s; }
+    
+    .marquee-container { overflow: hidden; }
+    .marquee-content { animation: marquee 25s linear infinite; }
+    @keyframes marquee {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    
+    .hover-lift { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+    .hover-lift:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(19, 81, 81, 0.15); }
+    
+    .hover-scale { transition: transform 0.3s ease; }
+    .hover-scale:hover { transform: scale(1.02); }
+    
+    .gradient-bg { background: linear-gradient(135deg, #135151 0%, #1a6b6b 50%, #c2a483 100%); }
+    
+    .image-placeholder {
+      background: linear-gradient(135deg, #f0f0f0 0%, #e0e0e0 100%);
+      position: relative;
+      overflow: hidden;
+    }
+    .image-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        45deg,
+        transparent,
+        transparent 10px,
+        rgba(19, 81, 81, 0.03) 10px,
+        rgba(19, 81, 81, 0.03) 20px
+      );
+    }
+    
+    .glow-green { box-shadow: 0 0 40px rgba(19, 81, 81, 0.2); }
+    
+    .text-gradient {
+      background: linear-gradient(135deg, #135151 0%, #c2a483 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #135151, #c2a483); width: var(--progress); z-index: 100; transition: width 0.1s; }
+    
+    .scroll-animate { opacity: 0; filter: blur(12px); transform: translateY(40px) scale(0.95); transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out; }
+    .scroll-animate.in-view { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+    
+    .scroll-animate-fade { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .scroll-animate-fade.in-view { opacity: 1; transform: translateY(0); }
+    
+    .scroll-animate-scale { opacity: 0; transform: scale(0.9); transition: opacity 0.7s ease-out, transform 0.7s ease-out; }
+    .scroll-animate-scale.in-view { opacity: 1; transform: scale(1); }
+    
+    .scroll-delay-1 { transition-delay: 0.1s; }
+    .scroll-delay-2 { transition-delay: 0.2s; }
+    .scroll-delay-3 { transition-delay: 0.3s; }
+    .scroll-delay-4 { transition-delay: 0.4s; }
+    .scroll-delay-5 { transition-delay: 0.5s; }
+    
+    .animate-float-slow { animation: float 6s ease-in-out infinite; }
+    .animate-float-delayed { animation: float-delayed 6s ease-in-out infinite; }
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    @keyframes float-delayed {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .marquee-container { overflow: hidden; }
+  </style>
+</head>
+<body class="font-sans bg-white text-primary antialiased">
+  <div class="scroll-progress" id="scrollProgress"></div>
+  <div x-data="{ scrolled: false, mobileMenu: false }">
+    <div :class="scrolled ? 'bg-white/98 backdrop-blur-md shadow-sm' : 'bg-transparent'"
+         class="fixed w-full z-50 transition-all duration-300 border-b border-primary/10"
+         @scroll.window="scrolled = window.scrollY > 20"
+         x-init="$watch('mobileMenu', value => { document.body.style.overflow = value ? 'hidden' : ''; })">
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+        <a href="#" class="flex items-center gap-3">
+          <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center">
+            <i data-lucide=" Box" class="w-6 h-6 text-white"></i>
+          </div>
+          <span class="font-display text-2xl tracking-tight">WebFlow</span>
+        </a>
+        <div class="hidden md:flex items-center gap-8">
+          <a href="#work" class="text-primary/70 hover:text-primary font-medium transition-colors">Work</a>
+          <a href="#services" class="text-primary/70 hover:text-primary font-medium transition-colors">Services</a>
+          <a href="#process" class="text-primary/70 hover:text-primary font-medium transition-colors">Process</a>
+          <a href="#pricing" class="text-primary/70 hover:text-primary font-medium transition-colors">Pricing</a>
+          <a href="#contact" class="px-6 py-2.5 bg-primary text-white font-medium rounded-lg hover:bg-primary-light transition-all hover:shadow-lg hover:shadow-primary/25">Start Project</a>
+        </div>
+        <button @click="mobileMenu = !mobileMenu" class="md:hidden p-2 text-primary">
+          <i data-lucide="menu" class="w-6 h-6"></i>
+        </button>
+      </nav>
+    </div>
+
+    <div x-show="mobileMenu" x-collapse 
+         class="md:hidden fixed inset-0 bg-white z-[60]"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         style="display: none;">
+      <div class="flex flex-col items-center justify-center h-full space-y-8 px-4">
+        <a href="#work" @click="mobileMenu = false" class="text-3xl md:text-2xl font-display text-primary/70 hover:text-primary transition-colors">Work</a>
+        <a href="#services" @click="mobileMenu = false" class="text-3xl md:text-2xl font-display text-primary/70 hover:text-primary transition-colors">Services</a>
+        <a href="#process" @click="mobileMenu = false" class="text-3xl md:text-2xl font-display text-primary/70 hover:text-primary transition-colors">Process</a>
+        <a href="#pricing" @click="mobileMenu = false" class="text-3xl md:text-2xl font-display text-primary/70 hover:text-primary transition-colors">Pricing</a>
+        <a href="#contact" @click="mobileMenu = false" class="mt-8 px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-light transition-all">Start Project</a>
+      </div>
+      <button @click="mobileMenu = false; lucide.createIcons()" class="absolute top-6 right-6 p-2 text-primary/50 hover:text-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+    </div>
+  </div>
+
+  <section class="min-h-screen flex items-center pt-20 relative overflow-hidden">
+    <div class="absolute inset-0 opacity-30">
+      <div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/10 rounded-full blur-[120px]"></div>
+      <div class="absolute bottom-0 left-0 w-[400px] h-[400px] bg-secondary/20 rounded-full blur-[80px]"></div>
+    </div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24 relative z-10">
+      <div class="grid lg:grid-cols-2 gap-16 items-center">
+        <div class="space-y-8">
+          <div class="inline-flex items-center gap-2 px-4 py-2 bg-primary/5 rounded-full text-sm font-medium text-primary scroll-animate">
+            <span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+            Premium WebFlow Partner
+          </div>
+          <h1 class="font-display text-5xl lg:text-7xl font-bold leading-tight text-primary scroll-animate scroll-delay-1">
+            We craft <span class="italic text-secondary">exceptional</span> digital experiences
+          </h1>
+          <p class="text-lg text-primary/60 max-w-lg leading-relaxed scroll-animate scroll-delay-2">
+            Award-winning Webflow design and development studio. We transform brands through stunning websites, strategic digital branding, and seamless user experiences.
+          </p>
+          <div class="flex flex-wrap gap-4 scroll-animate scroll-delay-3">
+            <a href="#contact" class="px-8 py-4 bg-primary text-white font-semibold rounded-lg hover:bg-primary-light transition-all hover:shadow-xl hover:shadow-primary/25 flex items-center gap-2">
+              <span>Start Your Project</span>
+              <i data-lucide=" ArrowRight" class="w-5 h-5"></i>
+            </a>
+            <a href="#work" class="px-8 py-4 border-2 border-primary/20 text-primary font-semibold rounded-lg hover:border-primary transition-all flex items-center gap-2">
+              <i data-lucide=" Eye" class="w-5 h-5"></i>
+              <span>View Portfolio</span>
+            </a>
+          </div>
+          <div class="flex items-center gap-8 pt-4 scroll-animate scroll-delay-4">
+            <div class="flex -space-x-3">
+              <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium border-2 border-white">JD</div>
+              <div class="w-10 h-10 rounded-full bg-secondary text-white flex items-center justify-center text-sm font-medium border-2 border-white">SK</div>
+              <div class="w-10 h-10 rounded-full bg-primary/70 text-white flex items-center justify-center text-sm font-medium border-2 border-white">MR</div>
+            </div>
+            <div class="text-sm">
+              <span class="font-semibold text-primary">150+</span>
+              <span class="text-primary/50">Projects delivered</span>
+            </div>
+          </div>
+        </div>
+        <div class="relative scroll-animate scroll-delay-2">
+          <div class="relative z-10 bg-white rounded-2xl shadow-2xl overflow-hidden border border-primary/10 glow-green animate-float-slow">
+            <div class="bg-primary px-4 py-3 flex items-center gap-2">
+              <div class="flex gap-1.5">
+                <div class="w-3 h-3 rounded-full bg-white/20"></div>
+                <div class="w-3 h-3 rounded-full bg-white/20"></div>
+                <div class="w-3 h-3 rounded-full bg-white/20"></div>
+              </div>
+              <div class="flex-1 text-center">
+                <span class="text-xs text-white/60 font-mono">webflow.studio</span>
+              </div>
+            </div>
+            <div class="p-8 space-y-6">
+              <div class="flex items-center gap-4 p-4 bg-primary/5 rounded-xl">
+                <div class="w-12 h-12 bg-primary rounded-lg flex items-center justify-center">
+                  <i data-lucide=" TrendingUp" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                  <p class="font-semibold text-primary">+340% Traffic</p>
+                  <p class="text-sm text-primary/60">Website performance</p>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 bg-primary/5 rounded-xl text-center">
+                  <p class="text-2xl font-bold text-primary">98</p>
+                  <p class="text-sm text-primary/60">WebFlow Sites</p>
+                </div>
+                <div class="p-4 bg-primary/5 rounded-xl text-center">
+                  <p class="text-2xl font-bold text-primary">50+</p>
+                  <p class="text-sm text-primary/60">Brands</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="absolute -top-6 -right-6 w-full h-full bg-primary/10 rounded-2xl -z-10 animate-float-delayed"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-primary text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="marquee-container">
+        <div class="marquee-content flex items-center">
+          <div class="flex items-center gap-16 px-8 min-w-max">
+            <span class="text-xl font-medium opacity-80">WebFlow</span>
+            <span class="text-xl font-medium opacity-80">Framer</span>
+            <span class="text-xl font-medium opacity-80">React</span>
+            <span class="text-xl font-medium opacity-80">GSAP</span>
+            <span class="text-xl font-medium opacity-80">Headless CMS</span>
+            <span class="text-xl font-medium opacity-800">Vercel</span>
+            <span class="text-xl font-medium opacity-80">Netlify</span>
+            <span class="text-xl font-medium opacity-80">Figma</span>
+          </div>
+          <div class="flex items-center gap-16 px-8 min-w-max">
+            <span class="text-xl font-medium opacity-80">WebFlow</span>
+            <span class="text-xl font-medium opacity-80">Framer</span>
+            <span class="text-xl font-medium opacity-80">React</span>
+            <span class="text-xl font-medium opacity-80">GSAP</span>
+            <span class="text-xl font-medium opacity-80">Headless CMS</span>
+            <span class="text-xl font-medium opacity-800">Vercel</span>
+            <span class="text-xl font-medium opacity-80">Netlify</span>
+            <span class="text-xl font-medium opacity-80">Figma</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16 scroll-animate">
+        <span class="text-secondary text-sm font-medium tracking-wider uppercase">Our Services</span>
+        <h2 class="font-display text-4xl lg:text-5xl font-bold text-primary mt-4 mb-6">Complete Web Solutions</h2>
+        <p class="text-primary/60">From concept to launch, we deliver end-to-end Webflow development and digital branding services.</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 hover-lift transition-all scroll-animate scroll-delay-1">
+          <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+            <i data-lucide=" Layout" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-3">WebFlow Design</h3>
+          <p class="text-primary/60 leading-relaxed mb-4">Custom Webflow website design that combines stunning visuals with intuitive user experiences.</p>
+          <ul class="space-y-2 text-sm text-primary/70">
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Responsive layouts</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> CMS integration</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Animation systems</li>
+          </ul>
+        </div>
+        <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 hover-lift transition-all scroll-animate scroll-delay-2">
+          <div class="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center mb-6">
+            <i data-lucide=" Code" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-3">Web Development</h3>
+          <p class="text-primary/60 leading-relaxed mb-4">Clean, performant code using Webflow's powerful development platform and custom interactions.</p>
+          <ul class="space-y-2 text-sm text-primary/70">
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-primary"></i> Custom interactions</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-primary"></i> API integrations</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-primary"></i> Performance tuning</li>
+          </ul>
+        </div>
+        <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 hover-lift transition-all scroll-animate scroll-delay-3">
+          <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+            <i data-lucide=" Palette" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-3">Digital Branding</h3>
+          <p class="text-primary/60 leading-relaxed mb-4">Comprehensive brand identity design that elevates your digital presence and connects with audiences.</p>
+          <ul class="space-y-2 text-sm text-primary/70">
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Brand strategy</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Visual identity</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Brand guidelines</li>
+          </ul>
+        </div>
+        <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 hover-lift transition-all scroll-animate scroll-delay-4">
+          <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+            <i data-lucide=" Smartphone" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-3">Responsive Design</h3>
+          <p class="text-primary/60 leading-relaxed mb-4">Websites that look and perform beautifully across all devices, from desktop to mobile.</p>
+          <ul class="space-y-2 text-sm text-primary/70">
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Mobile-first approach</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Breakpoint optimization</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Touch interactions</li>
+          </ul>
+        </div>
+        <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 hover-lift transition-all scroll-animate scroll-delay-5">
+          <div class="w-14 h-14 bg-secondary rounded-2xl flex items-center justify-center mb-6">
+            <i data-lucide=" Zap" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-3">Speed Optimization</h3>
+          <p class="text-primary/60 leading-relaxed mb-4">Lightning-fast websites optimized for Core Web Vitals and maximum performance scores.</p>
+          <ul class="space-y-2 text-sm text-primary/70">
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-primary"></i> Core Web Vitals</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-primary"></i> Asset optimization</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-primary"></i> CDN setup</li>
+          </ul>
+        </div>
+        <div class="group p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 hover-lift transition-all scroll-animate scroll-delay-1">
+          <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-6 group-hover:bg-primary-light transition-colors">
+            <i data-lucide=" Search" class="w-7 h-7 text-white"></i>
+          </div>
+          <h3 class="font-display text-2xl font-bold text-primary mb-3">SEO & Analytics</h3>
+          <p class="text-primary/60 leading-relaxed mb-4">Built-in SEO optimization and analytics integration to help your site rank and perform.</p>
+          <ul class="space-y-2 text-sm text-primary/70">
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> On-page SEO</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Schema markup</li>
+            <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Analytics setup</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="py-24 bg-primary text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col lg:flex-row justify-between items-end mb-12 scroll-animate">
+        <div class="max-w-xl">
+          <span class="text-secondary text-sm font-medium tracking-wider uppercase">Selected Work</span>
+          <h2 class="font-display text-4xl lg:text-5xl font-bold mt-4">Recent Projects</h2>
+        </div>
+        <a href="#" class="mt-6 lg:mt-0 inline-flex items-center gap-2 text-secondary hover:text-white font-semibold transition-colors">
+          <span>View All Projects</span>
+          <i data-lucide=" ArrowRight" class="w-5 h-5"></i>
+        </a>
+      </div>
+      <div class="grid lg:grid-cols-2 gap-8">
+        <div class="group relative overflow-hidden rounded-2xl aspect-[4/3] scroll-animate scroll-delay-1">
+          <div class="image-placeholder w-full h-full">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center">
+                <i data-lucide=" Monitor" class="w-16 h-16 text-primary/20 mx-auto mb-4"></i>
+                <p class="text-primary/30 font-medium">Tech SaaS Platform</p>
+              </div>
+            </div>
+          </div>
+          <div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <div class="text-center p-6">
+              <p class="text-secondary text-sm font-medium mb-2">SaaS Platform</p>
+              <h3 class="font-display text-2xl font-bold mb-2">TechFlow Dashboard</h3>
+              <p class="text-white/70 text-sm">WebFlow development with custom CMS</p>
+            </div>
+          </div>
+        </div>
+        <div class="grid gap-8">
+          <div class="group relative overflow-hidden rounded-2xl aspect-[16/9] scroll-animate scroll-delay-2">
+            <div class="image-placeholder w-full h-full">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i data-lucide=" ShoppingBag" class="w-12 h-12 text-primary/20"></i>
+              </div>
+            </div>
+            <div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <div class="text-center">
+                <p class="text-secondary text-sm font-medium mb-1">E-commerce</p>
+                <h3 class="font-display text-xl font-bold">Lume Store</h3>
+              </div>
+            </div>
+          </div>
+          <div class="group relative overflow-hidden rounded-2xl aspect-[16/9] scroll-animate scroll-delay-3">
+            <div class="image-placeholder w-full h-full">
+              <div class="absolute inset-0 flex items-center justify-center">
+                <i data-lucide=" Building2" class="w-12 h-12 text-primary/20"></i>
+              </div>
+            </div>
+            <div class="absolute inset-0 bg-primary/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+              <div class="text-center">
+                <p class="text-secondary text-sm font-medium mb-1">Corporate</p>
+                <h3 class="font-display text-xl font-bold">Aura Architects</h3>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="process" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-12 gap-12 mb-16">
+        <div class="lg:col-span-5 scroll-animate">
+          <span class="text-secondary text-sm font-medium tracking-wider uppercase">Our Process</span>
+          <h2 class="font-display text-4xl font-bold text-primary mt-4 mb-6">How We Work</h2>
+          <p class="text-primary/60 leading-relaxed">Our streamlined process ensures every project delivers exceptional results. We combine strategy, design, and technical expertise to build websites that perform.</p>
+        </div>
+        <div class="lg:col-span-7">
+          <div class="grid grid-cols-2 gap-6">
+            <div class="p-6 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors scroll-animate scroll-delay-1">
+              <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center mb-4">
+                <span class="text-white font-bold">1</span>
+              </div>
+              <h3 class="font-semibold text-primary mb-2">Discovery</h3>
+              <p class="text-sm text-primary/60">We dive deep into your business, goals, and audience through research and workshops.</p>
+            </div>
+            <div class="p-6 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors scroll-animate scroll-delay-2" style="transform: translateY(2rem);">
+              <div class="w-10 h-10 bg-primary-light rounded-lg flex items-center justify-center mb-4">
+                <span class="text-white font-bold">2</span>
+              </div>
+              <h3 class="font-semibold text-primary mb-2">Strategy</h3>
+              <p class="text-sm text-primary/60">We define the blueprint—information architecture, user flows, and design direction.</p>
+            </div>
+            <div class="p-6 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors scroll-animate scroll-delay-3">
+              <div class="w-10 h-10 bg-secondary rounded-lg flex items-center justify-center mb-4">
+                <span class="text-white font-bold">3</span>
+              </div>
+              <h3 class="font-semibold text-primary mb-2">Design</h3>
+              <p class="text-sm text-primary/60">Iterative design from wireframes to high-fidelity mockups in Figma.</p>
+            </div>
+            <div class="p-6 bg-primary/5 rounded-xl hover:bg-primary/10 transition-colors scroll-animate scroll-delay-4" style="transform: translateY(2rem);">
+              <div class="w-10 h-10 bg-primary/70 rounded-lg flex items-center justify-center mb-4">
+                <span class="text-white font-bold">4</span>
+              </div>
+              <h3 class="font-semibold text-primary mb-2">Development</h3>
+              <p class="text-sm text-primary/60">Clean WebFlow build with interactions, CMS setup, and responsive styling.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+       <div class="grid md:grid-cols-4 gap-8 pt-16 border-t border-primary/10">
+        <div class="text-center p-6 scroll-animate scroll-delay-1">
+          <p class="text-4xl font-display font-bold text-primary mb-2">2-6</p>
+          <p class="text-sm text-primary/60">Weeks Average Timeline</p>
+        </div>
+        <div class="text-center p-6 scroll-animate scroll-delay-2">
+          <p class="text-4xl font-display font-bold text-primary mb-2">100%</p>
+          <p class="text-sm text-primary/60">WebFlow Certified</p>
+        </div>
+        <div class="text-center p-6 scroll-animate scroll-delay-3">
+          <p class="text-4xl font-display font-bold text-primary mb-2">3</p>
+          <p class="text-sm text-primary/60">Revision Rounds</p>
+        </div>
+        <div class="text-center p-6 scroll-animate scroll-delay-4">
+          <p class="text-4xl font-display font-bold text-primary mb-2">24h</p>
+          <p class="text-sm text-primary/60">Response Time</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" class="py-24 bg-primary/5">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto mb-16 scroll-animate">
+        <span class="text-secondary text-sm font-medium tracking-wider uppercase">Pricing</span>
+        <h2 class="font-display text-4xl lg:text-5xl font-bold text-primary mt-4 mb-6">Simple, Transparent Pricing</h2>
+        <p class="text-primary/60">Choose the package that fits your project needs. No hidden fees, no surprises.</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div class="p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 transition-all scroll-animate scroll-delay-1">
+          <h3 class="font-display text-2xl font-bold text-primary mb-2">Starter</h3>
+          <p class="text-primary/60 text-sm mb-6">Perfect for small businesses</p>
+          <div class="mb-6">
+            <span class="text-4xl font-bold text-primary">$5K</span>
+            <span class="text-primary/50">/project</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Up to 5 pages</li>
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Responsive design</li>
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Basic CMS setup</li>
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> 2 week timeline</li>
+          </ul>
+          <a href="#contact" class="block w-full py-3 text-center border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-all">Get Started</a>
+        </div>
+        <div class="relative p-8 bg-primary rounded-2xl shadow-2xl transform md:-translate-y-4 scroll-animate scroll-delay-2">
+          <div class="absolute -top-4 left-1/2 -translate-x-1/2 px-4 py-1 bg-secondary text-white text-sm font-semibold rounded-full">Most Popular</div>
+          <h3 class="font-display text-2xl font-bold text-white mb-2">Professional</h3>
+          <p class="text-white/70 text-sm mb-6">For growing businesses</p>
+          <div class="mb-6">
+            <span class="text-4xl font-bold text-white">$12K</span>
+            <span class="text-white/50">/project</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-center gap-3 text-sm text-white/80"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Up to 12 pages</li>
+            <li class="flex items-center gap-3 text-sm text-white/80"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Custom interactions</li>
+            <li class="flex items-center gap-3 text-sm text-white/80"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Advanced CMS</li>
+            <li class="flex items-center gap-3 text-sm text-white/80"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> SEO optimization</li>
+          </ul>
+          <a href="#contact" class="block w-full py-3 text-center bg-white text-primary font-semibold rounded-lg hover:bg-secondary hover:text-white transition-all">Get Started</a>
+        </div>
+        <div class="p-8 bg-white rounded-2xl border border-primary/10 hover:border-primary/30 transition-all scroll-animate scroll-delay-3">
+          <h3 class="font-display text-2xl font-bold text-primary mb-2">Enterprise</h3>
+          <p class="text-primary/60 text-sm mb-6">For large organizations</p>
+          <div class="mb-6">
+            <span class="text-4xl font-bold text-primary">Custom</span>
+          </div>
+          <ul class="space-y-4 mb-8">
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Unlimited pages</li>
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Custom development</li>
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> API integrations</li>
+            <li class="flex items-center gap-3 text-sm text-primary/70"><i data-lucide=" Check" class="w-5 h-5 text-secondary"></i> Ongoing support</li>
+          </ul>
+          <a href="#contact" class="block w-full py-3 text-center border-2 border-primary text-primary font-semibold rounded-lg hover:bg-primary hover:text-white transition-all">Contact Us</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="testimonials" class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16 scroll-animate">
+        <span class="text-secondary text-sm font-medium tracking-wider uppercase">Testimonials</span>
+        <h2 class="font-display text-4xl font-bold text-primary mt-4">Client Stories</h2>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <div class="p-8 bg-primary/5 rounded-2xl scroll-animate scroll-delay-1">
+          <div class="flex items-center gap-1 mb-4">
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+          </div>
+          <p class="text-primary/70 mb-6 leading-relaxed">"WebFlow Studio transformed our online presence completely. The new site is stunning, fast, and our conversions increased by 40%."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white text-sm font-medium">SJ</div>
+            <div>
+              <p class="font-medium text-primary">Sarah Johnson</p>
+              <p class="text-sm text-primary/60">CEO, TechStart</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-8 bg-primary/5 rounded-2xl scroll-animate scroll-delay-2">
+          <div class="flex items-center gap-1 mb-4">
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+          </div>
+          <p class="text-primary/70 mb-6 leading-relaxed">"Professional, creative, and technically excellent. They delivered our complex CMS website on time and exceeded expectations."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-secondary rounded-full flex items-center justify-center text-white text-sm font-medium">MK</div>
+            <div>
+              <p class="font-medium text-primary">Michael Kim</p>
+              <p class="text-sm text-primary/60">Founder, DataFlow</p>
+            </div>
+          </div>
+        </div>
+        <div class="p-8 bg-primary/5 rounded-2xl scroll-animate scroll-delay-3">
+          <div class="flex items-center gap-1 mb-4">
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+            <i data-lucide=" Star" class="w-4 h-4 fill-secondary text-secondary"></i>
+          </div>
+          <p class="text-primary/70 mb-6 leading-relaxed">"The best Webflow agency we've worked with. Their attention to detail and brand understanding is unmatched in the industry."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-primary/70 rounded-full flex items-center justify-center text-white text-sm font-medium">EL</div>
+            <div>
+              <p class="font-medium text-primary">Emma Lee</p>
+              <p class="text-sm text-primary/60">CMO, GrowthCo</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="faq" class="py-24 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12 scroll-animate">
+        <span class="text-secondary text-sm font-medium tracking-wider uppercase">FAQ</span>
+        <h2 class="font-display text-4xl font-bold text-primary mt-4">Common Questions</h2>
+      </div>
+      <div x-data="{ active: null }" class="space-y-4">
+        <div class="border border-primary/10 rounded-xl overflow-hidden scroll-animate scroll-delay-1">
+          <button @click="active = active === 1 ? null : 1" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-primary/5 transition-colors">
+            <span class="font-semibold text-primary">What is your typical project timeline?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary/40 transition-transform" :class="active === 1 ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div x-show="active === 1" x-collapse class="px-6 pb-4">
+            <p class="text-primary/60 text-sm leading-relaxed">Project timelines vary based on scope. A typical 5-page website takes 2-4 weeks, while more complex projects may take 6-8 weeks. We'll provide a detailed timeline during our initial consultation.</p>
+          </div>
+        </div>
+        <div class="border border-primary/10 rounded-xl overflow-hidden scroll-animate scroll-delay-2">
+          <button @click="active = active === 2 ? null : 2" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-primary/5 transition-colors">
+            <span class="font-semibold text-primary">Do you provide WebFlow training?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary/40 transition-transform" :class="active === 2 ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div x-show="active === 2" x-collapse class="px-6 pb-4">
+            <p class="text-primary/60 text-sm leading-relaxed">Yes! We provide comprehensive training sessions to help you manage and update your WebFlow site. We also offer documentation and video guides for easy reference.</p>
+          </div>
+        </div>
+        <div class="border border-primary/10 rounded-xl overflow-hidden scroll-animate scroll-delay-3">
+          <button @click="active = active === 3 ? null : 3" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-primary/5 transition-colors">
+            <span class="font-semibold text-primary">Can you help with hosting and domains?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary/40 transition-transform" :class="active === 3 ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div x-show="active === 3" x-collapse class="px-6 pb-4">
+            <p class="text-primary/60 text-sm leading-relaxed">Absolutely. We can help set up hosting on WebFlow, configure custom domains, and ensure SSL certificates are properly installed for secure connections.</p>
+          </div>
+        </div>
+        <div class="border border-primary/10 rounded-xl overflow-hidden scroll-animate scroll-delay-4">
+          <button @click="active = active === 4 ? null : 4" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-primary/5 transition-colors">
+            <span class="font-semibold text-primary">What is included in the project?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary/40 transition-transform" :class="active === 4 ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div x-show="active === 4" x-collapse class="px-6 pb-4">
+            <p class="text-primary/60 text-sm leading-relaxed">All projects include design, development, CMS setup, responsive testing, SEO basics, and one month of post-launch support. We also provide source files and documentation.</p>
+          </div>
+        </div>
+        <div class="border border-primary/10 rounded-xl overflow-hidden scroll-animate scroll-delay-5">
+          <button @click="active = active === 5 ? null : 5" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-primary/5 transition-colors">
+            <span class="font-semibold text-primary">How much does a website cost?</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary/40 transition-transform" :class="active === 5 ? 'rotate-180' : ''"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <div x-show="active === 5" x-collapse class="px-6 pb-4">
+            <p class="text-primary/60 text-sm leading-relaxed">Our projects typically range from $5K for starter sites to $12K for professional packages. Enterprise projects are custom quoted based on requirements. We offer transparent pricing with no hidden fees.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="py-24 bg-primary text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-16">
+        <div class="scroll-animate">
+          <span class="text-secondary text-sm font-medium tracking-wider uppercase">Get in Touch</span>
+          <h2 class="font-display text-4xl lg:text-5xl font-bold mt-4 mb-6">Let's Build Something Amazing</h2>
+          <p class="text-white/70 text-lg mb-8">Ready to transform your digital presence? Tell us about your project and we'll get back to you within 24 hours.</p>
+          <div class="space-y-4">
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                <i data-lucide=" Mail" class="w-6 h-6 text-secondary"></i>
+              </div>
+              <div>
+                <p class="font-medium">Email</p>
+                <p class="text-white/70">hello@webflow.studio</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center">
+                <i data-lucide=" MapPin" class="w-6 h-6 text-secondary"></i>
+              </div>
+              <div>
+                <p class="font-medium">Location</p>
+                <p class="text-white/70">San Francisco, CA</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <form class="space-y-6 scroll-animate scroll-delay-1">
+          <div class="grid md:grid-cols-2 gap-6">
+            <div>
+              <label class="block text-sm font-medium text-white/70 mb-2">Name</label>
+              <input type="text" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/40 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all" placeholder="John Doe">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-white/70 mb-2">Email</label>
+              <input type="email" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/40 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all" placeholder="john@example.com">
+            </div>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-2">Project Type</label>
+            <select class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white focus:ring-2 focus:ring-secondary focus:border-transparent transition-all">
+              <option class="bg-primary">WebFlow Website</option>
+              <option class="bg-primary">E-commerce</option>
+              <option class="bg-primary">Brand Identity</option>
+              <option class="bg-primary">Full Rebrand</option>
+              <option class="bg-primary">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-white/70 mb-2">Message</label>
+            <textarea rows="4" class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder:text-white/40 focus:ring-2 focus:ring-secondary focus:border-transparent transition-all resize-none" placeholder="Tell us about your project..."></textarea>
+          </div>
+          <button type="submit" class="w-full py-4 bg-secondary text-primary font-semibold rounded-lg hover:bg-white transition-all flex items-center justify-center gap-2">
+            <span>Send Message</span>
+            <i data-lucide=" Send" class="w-5 h-5"></i>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-8 bg-primary-dark text-white/60 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
+            <i data-lucide=" Box" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="font-display font-bold text-white">WebFlow</span>
+        </div>
+        <p class="text-sm">&copy; 2024 WebFlow Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      lucide.createIcons();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.05
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          }
+        });
+      }, observerOptions);
+      
+      document.querySelectorAll('.scroll-animate, .scroll-animate-fade, .scroll-animate-scale').forEach(el => {
+        observer.observe(el);
+      });
+    });
+    window.addEventListener('scroll', () => {
+      const scrollProgress = document.getElementById('scrollProgress');
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      scrollProgress.style.width = scrollPercent + '%';
+    });
+  </script>
+</body>
+</html>

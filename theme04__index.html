@@ -1,0 +1,1357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SuperSOLD - Design at the speed of thought</title>
+    <meta name="description"
+        content="The AI Agent that deeply understands your design system and brand context. Design at the speed of thought with SuperSOLD.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'serif': ['Instrument Serif', 'Georgia', 'serif'],
+                        'sans': ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fafafa;
+            overflow-x: hidden;
+        }
+
+        /* Dot pattern background */
+        .dot-pattern {
+            background-image: radial-gradient(circle, #d4d4d4 1px, transparent 1px);
+            background-size: 24px 24px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 40%, black 30%, transparent 100%);
+        }
+
+        /* Ripple Canvas */
+        #ripple-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Floating animations */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(var(--rotate, 0deg));
+            }
+
+            50% {
+                transform: translateY(-20px) rotate(var(--rotate, 0deg));
+            }
+        }
+
+        @keyframes float-slow {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(var(--rotate, 0deg));
+            }
+
+            50% {
+                transform: translateY(-12px) rotate(var(--rotate, 0deg));
+            }
+        }
+
+        @keyframes pulse-subtle {
+
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 1;
+                box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
+            }
+
+            50% {
+                transform: scale(0.98);
+                opacity: 0.9;
+                box-shadow: 0 0 20px 0 rgba(255, 255, 255, 0);
+            }
+        }
+
+        .float {
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .float-slow {
+            animation: float-slow 8s ease-in-out infinite;
+        }
+
+        .pulse-subtle {
+            animation: pulse-subtle 3s ease-in-out infinite;
+        }
+
+        .float-delay-1 {
+            animation-delay: -2s;
+        }
+
+        .float-delay-2 {
+            animation-delay: -4s;
+        }
+
+        /* Fade in up animation */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        .delay-4 {
+            animation-delay: 0.4s;
+        }
+
+        .delay-5 {
+            animation-delay: 0.5s;
+        }
+
+        /* Marquee */
+        @keyframes marquee {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        .marquee-track {
+            animation: marquee 30s linear infinite;
+            display: flex;
+            width: max-content;
+        }
+
+        .marquee-track:hover {
+            animation-play-state: paused;
+        }
+
+        /* Floating elements wrapper */
+        .floating-wrapper {
+            position: absolute;
+            pointer-events: auto;
+            cursor: grab;
+            transition: transform 0.1s cubic-bezier(0.2, 0.8, 0.2, 1);
+            /* Quick elastic response for JS */
+            will-change: transform;
+        }
+
+        .floating-wrapper:active {
+            cursor: grabbing;
+        }
+
+        /* Distortion Layer (Repulsion, Scale, Rotate) */
+        .floating-distortion {
+            width: 100%;
+            height: 100%;
+            transform-origin: center;
+            will-change: transform;
+            /* No transition - handled by JS Lerp */
+            pointer-events: none;
+        }
+
+        /* Inner content for CSS Animation */
+        .floating-content {
+            will-change: transform;
+        }
+
+        /* Glass card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+        }
+
+        .blur-sm {
+            filter: blur(2px);
+        }
+
+        .blur-md {
+            filter: blur(4px);
+        }
+
+
+        /* Command input */
+        .command-input {
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Tab active state */
+        .tab-btn.active {
+            background: #000;
+            color: #fff;
+        }
+
+        /* Code block */
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 1rem;
+            font-family: 'Fira Code', monospace;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body class="antialiased text-neutral-900">
+    <!-- Ripple Canvas -->
+    <canvas id="ripple-canvas"></canvas>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="fixed top-4 left-4 right-4 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto rounded-full px-6 py-3 flex items-center justify-between">
+            <a href="#" class="flex items-center gap-2 font-bold text-xl">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+                    <circle cx="16" cy="16" r="14" stroke="#000" stroke-width="2" />
+                    <path d="M10 16h12M16 10v12" stroke="#000" stroke-width="2" stroke-linecap="round" />
+                </svg>
+                SuperSOLD
+            </a>
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#features" class="text-sm text-neutral-600 hover:text-black transition-colors">Product</a>
+                <a href="#workflow" class="text-sm text-neutral-600 hover:text-black transition-colors">Features</a>
+                <a href="#pricing" class="text-sm text-neutral-600 hover:text-black transition-colors">Pricing</a>
+                <a href="#values" class="text-sm text-neutral-600 hover:text-black transition-colors">About</a>
+            </div>
+            <div class="hidden md:flex items-center gap-3">
+                <a href="#"
+                    class="text-sm font-medium px-4 py-2 rounded-full border border-neutral-200 hover:border-neutral-400 transition-colors">Log
+                    In</a>
+                <a href="#"
+                    class="text-sm font-medium px-4 py-2 rounded-full bg-black text-white hover:bg-neutral-800 transition-colors">Sign
+                    Up</a>
+            </div>
+            <button id="mobile-menu-btn" class="md:hidden p-2"><svg class="w-6 h-6" fill="none" stroke="currentColor"
+                    viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                </svg></button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-white z-[100] hidden flex-col items-center justify-center">
+        <button id="close-menu" class="absolute top-6 right-6 p-2"><svg class="w-8 h-8" fill="none"
+                stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg></button>
+        <div class="flex flex-col items-center gap-8">
+            <a href="#features" class="font-serif text-4xl hover:opacity-60 transition-opacity">Product</a>
+            <a href="#workflow" class="font-serif text-4xl hover:opacity-60 transition-opacity">Features</a>
+            <a href="#pricing" class="font-serif text-4xl hover:opacity-60 transition-opacity">Pricing</a>
+            <a href="#values" class="font-serif text-4xl hover:opacity-60 transition-opacity">About</a>
+            <a href="#" class="mt-8 px-8 py-4 bg-black text-white rounded-full text-lg font-medium">Get Started</a>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="relative min-h-screen flex items-center justify-center pt-24 pb-16 overflow-hidden">
+        <!-- Dot Pattern Background -->
+        <div class="absolute inset-0 dot-pattern"></div>
+
+        <!-- Floating Elements -->
+        <div id="floating-container" class="absolute inset-0 pointer-events-none overflow-hidden flex justify-center">
+            <div class="relative w-full max-w-[1440px] h-full">
+
+                <!-- LANDSCAPE CARDS (16:9) -->
+
+                <!-- Card L1: Top Left - Dashboard -->
+                <div class="floating-wrapper hidden lg:block" style="top: 12%; left: 2%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float float-delay-1" style="--rotate: -6deg;">
+                            <div
+                                class="relative w-64 aspect-video bg-white rounded-lg shadow-2xl shadow-neutral-400/20 transform border border-neutral-200 overflow-visible">
+                                <!-- Chip -->
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10 transition-transform hover:scale-105">
+                                    <div
+                                        class="w-4 h-4 rounded bg-orange-100 text-orange-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M4 6h16M4 12h16M4 18h7" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span
+                                            class="text-[10px] font-bold text-neutral-900 leading-tight">Dashboard</span>
+                                    </div>
+                                </div>
+                                <img src="assets/ui_landscape_1.png" alt="SaaS Dashboard" loading="lazy"
+                                    class="w-full h-full object-cover rounded-lg block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card L2: Bottom Right - Analytics (Blurred) -->
+                <div class="floating-wrapper hidden lg:block" style="bottom: 15%; right: 5%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float-slow blur-sm" style="--rotate: 4deg;">
+                            <div
+                                class="relative w-72 aspect-video bg-white rounded-lg shadow-xl shadow-neutral-400/10 transform border border-neutral-200 overflow-visible">
+                                <!-- Chip -->
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10">
+                                    <div
+                                        class="w-4 h-4 rounded bg-blue-100 text-blue-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span
+                                            class="text-[10px] font-bold text-neutral-900 leading-tight">Analytics</span>
+                                    </div>
+                                </div>
+                                <img src="assets/ui_landscape_3.png" alt="Analytics" loading="lazy"
+                                    class="w-full h-full object-cover rounded-lg block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card L3: Top Right - Fintech (Deep Blur) -->
+                <div class="floating-wrapper hidden lg:block" style="top: 8%; right: 15%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float float-delay-2 blur-md" style="--rotate: -3deg;">
+                            <div
+                                class="relative w-56 aspect-video bg-white rounded-lg shadow-lg transform border border-neutral-200 overflow-visible">
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10">
+                                    <div
+                                        class="w-4 h-4 rounded bg-green-100 text-green-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span
+                                            class="text-[10px] font-bold text-neutral-900 leading-tight">Fintech</span>
+                                    </div>
+                                </div>
+                                <img src="assets/ui_landscape_4.png" alt="Fintech App" loading="lazy"
+                                    class="w-full h-full object-cover rounded-lg block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card L4: Mid Left - Kanban (Slight Blur) -->
+                <div class="floating-wrapper hidden xl:block" style="top: 45%; left: -2%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float-slow blur-sm" style="--rotate: 8deg;">
+                            <div
+                                class="relative w-60 aspect-video bg-white rounded-lg shadow-xl transform border border-neutral-200 overflow-visible">
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10">
+                                    <div
+                                        class="w-4 h-4 rounded bg-purple-100 text-purple-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span class="text-[10px] font-bold text-neutral-900 leading-tight">Board</span>
+                                    </div>
+                                </div>
+                                <img src="assets/ui_landscape_2.png" alt="Kanban Board" loading="lazy"
+                                    class="w-full h-full object-cover rounded-lg block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PORTRAIT CARDS (9:16) -->
+
+                <!-- Card P1: Top Right - Social Feed -->
+                <div class="floating-wrapper hidden lg:block" style="top: 15%; right: 5%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float float-delay-2" style="--rotate: 12deg;">
+                            <div
+                                class="relative w-40 aspect-[9/16] bg-white rounded-[2rem] shadow-2xl shadow-neutral-200/50 transform border border-neutral-200 overflow-visible">
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10">
+                                    <div
+                                        class="w-4 h-4 rounded bg-pink-100 text-pink-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span class="text-[10px] font-bold text-neutral-900 leading-tight">Feed</span>
+                                    </div>
+                                </div>
+                                <img src="assets/ui_portrait_1.png" alt="Social Feed" loading="lazy"
+                                    class="w-full h-full object-cover rounded-[1.9rem] block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card P2: Bottom Left - Crypto Wallet -->
+                <div class="floating-wrapper hidden md:block" style="bottom: 20%; left: 8%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float-slow" style="--rotate: -5deg;">
+                            <div
+                                class="relative w-44 aspect-[9/16] bg-white rounded-[2rem] shadow-2xl shadow-neutral-200/50 transform border border-neutral-200 overflow-visible">
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10">
+                                    <div
+                                        class="w-4 h-4 rounded bg-indigo-100 text-indigo-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span class="text-[10px] font-bold text-neutral-900 leading-tight">Crypto</span>
+                                    </div>
+                                </div>
+                                <img src="assets/ui_portrait_2.png" alt="Crypto Wallet" loading="lazy"
+                                    class="w-full h-full object-cover rounded-[1.9rem] block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card P3: Top Mid-Left - Payment (Blurred) -->
+                <div class="floating-wrapper hidden lg:block" style="top: 25%; left: 25%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float blur-sm" style="--rotate: -15deg;">
+                            <div
+                                class="relative w-32 aspect-[9/16] bg-white rounded-[1.5rem] shadow-lg transform border border-neutral-200 overflow-visible">
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10">
+                                    <div
+                                        class="w-4 h-4 rounded bg-amber-100 text-amber-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span
+                                            class="text-[10px] font-bold text-neutral-900 leading-tight">Payment</span>
+                                    </div>
+                                </div>
+                                <img src="assets/ui_portrait_3.png" alt="Payment App" loading="lazy"
+                                    class="w-full h-full object-cover rounded-[1.4rem] block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card P4: Bottom Mid-Right - Mobile Mockup (Deep Blur) -->
+                <div class="floating-wrapper hidden lg:block" style="bottom: 35%; right: 28%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float-slow float-delay-1 blur-md" style="--rotate: 6deg;">
+                            <div
+                                class="relative w-36 aspect-[9/16] bg-white rounded-[1.5rem] shadow-lg transform border border-neutral-200 overflow-visible">
+                                <div
+                                    class="absolute -top-3 -left-3 bg-white px-2 py-1 rounded-md shadow-sm border border-neutral-100 flex items-center gap-2 z-10">
+                                    <div
+                                        class="w-4 h-4 rounded bg-cyan-100 text-cyan-600 flex items-center justify-center">
+                                        <svg class="w-2.5 h-2.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3"
+                                                d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col">
+                                        <span
+                                            class="text-[8px] text-neutral-400 uppercase tracking-wider font-semibold">Page
+                                            Type</span>
+                                        <span class="text-[10px] font-bold text-neutral-900 leading-tight">Mobile</span>
+                                    </div>
+                                </div>
+                                <img src="assets/mockup_mobile.png" alt="Mobile App" loading="lazy"
+                                    class="w-full h-full object-cover rounded-[1.4rem] block">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- SOCIAL ICONS with Pulse -->
+
+                <!-- Instagram Icon -->
+                <div class="floating-wrapper hidden md:flex" style="top: 40%; left: 18%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float-slow">
+                            <div
+                                class="pulse-subtle w-12 h-12 bg-white/80 backdrop-blur rounded-xl shadow-lg flex items-center justify-center border border-white/50">
+                                <svg class="w-6 h-6 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LinkedIn Icon -->
+                <div class="floating-wrapper hidden md:flex" style="top: 55%; right: 15%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float-slow float-delay-1">
+                            <div
+                                class="pulse-subtle w-12 h-12 bg-white/80 backdrop-blur rounded-xl shadow-lg flex items-center justify-center border border-white/50">
+                                <svg class="w-6 h-6 text-blue-700" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Figma Icon -->
+                <div class="floating-wrapper hidden md:flex" style="bottom: 30%; right: 25%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float float-delay-2">
+                            <div
+                                class="pulse-subtle w-12 h-12 bg-white/80 backdrop-blur rounded-xl shadow-lg flex items-center justify-center border border-white/50">
+                                <svg class="w-6 h-6" fill="none" viewBox="0 0 15 23">
+                                    <path fill="#F24E1E"
+                                        d="M3.5 23C5.433 23 7 21.433 7 19.5V16H3.5C1.567 16 0 17.567 0 19.5C0 21.433 1.567 23 3.5 23Z" />
+                                    <path fill="#0ACF83"
+                                        d="M0 12.5C0 10.567 1.567 9 3.5 9H7V16H3.5C1.567 16 0 14.433 0 12.5Z" />
+                                    <path fill="#A259FF"
+                                        d="M3.5 0C1.567 0 0 1.567 0 3.5C0 5.433 1.567 7 3.5 7H7V0H3.5Z" />
+                                    <path fill="#1ABCFE"
+                                        d="M7 0H10.5C12.433 0 14 1.567 14 3.5C14 5.433 12.433 7 10.5 7H7V0Z" />
+                                    <path fill="#1ABCFE"
+                                        d="M14 10.5C14 12.433 12.433 14 10.5 14C8.567 14 7 12.433 7 10.5V7H10.5C12.433 7 14 8.567 14 10.5Z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- TikTok Icon -->
+                <div class="floating-wrapper hidden md:flex" style="bottom: 45%; left: 10%;">
+                    <div class="floating-distortion">
+                        <div class="floating-content float-slow">
+                            <div
+                                class="pulse-subtle w-12 h-12 bg-white/80 backdrop-blur rounded-xl shadow-lg flex items-center justify-center border border-white/50">
+                                <svg class="w-6 h-6 text-black" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M19.589 6.686a4.793 4.793 0 0 1-3.77-4.245V2h-3.445v13.672a2.896 2.896 0 0 1-5.201 1.743l-.002-.001.002.001a2.895 2.895 0 0 1 3.183-4.51v-3.5a6.329 6.329 0 0 0-5.394 10.692 6.33 6.33 0 0 0 10.857-4.424V8.687a8.182 8.182 0 0 0 4.773 1.526V6.79a4.831 4.831 0 0 1-1.003-.104z" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Hero Content -->
+        <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+            <!-- Pills -->
+            <div class="flex flex-wrap justify-center gap-3 mb-8 fade-in-up">
+                <span
+                    class="px-4 py-1.5 bg-green-50 text-green-700 text-xs font-medium rounded-full border border-green-200">Fresh
+                    updates
+                    weekly</span>
+                <span
+                    class="px-4 py-1.5 bg-purple-50 text-purple-700 text-xs font-medium rounded-full border border-purple-200">Flows
+                    now
+                    available</span>
+            </div>
+
+            <!-- Heading -->
+            <h1
+                class="font-serif text-5xl md:text-7xl lg:text-8xl tracking-tight text-neutral-900 mb-6 fade-in-up delay-1">
+                Design at the<br>speed of thought
+            </h1>
+
+            <!-- Subtitle -->
+            <p class="text-base md:text-lg text-neutral-600 max-w-2xl mx-auto mb-8 fade-in-up delay-2">
+                The AI Agent that deeply understands your design system and brand context.
+            </p>
+
+            <!-- Buttons -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12 fade-in-up delay-3">
+                <a href="#"
+                    class="px-8 py-4 bg-black text-white rounded-full font-medium hover:bg-neutral-800 transition-colors">Start
+                    Exploring</a>
+                <a href="#"
+                    class="px-8 py-4 border border-neutral-300 rounded-full font-medium hover:border-neutral-500 transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M8 5v14l11-7z" />
+                    </svg>
+                    Watch Demo
+                </a>
+            </div>
+
+            <!-- Command Input -->
+            <div class="command-input max-w-3xl mx-auto p-4 fade-in-up delay-4">
+                <div class="flex flex-col gap-4">
+                    <textarea id="prompt-input" rows="2" placeholder="Describe the UI you want to create..."
+                        class="w-full resize-none border-0 focus:ring-0 text-lg text-neutral-800 placeholder:text-neutral-400 bg-transparent outline-none"></textarea>
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <button class="p-2 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer"><svg
+                                    class="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg></button>
+                            <button class="p-2 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer"><svg
+                                    class="w-5 h-5 text-neutral-500" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                                </svg></button>
+                            <select
+                                class="text-sm text-neutral-600 bg-neutral-100 border-0 rounded-lg px-3 py-1.5 cursor-pointer">
+                                <option>1K</option>
+                                <option>2K</option>
+                                <option selected>4K</option>
+                            </select>
+                        </div>
+                        <button
+                            class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center hover:bg-neutral-800 transition-colors cursor-pointer">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M14 5l7 7m0 0l-7 7m7-7H3" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                <!-- Suggestions -->
+                <div class="flex flex-wrap gap-2 mt-4 pt-4 border-t border-neutral-100">
+                    <button
+                        class="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-sm text-neutral-600 rounded-full transition-colors cursor-pointer">SaaS
+                        pricing table</button>
+                    <button
+                        class="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-sm text-neutral-600 rounded-full transition-colors cursor-pointer">Mobile
+                        onboarding</button>
+                    <button
+                        class="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-sm text-neutral-600 rounded-full transition-colors cursor-pointer">Dashboard
+                        analytics</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof Marquee -->
+    <section class="py-16 border-y border-neutral-200 overflow-hidden bg-white">
+        <div class="marquee-track">
+            <div class="flex items-center gap-16 px-8">
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">LOGOIPSUM</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">COMPANY</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">BRAND</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">STARTUP</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">ENTERPRISE</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">AGENCY</text>
+                    </svg></div>
+            </div>
+            <div class="flex items-center gap-16 px-8">
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">LOGOIPSUM</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">COMPANY</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">BRAND</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">STARTUP</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">ENTERPRISE</text>
+                    </svg></div>
+                <div class="opacity-40 hover:opacity-100 transition-opacity cursor-pointer"><svg class="h-8"
+                        viewBox="0 0 120 30" fill="currentColor">
+                        <rect width="120" height="30" rx="4" fill="#e5e5e5" /><text x="60" y="20" text-anchor="middle"
+                            font-size="12" fill="#737373">AGENCY</text>
+                    </svg></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Interactive Showcase -->
+    <section id="showcase" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-serif text-4xl md:text-5xl mb-4">From prompt to production</h2>
+                <p class="text-lg text-neutral-600">See how SuperSOLD transforms ideas into pixel-perfect designs</p>
+            </div>
+            <div class="grid lg:grid-cols-5 gap-8 reveal">
+                <!-- Tabs -->
+                <div class="lg:col-span-2 space-y-4">
+                    <button
+                        class="tab-btn active w-full text-left p-6 bg-white rounded-2xl shadow-sm border border-neutral-100 transition-all hover:shadow-md cursor-pointer"
+                        data-tab="analytics">
+                        <h3 class="font-semibold text-lg mb-1">Analytics Dashboard</h3>
+                        <p class="text-sm text-neutral-500">Dark mode SaaS with real-time charts</p>
+                    </button>
+                    <button
+                        class="tab-btn w-full text-left p-6 bg-white rounded-2xl shadow-sm border border-neutral-100 transition-all hover:shadow-md cursor-pointer"
+                        data-tab="marketing">
+                        <h3 class="font-semibold text-lg mb-1">Marketing Page</h3>
+                        <p class="text-sm text-neutral-500">High conversion hero with social proof</p>
+                    </button>
+                    <button
+                        class="tab-btn w-full text-left p-6 bg-white rounded-2xl shadow-sm border border-neutral-100 transition-all hover:shadow-md cursor-pointer"
+                        data-tab="mobile">
+                        <h3 class="font-semibold text-lg mb-1">Mobile Profile</h3>
+                        <p class="text-sm text-neutral-500">Fitness tracking app interface</p>
+                    </button>
+                </div>
+                <!-- Preview -->
+                <div class="lg:col-span-3">
+                    <div class="bg-white rounded-3xl shadow-2xl shadow-neutral-200/50 overflow-hidden">
+                        <div class="flex items-center gap-2 px-4 py-3 border-b border-neutral-100">
+                            <div class="flex gap-1.5">
+                                <div class="w-3 h-3 rounded-full bg-red-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-400"></div>
+                            </div>
+                            <div class="flex-1 flex justify-center gap-4">
+                                <button
+                                    class="preview-mode-btn text-sm font-medium px-4 py-1 rounded-full bg-neutral-100 cursor-pointer"
+                                    data-mode="preview">Preview</button>
+                                <button
+                                    class="preview-mode-btn text-sm text-neutral-500 px-4 py-1 rounded-full hover:bg-neutral-50 cursor-pointer"
+                                    data-mode="code">Code</button>
+                            </div>
+                        </div>
+                        <div id="preview-content"
+                            class="aspect-video bg-gradient-to-br from-slate-900 to-slate-800 p-6 flex items-center justify-center">
+                            <div class="text-center text-white/60"><svg class="w-16 h-16 mx-auto mb-4 opacity-50"
+                                    fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                                <p>Analytics Dashboard Preview</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-serif text-4xl md:text-5xl mb-4">Built for modern product teams</h2>
+                <p class="text-lg text-neutral-600">Everything you need to ship faster</p>
+            </div>
+            <div class="grid md:grid-cols-2 gap-6 reveal">
+                <div class="p-8 bg-neutral-50 rounded-3xl hover:shadow-lg transition-shadow cursor-pointer">
+                    <div class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6"><svg
+                            class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
+                        </svg></div>
+                    <h3 class="text-xl font-semibold mb-2">Context Importer</h3>
+                    <p class="text-neutral-600">Import existing sites & design tokens. SuperSOLD learns your brand
+                        instantly.</p>
+                </div>
+                <div class="p-8 bg-neutral-50 rounded-3xl hover:shadow-lg transition-shadow cursor-pointer">
+                    <div class="w-14 h-14 bg-purple-100 rounded-2xl flex items-center justify-center mb-6"><svg
+                            class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                        </svg></div>
+                    <h3 class="text-xl font-semibold mb-2">Infinite Canvas</h3>
+                    <p class="text-neutral-600">Explore multiple design versions side by side. Never lose a good idea.
+                    </p>
+                </div>
+                <div class="p-8 bg-neutral-50 rounded-3xl hover:shadow-lg transition-shadow cursor-pointer">
+                    <div class="w-14 h-14 bg-orange-100 rounded-2xl flex items-center justify-center mb-6"><svg
+                            class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg></div>
+                    <h3 class="text-xl font-semibold mb-2">Plan Mode</h3>
+                    <p class="text-neutral-600">Map user flows before diving into visuals. Strategy meets design.</p>
+                </div>
+                <div class="p-8 bg-neutral-50 rounded-3xl hover:shadow-lg transition-shadow cursor-pointer">
+                    <div class="w-14 h-14 bg-green-100 rounded-2xl flex items-center justify-center mb-6"><svg
+                            class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                        </svg></div>
+                    <h3 class="text-xl font-semibold mb-2">Prompt Library</h3>
+                    <p class="text-neutral-600">Curated best practices and templates. Start with proven patterns.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Workflow Bento Grid -->
+    <section id="workflow" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-serif text-4xl md:text-5xl mb-4">Works where you work</h2>
+                <p class="text-lg text-neutral-600">Seamless integration with your favorite tools</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-6 reveal">
+                <!-- Figma Plugin - Large -->
+                <div
+                    class="md:col-span-2 p-8 bg-white rounded-3xl shadow-lg shadow-neutral-100 hover:shadow-xl transition-shadow cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-4">Figma Plugin</h3>
+                    <div
+                        class="aspect-video bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl flex items-center justify-center">
+                        <svg class="w-20 h-20 text-purple-300" viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M5 5.5A3.5 3.5 0 018.5 2H12v7H8.5A3.5 3.5 0 015 5.5zM12 2h3.5a3.5 3.5 0 110 7H12V2zm0 12.5a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0zm0-5.5h3.5a3.5 3.5 0 110 7H12V9z" />
+                        </svg>
+                    </div>
+                </div>
+                <!-- React & Tailwind - Dark -->
+                <div
+                    class="p-8 bg-neutral-900 text-white rounded-3xl hover:bg-neutral-800 transition-colors cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-4">React & Tailwind</h3>
+                    <div class="bg-neutral-800 rounded-xl p-4 font-mono text-sm text-green-400 overflow-hidden">
+                        <code>&lt;Button variant="primary"&gt;<br>&nbsp;&nbsp;Get Started<br>&lt;/Button&gt;</code>
+                    </div>
+                </div>
+                <!-- Design Tokens -->
+                <div
+                    class="p-8 bg-white rounded-3xl shadow-lg shadow-neutral-100 hover:shadow-xl transition-shadow cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-4">Design Tokens</h3>
+                    <div class="flex gap-3 mt-6">
+                        <div class="w-10 h-10 rounded-full bg-blue-500"></div>
+                        <div class="w-10 h-10 rounded-full bg-purple-500"></div>
+                        <div class="w-10 h-10 rounded-full bg-pink-500"></div>
+                        <div class="w-10 h-10 rounded-full bg-orange-500"></div>
+                        <div class="w-10 h-10 rounded-full bg-green-500"></div>
+                    </div>
+                </div>
+                <!-- GitHub Sync - Wide -->
+                <div
+                    class="md:col-span-2 p-8 bg-white rounded-3xl shadow-lg shadow-neutral-100 hover:shadow-xl transition-shadow cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-4">GitHub Sync</h3>
+                    <div class="flex items-center gap-4 mt-4">
+                        <div class="flex-1 h-3 bg-neutral-100 rounded-full overflow-hidden">
+                            <div class="h-full w-3/4 bg-green-500 rounded-full"></div>
+                        </div><span class="text-sm font-medium text-green-600">PR Merged</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values Section - Dark -->
+    <section id="values" class="py-24 px-6 bg-black text-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-3 gap-12 reveal">
+                <div class="text-center md:text-left">
+                    <span class="text-5xl font-serif text-neutral-500">01</span>
+                    <h3 class="text-2xl font-semibold mt-4 mb-3">Deep Context</h3>
+                    <p class="text-neutral-400">Understands design tokens, brand guidelines, and component libraries.
+                        Not just pixels.</p>
+                </div>
+                <div class="text-center md:text-left">
+                    <span class="text-5xl font-serif text-neutral-500">02</span>
+                    <h3 class="text-2xl font-semibold mt-4 mb-3">Rapid Exploration</h3>
+                    <p class="text-neutral-400">Generate diverging paths instantly. Compare options in real-time.</p>
+                </div>
+                <div class="text-center md:text-left">
+                    <span class="text-5xl font-serif text-neutral-500">03</span>
+                    <h3 class="text-2xl font-semibold mt-4 mb-3">Production Ready</h3>
+                    <p class="text-neutral-400">Clean, structured code that ships. No cleanup required.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 px-6 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-serif text-4xl md:text-5xl mb-4">Simple, transparent pricing</h2>
+                <p class="text-lg text-neutral-600">Start free. Scale as you grow.</p>
+            </div>
+            <div class="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto reveal">
+                <!-- Starter -->
+                <div
+                    class="p-8 bg-neutral-50 rounded-3xl border border-neutral-200 hover:shadow-lg transition-shadow cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-2">Starter</h3>
+                    <div class="text-4xl font-bold mb-4">$0<span class="text-lg font-normal text-neutral-500">/mo</span>
+                    </div>
+                    <ul class="space-y-3 text-neutral-600 mb-8">
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>10 generations/month</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>1K resolution</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>Community support</li>
+                    </ul>
+                    <a href="#"
+                        class="block text-center py-3 border border-neutral-300 rounded-full font-medium hover:border-neutral-500 transition-colors">Get
+                        Started</a>
+                </div>
+                <!-- Pro - Highlighted -->
+                <div class="p-8 bg-black text-white rounded-3xl scale-105 shadow-2xl cursor-pointer">
+                    <div class="flex justify-between items-start mb-2">
+                        <h3 class="text-xl font-semibold">Pro</h3><span
+                            class="px-3 py-1 bg-white/20 text-xs font-medium rounded-full">Popular</span>
+                    </div>
+                    <div class="text-4xl font-bold mb-4">$29<span
+                            class="text-lg font-normal text-neutral-400">/mo</span></div>
+                    <ul class="space-y-3 text-neutral-300 mb-8">
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>Unlimited generations</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>4K resolution</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>Figma plugin</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-400" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>Priority support</li>
+                    </ul>
+                    <a href="#"
+                        class="block text-center py-3 bg-white text-black rounded-full font-medium hover:bg-neutral-100 transition-colors">Start
+                        Free Trial</a>
+                </div>
+                <!-- Team -->
+                <div
+                    class="p-8 bg-neutral-50 rounded-3xl border border-neutral-200 hover:shadow-lg transition-shadow cursor-pointer">
+                    <h3 class="text-xl font-semibold mb-2">Team</h3>
+                    <div class="text-4xl font-bold mb-4">$99<span
+                            class="text-lg font-normal text-neutral-500">/mo</span></div>
+                    <ul class="space-y-3 text-neutral-600 mb-8">
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>Everything in Pro</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>5 team members</li>
+                        <li class="flex items-center gap-2"><svg class="w-5 h-5 text-green-500" fill="none"
+                                stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 13l4 4L19 7" />
+                            </svg>SSO & Admin</li>
+                    </ul>
+                    <a href="#"
+                        class="block text-center py-3 border border-neutral-300 rounded-full font-medium hover:border-neutral-500 transition-colors">Contact
+                        Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 px-6">
+        <div class="max-w-4xl mx-auto text-center reveal">
+            <h2 class="font-serif text-4xl md:text-6xl mb-8">Ready to ship faster?</h2>
+            <div class="flex flex-wrap justify-center gap-4">
+                <a href="#"
+                    class="px-8 py-4 bg-black text-white rounded-full font-medium hover:bg-neutral-800 transition-colors">Get
+                    SuperSOLD Free</a>
+                <a href="#"
+                    class="px-8 py-4 border border-neutral-300 rounded-full font-medium hover:border-neutral-500 transition-colors">Book
+                    a Demo</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-16 px-6 border-t border-neutral-200">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid md:grid-cols-5 gap-12 mb-12">
+                <div class="md:col-span-2">
+                    <a href="#" class="flex items-center gap-2 font-bold text-xl mb-4"><svg width="32" height="32"
+                            viewBox="0 0 32 32" fill="none">
+                            <circle cx="16" cy="16" r="14" stroke="#000" stroke-width="2" />
+                            <path d="M10 16h12M16 10v12" stroke="#000" stroke-width="2" stroke-linecap="round" />
+                        </svg>SuperSOLD</a>
+                    <p class="text-neutral-600 max-w-xs">The AI Agent that deeply understands your design system and
+                        brand context.</p>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Product</h4>
+                    <ul class="space-y-2 text-neutral-600">
+                        <li><a href="#" class="hover:text-black transition-colors">Features</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">Pricing</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">Enterprise</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Resources</h4>
+                    <ul class="space-y-2 text-neutral-600">
+                        <li><a href="#" class="hover:text-black transition-colors">Docs</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">Community</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-semibold mb-4">Company</h4>
+                    <ul class="space-y-2 text-neutral-600">
+                        <li><a href="#" class="hover:text-black transition-colors">About</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">Careers</a></li>
+                        <li><a href="#" class="hover:text-black transition-colors">Legal</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="flex flex-col md:flex-row justify-between items-center pt-8 border-t border-neutral-200">
+                <p class="text-neutral-500 text-sm">&copy; 2026 SuperSOLD. All rights reserved.</p>
+                <div class="flex gap-4 mt-4 md:mt-0">
+                    <a href="#" class="text-neutral-400 hover:text-black transition-colors"><svg class="w-5 h-5"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z" />
+                        </svg></a>
+                    <a href="#" class="text-neutral-400 hover:text-black transition-colors"><svg class="w-5 h-5"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z" />
+                        </svg></a>
+                    <a href="#" class="text-neutral-400 hover:text-black transition-colors"><svg class="w-5 h-5"
+                            fill="currentColor" viewBox="0 0 24 24">
+                            <path
+                                d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                        </svg></a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Ripple Canvas Effect
+        const canvas = document.getElementById('ripple-canvas');
+        const ctx = canvas.getContext('2d');
+        let ripples = [];
+        // Reduced opacity in base colors
+        const colors = ['rgba(168, 85, 247, 0.1)', 'rgba(59, 130, 246, 0.1)', 'rgba(236, 72, 153, 0.1)', 'rgba(34, 197, 94, 0.08)'];
+
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        document.addEventListener('mousemove', (e) => {
+            // Reduced frequency: only 30% chance per event
+            if (Math.random() > 0.7) {
+                ripples.push({
+                    x: e.clientX,
+                    y: e.clientY,
+                    radius: 2 + Math.random() * 6, // Slightly smaller radius
+                    alpha: 0.4, // Lower starting alpha
+                    color: colors[Math.floor(Math.random() * colors.length)],
+                    velocity: Math.random() * 0.4 // Slower velocity
+                });
+            }
+        });
+
+        function animateRipples() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ripples = ripples.filter(r => r.alpha > 0.01);
+            ripples.forEach(r => {
+                ctx.beginPath();
+                ctx.arc(r.x, r.y, r.radius, 0, Math.PI * 2);
+                ctx.fillStyle = r.color.replace(/[\d.]+\)$/, r.alpha + ')');
+                ctx.fill();
+                r.radius += 0.4 + r.velocity; // Slower expansion
+                r.alpha *= 0.96;
+            });
+            requestAnimationFrame(animateRipples);
+        }
+        animateRipples();
+
+        // Floating Elements Physics & Drag
+        const floatingWrappers = document.querySelectorAll('.floating-wrapper');
+        let mouseX = 0, mouseY = 0;
+        let isDragging = false;
+        let draggedElement = null;
+        let dragOffset = { x: 0, y: 0 };
+
+        const physicsState = new Map();
+
+        // Initialize physics state and add drag listeners
+        floatingWrappers.forEach(el => {
+            // physicsState stores the Drag/Snap Position (Wrapper)
+            physicsState.set(el, {
+                x: 0, y: 0, vx: 0, vy: 0,
+                isDragging: false,
+                // Distortion State (Inner)
+                distX: 0, distY: 0, distScale: 1, distRotate: 0
+            });
+
+            el.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                draggedElement = el;
+                // Calculate offset from the element's current physics position
+                const state = physicsState.get(el);
+                dragOffset.x = e.clientX - state.x;
+                dragOffset.y = e.clientY - state.y;
+
+                // Stop velocity when grabbed
+                state.vx = 0;
+                state.vy = 0;
+                state.isDragging = true;
+
+                el.style.transition = 'none'; // Disable any CSS transition
+                // lift z-index
+                el.style.zIndex = '50';
+            });
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+
+            if (isDragging && draggedElement) {
+                const state = physicsState.get(draggedElement);
+                // Directly map physics position to mouse with offset
+                state.x = e.clientX - dragOffset.x;
+                state.y = e.clientY - dragOffset.y;
+            }
+        });
+
+        document.addEventListener('mouseup', () => {
+            if (draggedElement) {
+                const state = physicsState.get(draggedElement);
+                state.isDragging = false;
+                draggedElement.style.zIndex = ''; // Reset z-index
+                draggedElement = null;
+                isDragging = false;
+            }
+        });
+
+        function updateFloating() {
+            floatingWrappers.forEach(el => {
+                const state = physicsState.get(el);
+                const distortionEl = el.querySelector('.floating-distortion');
+
+                // --- 1. WRAPPER PHYSICS (Drag & Snap Back) ---
+                if (!state.isDragging) {
+                    // Slight gentle wander or just snap to 0? User liked "floaty snapback".
+                    // Target is 0,0 (Origin)
+
+                    const spring = 0.01; // Slower, eased return (was 0.015)
+                    const friction = 0.92; // Less friction = slight bounce/overshoot (was 0.96)
+
+                    state.vx += (0 - state.x) * spring;
+                    state.vy += (0 - state.y) * spring;
+                    state.vx *= friction;
+                    state.vy *= friction;
+                    state.x += state.vx;
+                    state.y += state.vy;
+                }
+                // Apply Wrapper Transform
+                el.style.transform = `translate(${state.x}px, ${state.y}px)`;
+
+                // --- 2. DISTORTION PHYSICS (Lerp Repulsion) ---
+                if (distortionEl) {
+                    const rect = el.getBoundingClientRect();
+                    const centerX = rect.left + rect.width / 2;
+                    const centerY = rect.top + rect.height / 2;
+
+                    const dx = mouseX - centerX;
+                    const dy = mouseY - centerY;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    const radius = 400; // Interaction Radius
+
+                    let targetDX = 0;
+                    let targetDY = 0;
+                    let targetScale = 1;
+                    let targetRotate = 0;
+
+                    if (dist < radius) {
+                        // Repulsion Force
+                        const force = (1 - dist / radius) * 28; // Gentler repulsion (was 40)
+                        const angle = Math.atan2(dy, dx);
+
+                        // Move AWAY from mouse
+                        targetDX = -Math.cos(angle) * force;
+                        targetDY = -Math.sin(angle) * force;
+
+                        // Scale down
+                        targetScale = 1 - (1 - dist / radius) * 0.05;
+
+                        // Tilt
+                        targetRotate = (dx * 0.05) * (1 - dist / radius);
+                    }
+
+                    // Smooth Interpolation (Lerp with ease 0.1)
+                    const ease = 0.1;
+                    state.distX += (targetDX - state.distX) * ease;
+                    state.distY += (targetDY - state.distY) * ease;
+                    state.distScale += (targetScale - state.distScale) * ease;
+                    state.distRotate += (targetRotate - state.distRotate) * ease;
+
+                    // Apply Distortion Transform
+                    distortionEl.style.transform = `translate3d(${state.distX}px, ${state.distY}px, 0) scale(${state.distScale}) rotate(${state.distRotate}deg)`;
+                }
+            });
+            requestAnimationFrame(updateFloating);
+        }
+        updateFloating();
+
+        // Scroll Reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); } });
+        }, { threshold: 0.1 });
+        reveals.forEach(el => observer.observe(el));
+
+        // Mobile Menu
+        document.getElementById('mobile-menu-btn').addEventListener('click', () => { document.getElementById('mobile-menu').classList.remove('hidden'); document.getElementById('mobile-menu').classList.add('flex'); });
+        document.getElementById('close-menu').addEventListener('click', () => { document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('mobile-menu').classList.remove('flex'); });
+        document.querySelectorAll('#mobile-menu a').forEach(link => { link.addEventListener('click', () => { document.getElementById('mobile-menu').classList.add('hidden'); document.getElementById('mobile-menu').classList.remove('flex'); }); });
+
+        // Tab Switching
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const tab = btn.dataset.tab;
+                const content = document.getElementById('preview-content');
+                const labels = { analytics: 'Analytics Dashboard', marketing: 'Marketing Page', mobile: 'Mobile Profile' };
+                content.innerHTML = `<div class="text-center text-white/60"><svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg><p>${labels[tab]} Preview</p></div>`;
+            });
+        });
+    </script>
+</body>
+
+</html>

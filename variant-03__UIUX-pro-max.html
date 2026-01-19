@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebFlow Studio | Premium Web Design & Development</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Geist+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Instrument+Serif:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            white: '#FFFFFF',
+            primary: '#135151',
+            secondary: '#c2a483',
+            'primary-light': '#1a6b6b',
+            'primary-dark': '#0d3a3a',
+            dark: {
+              900: '#0a0f0f',
+              800: '#0f1414',
+              700: '#1a1f1f',
+              600: '#252a2a',
+            }
+          },
+          fontFamily: {
+            sans: ['Geist Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+            display: ['Instrument Serif', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    [x-cloak] { display: none !important; }
+    :root { --progress: 0%; }
+    .scroll-progress { position: fixed; top: 0; left: 0; height: 3px; background: linear-gradient(90deg, #135151, #c2a483); width: var(--progress); z-index: 100; transition: width 0.1s; }
+    .chapter-1 { background: linear-gradient(180deg, #ffffff 0%, #f5f5f5 100%); }
+    .chapter-2 { background: linear-gradient(180deg, #f5f5f5 0%, #e8e8e8 100%); }
+    .chapter-3 { background: linear-gradient(180deg, #e8e8e8 0%, #dcdcdc 100%); }
+    .chapter-4 { background: linear-gradient(180deg, #dcdcdc 0%, #d0d0d0 100%); }
+    .chapter-5 { background: linear-gradient(180deg, #d0d0d0 0%, #c4c4c4 100%); }
+    
+    .scroll-trigger { opacity: 0; transform: translateY(60px) scale(0.95); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .scroll-trigger.in-view { opacity: 1; transform: translateY(0) scale(1); }
+    
+    .scroll-trigger-x-left { opacity: 0; transform: translateX(-80px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .scroll-trigger-x-left.in-view { opacity: 1; transform: translateX(0); }
+    
+    .scroll-trigger-x-right { opacity: 0; transform: translateX(80px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+    .scroll-trigger-x-right.in-view { opacity: 1; transform: translateX(0); }
+    
+    .scroll-trigger-blur { opacity: 0; filter: blur(12px); transform: scale(0.98); transition: all 1s ease-out; }
+    .scroll-trigger-blur.in-view { opacity: 1; filter: blur(0); transform: scale(1); }
+    
+    .scroll-animate { opacity: 0; filter: blur(10px); transform: translateY(45px) scale(0.95); transition: opacity 0.8s ease-out, filter 0.8s ease-out, transform 0.8s ease-out; }
+    .scroll-animate.in-view { opacity: 1; filter: blur(0); transform: translateY(0) scale(1); }
+    
+    .scroll-animate-fade { opacity: 0; transform: translateY(35px); transition: opacity 0.6s ease-out, transform 0.6s ease-out; }
+    .scroll-animate-fade.in-view { opacity: 1; transform: translateY(0); }
+    
+    .scroll-delay-1 { transition-delay: 0.1s; }
+    .scroll-delay-2 { transition-delay: 0.2s; }
+    .scroll-delay-3 { transition-delay: 0.3s; }
+    .scroll-delay-4 { transition-delay: 0.4s; }
+    .scroll-delay-5 { transition-delay: 0.5s; }
+  </style>
+</head>
+<body class="font-sans antialiased" x-data="{ darkMode: true }" :class="darkMode ? 'bg-dark-900 text-white' : 'bg-white text-primary'">
+  <div class="scroll-progress" id="scrollProgress"></div>
+
+  <nav x-data="{ scrolled: false, menuOpen: false, progress: 0 }" :class="scrolled ? (darkMode ? 'bg-dark-800/95 backdrop-blur-md border-white/10' : 'bg-white/95 backdrop-blur-md border-primary/10') : (darkMode ? 'bg-transparent border-white/10' : 'bg-transparent border-primary/10')" @scroll.window="scrolled = window.scrollY > 50; progress = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100; document.getElementById('scrollProgress').style.setProperty('--progress', progress + '%')" x-init="$watch('menuOpen', value => { document.body.style.overflow = value ? 'hidden' : ''; })" class="fixed w-full z-50 transition-all duration-300 border-b" :style="scrolled ? (darkMode ? 'background: rgba(15, 20, 20, 0.95);' : 'background: rgba(255, 255, 255, 0.95);') : ''">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center group-hover:bg-primary-light transition-colors">
+          <i data-lucide=" Box" class="w-6 h-6 text-white"></i>
+        </div>
+        <span class="font-display font-bold text-xl tracking-tight" :class="darkMode ? 'text-white' : 'text-primary'">WebFlow</span>
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#chapter-1" class="text-sm transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Story</a>
+        <a href="#chapter-2" class="text-sm transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Work</a>
+        <a href="#chapter-3" class="text-sm transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Services</a>
+        <a href="#chapter-4" class="text-sm transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Pricing</a>
+      </div>
+      <div class="flex items-center gap-3">
+        <button @click="darkMode = !darkMode" class="p-2 transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'" aria-label="Toggle theme">
+          <svg x-show="darkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+          <svg x-show="!darkMode" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-5 h-5" style="display: none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+        <a href="#contact" class="hidden sm:inline-flex items-center gap-2 px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-lg hover:bg-primary-light transition-colors">
+          <span>Start Project</span>
+          <i data-lucide=" ArrowRight" class="w-4 h-4"></i>
+        </a>
+      </div>
+      <button @click="menuOpen = !menuOpen" class="md:hidden p-2" :class="darkMode ? 'text-white' : 'text-primary'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="6" x2="20" y2="6"/><line x1="4" y1="18" x2="20" y2="18"/></svg>
+      </button>
+    </div>
+    <div x-show="menuOpen" x-collapse 
+         class="md:hidden fixed inset-0 z-50"
+         :class="darkMode ? 'bg-dark-800' : 'bg-white'"
+         style="display: none;">
+      <div class="flex flex-col items-center justify-center h-full space-y-8 px-4">
+        <a href="#chapter-1" @click="menuOpen = false" class="text-2xl font-display transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Story</a>
+        <a href="#chapter-2" @click="menuOpen = false" class="text-2xl font-display transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Work</a>
+        <a href="#chapter-3" @click="menuOpen = false" class="text-2xl font-display transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Services</a>
+        <a href="#chapter-4" @click="menuOpen = false" class="text-2xl font-display transition-colors" :class="darkMode ? 'text-white/70 hover:text-white' : 'text-primary/70 hover:text-primary'">Pricing</a>
+        <a href="#contact" @click="menuOpen = false" class="mt-8 px-8 py-3 bg-primary text-white font-medium rounded-lg hover:bg-primary-light transition-all">Start Project</a>
+      </div>
+      <button @click="menuOpen = false" class="absolute top-6 right-6 p-2 transition-colors" :class="darkMode ? 'text-white/50 hover:text-white' : 'text-primary/50 hover:text-primary'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-6 h-6"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+  </nav>
+
+  <main>
+    <section id="chapter-1" class="min-h-screen flex items-center justify-center relative overflow-hidden" :class="darkMode ? 'bg-dark-900' : 'bg-white'">
+      <div class="absolute inset-0 opacity-30">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px]"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/30 rounded-full blur-[96px]"></div>
+      </div>
+      <div class="relative max-w-5xl mx-auto px-6 py-24 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm mb-10 scroll-trigger" :class="darkMode ? 'bg-primary/20' : 'bg-primary/5'">
+          <span class="w-2 h-2 bg-secondary rounded-full animate-pulse"></span>
+          <span :class="darkMode ? 'text-white/80' : 'text-primary'">Premium WebFlow Partner</span>
+        </div>
+        <h1 class="font-display text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-8 scroll-trigger stagger-1">
+          <span class="block" :class="darkMode ? 'text-white' : 'text-primary'">We craft</span>
+          <span class="block text-secondary italic">exceptional</span>
+          <span class="block" :class="darkMode ? 'text-white' : 'text-primary'">digital experiences</span>
+        </h1>
+        <p class="text-lg max-w-2xl mx-auto mb-12 leading-relaxed scroll-trigger stagger-2" :class="darkMode ? 'text-white/60' : 'text-primary/60'">
+          Award-winning WebFlow design and development studio. We transform brands through stunning websites, strategic digital branding, and seamless user experiences.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16 scroll-trigger stagger-3">
+          <a href="#contact" class="inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-white font-medium rounded-lg hover:bg-primary-light transition-all hover:shadow-xl hover:shadow-primary/20">
+            <span>Start Your Journey</span>
+            <i data-lucide=" ArrowRight" class="w-5 h-5"></i>
+          </a>
+          <a href="#chapter-2" class="inline-flex items-center justify-center gap-2 px-8 py-4 font-medium rounded-lg transition-all" :class="darkMode ? 'border border-white/20 text-white hover:border-white hover:bg-white/5' : 'border border-primary/20 text-primary hover:border-primary hover:bg-primary/5'">
+            <i data-lucide=" Eye" class="w-5 h-5"></i>
+            <span>See Our Work</span>
+          </a>
+        </div>
+        <div class="flex flex-wrap justify-center gap-12 text-center scroll-trigger stagger-4">
+          <div>
+            <p class="font-display text-3xl font-bold" :class="darkMode ? 'text-white' : 'text-primary'">150+</p>
+            <p class="text-sm mt-1" :class="darkMode ? 'text-white/50' : 'text-primary/50'">Projects Launched</p>
+          </div>
+          <div>
+            <p class="font-display text-3xl font-bold" :class="darkMode ? 'text-white' : 'text-primary'">98%</p>
+            <p class="text-sm mt-1" :class="darkMode ? 'text-white/50' : 'text-primary/50'">Client Satisfaction</p>
+          </div>
+          <div>
+            <p class="font-display text-3xl font-bold" :class="darkMode ? 'text-white' : 'text-primary'">12</p>
+            <p class="text-sm mt-1" :class="darkMode ? 'text-white/50' : 'text-primary/50'">Design Awards</p>
+          </div>
+          <div>
+            <p class="font-display text-3xl font-bold" :class="darkMode ? 'text-white' : 'text-primary'">6</p>
+            <p class="text-sm mt-1" :class="darkMode ? 'text-white/50' : 'text-primary/50'">Years Experience</p>
+          </div>
+        </div>
+      </div>
+      <div class="absolute bottom-8 left-1/2 -translate-x-1/2 animate-bounce">
+        <i data-lucide=" ChevronDown" class="w-6 h-6" :class="darkMode ? 'text-white/30' : 'text-primary/30'"></i>
+      </div>
+    </section>
+
+    <section id="chapter-2" class="min-h-screen flex items-center relative overflow-hidden" :class="darkMode ? 'bg-dark-800' : 'bg-gray-50'">
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/3 right-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px]"></div>
+        <div class="absolute bottom-1/3 left-1/4 w-64 h-64 bg-secondary/20 rounded-full blur-[96px]"></div>
+      </div>
+      <div class="relative max-w-7xl mx-auto px-6 py-24">
+        <div class="mb-14 scroll-trigger">
+          <span class="inline-block px-4 py-2 rounded-full text-sm font-medium mb-4" :class="darkMode ? 'bg-primary/30 text-secondary' : 'bg-primary/10 text-primary'">Chapter 01 — Our Work</span>
+          <h2 class="font-display text-3xl md:text-5xl font-bold mb-5" :class="darkMode ? 'text-white' : 'text-primary'">Selected Projects</h2>
+          <p :class="darkMode ? 'text-white/60' : 'text-primary/60'">A curated collection of WebFlow projects that showcase our passion for exceptional design and development.</p>
+        </div>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div class="group relative overflow-hidden rounded-2xl aspect-[4/3] scroll-trigger-x-left" :class="darkMode ? 'bg-dark-700' : 'bg-gray-100'">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <div class="text-center">
+                <i data-lucide=" Monitor" class="w-16 h-16 mx-auto mb-3" :class="darkMode ? 'text-white/20' : 'text-primary/20'"></i>
+                <p class="font-medium" :class="darkMode ? 'text-white/40' : 'text-primary/40'">SaaS Platform</p>
+              </div>
+            </div>
+            <div class="absolute inset-0 bg-primary/90 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-secondary text-sm font-medium mb-1">WebFlow Development</p>
+              <h3 class="font-display text-xl font-bold text-white mb-1">TechFlow Dashboard</h3>
+              <p class="text-white/70 text-sm">Complete platform redesign with custom CMS</p>
+            </div>
+          </div>
+          <div class="group relative overflow-hidden rounded-2xl aspect-[4/3] scroll-trigger stagger-1" :class="darkMode ? 'bg-dark-700' : 'bg-gray-100'">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <i data-lucide=" ShoppingBag" class="w-14 h-14" :class="darkMode ? 'text-white/20' : 'text-primary/20'"></i>
+            </div>
+            <div class="absolute inset-0 bg-primary/90 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-secondary text-sm font-medium mb-1">E-commerce</p>
+              <h3 class="font-display text-xl font-bold text-white mb-1">Lume Store</h3>
+              <p class="text-white/70 text-sm">WebFlow e-commerce solution</p>
+            </div>
+          </div>
+          <div class="group relative overflow-hidden rounded-2xl aspect-[4/3] scroll-trigger stagger-2" :class="darkMode ? 'bg-dark-700' : 'bg-gray-100'">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <i data-lucide=" Building2" class="w-14 h-14" :class="darkMode ? 'text-white/20' : 'text-primary/20'"></i>
+            </div>
+            <div class="absolute inset-0 bg-primary/90 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-secondary text-sm font-medium mb-1">Corporate</p>
+              <h3 class="font-display text-xl font-bold text-white mb-1">Aura Architects</h3>
+              <p class="text-white/70 text-sm">Brand website with portfolio</p>
+            </div>
+          </div>
+          <div class="group relative overflow-hidden rounded-2xl aspect-[4/3] scroll-trigger-x-right" :class="darkMode ? 'bg-dark-700' : 'bg-gray-100'">
+            <div class="absolute inset-0 flex items-center justify-center">
+              <i data-lucide=" Sparkles" class="w-14 h-14" :class="darkMode ? 'text-white/20' : 'text-primary/20'"></i>
+            </div>
+            <div class="absolute inset-0 bg-primary/90 flex flex-col justify-end p-6 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <p class="text-secondary text-sm font-medium mb-1">Startup</p>
+              <h3 class="font-display text-xl font-bold text-white mb-1">Nova Launch</h3>
+              <p class="text-white/70 text-sm">Landing page with animations</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chapter-3" class="min-h-screen flex items-center relative overflow-hidden" :class="darkMode ? 'bg-dark-900' : 'bg-white'">
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/4 left-1/3 w-96 h-96 bg-primary/20 rounded-full blur-[128px]"></div>
+        <div class="absolute bottom-1/4 right-1/3 w-64 h-64 bg-secondary/20 rounded-full blur-[96px]"></div>
+      </div>
+      <div class="relative max-w-7xl mx-auto px-6 py-24">
+        <div class="text-center mb-14 scroll-trigger">
+          <span class="inline-block px-4 py-2 rounded-full text-sm font-medium mb-4" :class="darkMode ? 'bg-primary/30 text-secondary' : 'bg-primary/10 text-primary'">Chapter 02 — Our Services</span>
+          <h2 class="font-display text-3xl md:text-5xl font-bold mb-5" :class="darkMode ? 'text-white' : 'text-primary'">What We Do</h2>
+          <p :class="darkMode ? 'text-white/60' : 'text-primary/60'" class="max-w-2xl mx-auto">End-to-end WebFlow services designed to elevate your brand and drive measurable results.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6">
+          <div class="p-8 rounded-2xl border panel-hover scroll-trigger stagger-1" :class="darkMode ? 'bg-dark-800/80 border-white/10 hover:border-white/20' : 'bg-white/80 border-primary/10 hover:border-primary/30'">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-4">
+              <i data-lucide=" Layout" class="w-6 h-6 text-white"></i>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3" :class="darkMode ? 'text-white' : 'text-primary'">WebFlow Design</h3>
+            <p class="text-sm leading-relaxed mb-4" :class="darkMode ? 'text-white/60' : 'text-primary/60'">Custom website design with stunning visuals, intuitive UX, and conversion-focused layouts.</p>
+            <ul class="space-y-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'">
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Responsive design</li>
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Design systems</li>
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Prototyping</li>
+            </ul>
+          </div>
+          <div class="p-8 rounded-2xl border panel-hover scroll-trigger stagger-2" :class="darkMode ? 'bg-dark-800/80 border-white/10 hover:border-white/20' : 'bg-white/80 border-primary/10 hover:border-primary/30'">
+            <div class="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center mb-4">
+              <i data-lucide=" Code2" class="w-6 h-6 text-white"></i>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3" :class="darkMode ? 'text-white' : 'text-primary'">Web Development</h3>
+            <p class="text-sm leading-relaxed mb-4" :class="darkMode ? 'text-white/60' : 'text-primary/60'">Clean, performant WebFlow development with custom interactions and seamless integrations.</p>
+            <ul class="space-y-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'">
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4" :class="darkMode ? 'text-white' : 'text-primary'"></i> Custom interactions</li>
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4" :class="darkMode ? 'text-white' : 'text-primary'"></i> API integrations</li>
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4" :class="darkMode ? 'text-white' : 'text-primary'"></i> CMS setup</li>
+            </ul>
+          </div>
+          <div class="p-8 rounded-2xl border panel-hover scroll-trigger stagger-3" :class="darkMode ? 'bg-dark-800/80 border-white/10 hover:border-white/20' : 'bg-white/80 border-primary/10 hover:border-primary/30'">
+            <div class="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-4">
+              <i data-lucide=" Palette" class="w-6 h-6 text-white"></i>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3" :class="darkMode ? 'text-white' : 'text-primary'">Digital Branding</h3>
+            <p class="text-sm leading-relaxed mb-4" :class="darkMode ? 'text-white/60' : 'text-primary/60'">Strategic brand identity design that elevates your digital presence and connects with audiences.</p>
+            <ul class="space-y-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'">
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Brand strategy</li>
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Visual identity</li>
+              <li class="flex items-center gap-2"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Guidelines</li>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-14 p-6 rounded-2xl border scroll-trigger stagger-4" :class="darkMode ? 'bg-dark-800/60 border-white/10' : 'bg-gray-50/60 border-primary/10'">
+          <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+            <div class="text-center lg:text-left">
+              <h3 class="font-display text-lg font-bold mb-1" :class="darkMode ? 'text-white' : 'text-primary'">Trusted by Industry Leaders</h3>
+              <p class="text-sm" :class="darkMode ? 'text-white/60' : 'text-primary/60'">We've delivered results for startups and enterprises worldwide</p>
+            </div>
+            <div class="flex flex-wrap justify-center gap-8 items-center" :class="darkMode ? 'text-white/40' : 'text-primary/40'">
+              <span class="text-sm font-medium">WebFlow</span>
+              <span class="text-sm font-medium">Figma</span>
+              <span class="text-sm font-medium">React</span>
+              <span class="text-sm font-medium">GSAP</span>
+              <span class="text-sm font-medium">Vercel</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="chapter-4" class="min-h-screen flex items-center relative overflow-hidden" :class="darkMode ? 'bg-dark-800' : 'bg-gray-50'">
+      <div class="absolute inset-0 opacity-20">
+        <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[128px]"></div>
+        <div class="absolute bottom-1/4 right-1/4 w-64 h-64 bg-secondary/20 rounded-full blur-[96px]"></div>
+      </div>
+      <div class="relative max-w-7xl mx-auto px-6 py-24">
+        <div class="text-center mb-14 scroll-trigger">
+          <span class="inline-block px-4 py-2 rounded-full text-sm font-medium mb-4" :class="darkMode ? 'bg-primary/30 text-secondary' : 'bg-primary/20 text-primary'">Chapter 03 — Investment</span>
+          <h2 class="font-display text-3xl md:text-5xl font-bold mb-5" :class="darkMode ? 'text-white' : 'text-primary'">Simple, Transparent Pricing</h2>
+          <p :class="darkMode ? 'text-white/60' : 'text-primary/60'" class="max-w-2xl mx-auto">Choose the engagement model that fits your needs and budget.</p>
+        </div>
+        <div class="grid md:grid-cols-3 gap-6 max-w-4xl mx-auto">
+          <div class="p-6 rounded-2xl border scroll-trigger stagger-1" :class="darkMode ? 'bg-dark-700 border-white/10' : 'bg-white border-primary/20'">
+            <h3 class="font-display text-lg font-bold mb-1" :class="darkMode ? 'text-white' : 'text-primary'">Starter</h3>
+            <p class="text-sm mb-4" :class="darkMode ? 'text-white/60' : 'text-primary/60'">For small projects</p>
+            <div class="mb-5">
+              <span class="text-4xl font-display font-bold" :class="darkMode ? 'text-white' : 'text-primary'">$5K</span>
+              <span :class="darkMode ? 'text-white/50' : 'text-primary/50'">+</span>
+            </div>
+            <ul class="space-y-2.5 mb-5">
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Up to 5 pages</li>
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Responsive design</li>
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Basic CMS</li>
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> 2 week timeline</li>
+            </ul>
+            <a href="#contact" class="block w-full py-2.5 text-center border font-medium rounded-lg transition-all text-sm" :class="darkMode ? 'border-white/20 text-white hover:bg-white hover:text-dark-900' : 'border-primary/20 text-primary hover:bg-primary hover:text-white'">Get Started</a>
+          </div>
+          <div class="relative p-6 rounded-2xl shadow-xl scroll-trigger stagger-2" :class="darkMode ? 'bg-primary' : 'bg-primary text-white'">
+            <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-secondary text-white text-xs font-bold rounded-full">Most Popular</div>
+            <h3 class="font-display text-lg font-bold text-white mb-1">Professional</h3>
+            <p class="text-white/60 text-sm mb-4">For growing businesses</p>
+            <div class="mb-5">
+              <span class="text-4xl font-display font-bold text-white">$12K</span>
+              <span class="text-white/50">+</span>
+            </div>
+            <ul class="space-y-2.5 mb-5">
+              <li class="flex items-center gap-2 text-sm text-white/80"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Up to 12 pages</li>
+              <li class="flex items-center gap-2 text-sm text-white/80"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Custom interactions</li>
+              <li class="flex items-center gap-2 text-sm text-white/80"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Advanced CMS</li>
+              <li class="flex items-center gap-2 text-sm text-white/80"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> SEO included</li>
+            </ul>
+            <a href="#contact" class="block w-full py-2.5 text-center font-medium rounded-lg transition-all text-sm bg-white text-primary hover:bg-secondary hover:text-white">Choose Professional</a>
+          </div>
+          <div class="p-6 rounded-2xl border scroll-trigger stagger-3" :class="darkMode ? 'bg-dark-700 border-white/10' : 'bg-white border-primary/20'">
+            <h3 class="font-display text-lg font-bold mb-1" :class="darkMode ? 'text-white' : 'text-primary'">Enterprise</h3>
+            <p class="text-sm mb-4" :class="darkMode ? 'text-white/60' : 'text-primary/60'">For large organizations</p>
+            <div class="mb-5">
+              <span class="text-4xl font-display font-bold" :class="darkMode ? 'text-white' : 'text-primary'">Custom</span>
+            </div>
+            <ul class="space-y-2.5 mb-5">
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Unlimited pages</li>
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Custom development</li>
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> API integrations</li>
+              <li class="flex items-center gap-2 text-sm" :class="darkMode ? 'text-white/70' : 'text-primary/70'"><i data-lucide=" Check" class="w-4 h-4 text-secondary"></i> Ongoing support</li>
+            </ul>
+            <a href="#contact" class="block w-full py-2.5 text-center border font-medium rounded-lg transition-all text-sm" :class="darkMode ? 'border-white/20 text-white hover:bg-white hover:text-dark-900' : 'border-primary/20 text-primary hover:bg-primary hover:text-white'">Contact Us</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq" class="py-24" :class="darkMode ? 'bg-dark-900' : 'bg-white'">
+      <div class="max-w-3xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <span class="inline-block px-4 py-2 rounded-full text-sm font-medium mb-4" :class="darkMode ? 'bg-primary/30 text-secondary' : 'bg-primary/10 text-primary'">FAQ</span>
+          <h2 class="font-display text-3xl md:text-4xl font-bold mb-4" :class="darkMode ? 'text-white' : 'text-primary'">Common Questions</h2>
+          <p :class="darkMode ? 'text-white/60' : 'text-primary/60'">Everything you need to know about working with us.</p>
+        </div>
+        
+        <div x-data="{ active: null }" class="space-y-4">
+          <div class="accordion-item border rounded-xl overflow-hidden" :class="darkMode ? 'border-white/10' : 'border-primary/10'" :class="{ 'active': active === 1 }">
+            <button @click="active = active === 1 ? null : 1" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+              <span class="font-semibold" :class="darkMode ? 'text-white' : 'text-primary'">What is your typical project timeline?</span>
+              <i data-lucide=" ChevronDown" class="w-5 h-5 accordion-icon" :class="darkMode ? 'text-white/40' : 'text-primary/40'"></i>
+            </button>
+            <div class="accordion-content px-6">
+              <p class="pb-4 text-sm leading-relaxed" :class="darkMode ? 'text-white/60' : 'text-primary/60'">Project timelines vary based on scope. A typical 5-page website takes 2-4 weeks, while more complex projects may take 6-8 weeks. We'll provide a detailed timeline during our initial consultation.</p>
+            </div>
+          </div>
+          
+          <div class="accordion-item border rounded-xl overflow-hidden" :class="darkMode ? 'border-white/10' : 'border-primary/10'" :class="{ 'active': active === 2 }">
+            <button @click="active = active === 2 ? null : 2" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+              <span class="font-semibold" :class="darkMode ? 'text-white' : 'text-primary'">Do you provide WebFlow training?</span>
+              <i data-lucide=" ChevronDown" class="w-5 h-5 accordion-icon" :class="darkMode ? 'text-white/40' : 'text-primary/40'"></i>
+            </button>
+            <div class="accordion-content px-6">
+              <p class="pb-4 text-sm leading-relaxed" :class="darkMode ? 'text-white/60' : 'text-primary/60'">Yes! We provide comprehensive training sessions to help you manage and update your WebFlow site. We also offer documentation and video guides for easy reference.</p>
+            </div>
+          </div>
+          
+          <div class="accordion-item border rounded-xl overflow-hidden" :class="darkMode ? 'border-white/10' : 'border-primary/10'" :class="{ 'active': active === 3 }">
+            <button @click="active = active === 3 ? null : 3" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+              <span class="font-semibold" :class="darkMode ? 'text-white' : 'text-primary'">Can you help with hosting and domain?</span>
+              <i data-lucide=" ChevronDown" class="w-5 h-5 accordion-icon" :class="darkMode ? 'text-white/40' : 'text-primary/40'"></i>
+            </button>
+            <div class="accordion-content px-6">
+              <p class="pb-4 text-sm leading-relaxed" :class="darkMode ? 'text-white/60' : 'text-primary/60'">Absolutely. We can help set up hosting on WebFlow, configure custom domains, and ensure SSL certificates are properly installed for secure connections.</p>
+            </div>
+          </div>
+          
+          <div class="accordion-item border rounded-xl overflow-hidden" :class="darkMode ? 'border-white/10' : 'border-primary/10'" :class="{ 'active': active === 4 }">
+            <button @click="active = active === 4 ? null : 4" class="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-white/5 transition-colors">
+              <span class="font-semibold" :class="darkMode ? 'text-white' : 'text-primary'">What is included in the project?</span>
+              <i data-lucide=" ChevronDown" class="w-5 h-5 accordion-icon" :class="darkMode ? 'text-white/40' : 'text-primary/40'"></i>
+            </button>
+            <div class="accordion-content px-6">
+              <p class="pb-4 text-sm leading-relaxed" :class="darkMode ? 'text-white/60' : 'text-primary/60'">All projects include design, development, CMS setup, responsive testing, SEO basics, and one month of post-launch support. We also provide source files and documentation.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="py-24" :class="darkMode ? 'bg-dark-800 text-white' : 'bg-primary text-white'">
+      <div class="max-w-2xl mx-auto px-6 text-center">
+        <div class="mb-12 scroll-trigger">
+          <span class="inline-block px-4 py-2 rounded-full text-sm font-medium mb-4" :class="darkMode ? 'bg-secondary/20 text-secondary' : 'bg-secondary/20 text-secondary'">Get Started</span>
+          <h2 class="font-display text-3xl md:text-5xl font-bold mb-4">Ready to Build?</h2>
+          <p :class="darkMode ? 'text-white/70' : 'text-white/70'">Tell us about your project and let's create something amazing.</p>
+        </div>
+        <form class="space-y-4 text-left scroll-trigger stagger-1">
+          <div class="grid md:grid-cols-2 gap-4">
+            <input type="text" placeholder="Your name" class="w-full px-4 py-3 rounded-lg text-sm transition-all border" :class="darkMode ? 'bg-dark-700 border-white/10 text-white placeholder:text-white/40' : 'bg-white border border-primary/20 text-primary placeholder:text-primary/40'">
+            <input type="email" placeholder="Email address" class="w-full px-4 py-3 rounded-lg text-sm transition-all border" :class="darkMode ? 'bg-dark-700 border-white/10 text-white placeholder:text-white/40' : 'bg-white border border-primary/20 text-primary placeholder:text-primary/40'">
+          </div>
+          <select class="w-full px-4 py-3 rounded-lg text-sm transition-all border" :class="darkMode ? 'bg-dark-700 border-white/10 text-white' : 'bg-white border border-primary/20 text-primary'">
+            <option :class="darkMode ? 'bg-dark-700' : 'bg-white'">Project Type</option>
+            <option :class="darkMode ? 'bg-dark-700' : 'bg-white'">WebFlow Website</option>
+            <option :class="darkMode ? 'bg-dark-700' : 'bg-white'">E-commerce</option>
+            <option :class="darkMode ? 'bg-dark-700' : 'bg-white'">Brand Identity</option>
+            <option :class="darkMode ? 'bg-dark-700' : 'bg-white'">Other</option>
+          </select>
+          <textarea placeholder="Tell us about your project..." rows="4" class="w-full px-4 py-3 rounded-lg text-sm transition-all resize-none border" :class="darkMode ? 'bg-dark-700 border-white/10 text-white placeholder:text-white/40' : 'bg-white border border-primary/20 text-primary placeholder:text-primary/40'"></textarea>
+          <button type="submit" class="w-full py-3.5 font-medium rounded-lg transition-all" :class="darkMode ? 'bg-secondary text-primary-dark hover:bg-white' : 'bg-secondary text-primary-dark hover:bg-white'">
+            Send Message
+          </button>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <footer class="py-10 border-t" :class="darkMode ? 'bg-dark-900 border-white/10' : 'bg-white border-primary/10'">
+    <div class="max-w-7xl mx-auto px-6">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg flex items-center justify-center" :class="darkMode ? 'bg-white/10' : 'bg-primary'">
+            <i data-lucide=" Box" class="w-5 h-5 text-white"></i>
+          </div>
+          <span class="font-display font-bold" :class="darkMode ? 'text-white' : 'text-primary'">WebFlow</span>
+        </div>
+        <div class="flex gap-6 text-sm" :class="darkMode ? 'text-white/50' : 'text-primary/50'">
+          <a href="#" class="hover:text-secondary transition-colors">Twitter</a>
+          <a href="#" class="hover:text-secondary transition-colors">Instagram</a>
+          <a href="#" class="hover:text-secondary transition-colors">Dribbble</a>
+          <a href="#" class="hover:text-secondary transition-colors">LinkedIn</a>
+        </div>
+        <p class="text-sm" :class="darkMode ? 'text-white/50' : 'text-primary/50'">&copy; 2024 WebFlow Studio. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.addEventListener('alpine:init', () => {
+      lucide.createIcons();
+    });
+    document.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      
+      const observerOptions = {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.05
+      };
+      
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('in-view');
+          }
+        });
+      }, observerOptions);
+      
+      document.querySelectorAll('.scroll-trigger, .scroll-trigger-x-left, .scroll-trigger-x-right, .scroll-trigger-blur, .scroll-animate, .scroll-animate-fade').forEach(el => {
+        observer.observe(el);
+      });
+    });
+    window.addEventListener('scroll', () => {
+      const scrollProgress = document.getElementById('scrollProgress');
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrollPercent = (scrollTop / docHeight) * 100;
+      scrollProgress.style.width = scrollPercent + '%';
+    });
+  </script>
+</body>
+</html>
